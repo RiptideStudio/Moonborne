@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
-namespace Moonborne.Graphics.Sprites
+namespace Moonborne.Graphics
 {
     public static class SpriteManager
     {
