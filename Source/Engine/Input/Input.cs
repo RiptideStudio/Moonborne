@@ -1,12 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Moonborne.Game.Room;
+using Moonborne.Graphics;
+using Moonborne.Graphics.Camera;
 
 namespace Moonborne.Input
 {
     public static class InputManager
     {
-        static KeyboardState currentKeyboardState;
-        static KeyboardState previousKeyboardState;
+        public static KeyboardState currentKeyboardState;
+        public static KeyboardState previousKeyboardState;
+        public static MouseState MouseState;
+        public static Vector2 MousePosition;
 
         /// <summary>
         /// Check if a key is triggered by comparing previous and current state
@@ -39,6 +44,34 @@ namespace Moonborne.Input
         }
 
         /// <summary>
+        /// Check if 
+        /// </summary>
+        /// <returns></returns>
+        public static bool MouseLeftPressed()
+        {
+            return MouseState.LeftButton == ButtonState.Pressed;
+        }
+
+        /// <summary>
+        /// Get the mouse's coordinates in world 
+        /// </summary>
+        /// <param name="mousePosition"></param>
+        /// <param name="viewportWidth"></param>
+        /// <param name="viewportHeight"></param>
+        /// <returns></returns>
+        public static Vector2 MouseWorldCoords()
+        {
+            // Center of the screen (viewport center)
+            Vector2 viewportCenter = new Vector2(GraphicsManager.WindowSize.X / 2f, GraphicsManager.WindowSize.Y / 2f);
+
+            // Adjust mouse position for camera zoom and position
+            Vector2 worldPosition = ((MousePosition - viewportCenter) / Camera.Zoom) + Camera.Position;
+
+            return worldPosition;
+        }
+
+
+        /// <summary>
         /// Update input state given delta time
         /// </summary>
         /// <param name="dt"></param>
@@ -46,6 +79,8 @@ namespace Moonborne.Input
         {
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
+            MouseState = Mouse.GetState();
+            MousePosition = MouseState.Position.ToVector2();
         }
     }
 }

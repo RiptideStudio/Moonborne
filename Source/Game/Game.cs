@@ -8,6 +8,8 @@ using Moonborne.Game.Objects;
 using Moonborne.Input;
 using System;
 using System.Runtime.Serialization;
+using Moonborne.Game.Room;
+using System.Collections.Generic;
 
 namespace Moonborne
 {
@@ -37,6 +39,7 @@ namespace Moonborne
             spriteBatch = new SpriteBatch(GraphicsDevice);
             SpriteManager.LoadAllTextures();
             SpriteManager.spriteBatch = spriteBatch;
+            LevelEditor.LoadTilesets();
             player = new Player();
         }
 
@@ -58,9 +61,16 @@ namespace Moonborne
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
             spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: Camera.Transform);
             GameObjectManager.Draw(spriteBatch);
+            RoomManager.CurrentRoom.Draw(spriteBatch);
             spriteBatch.End();
+
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            LevelEditor.DrawTilesetSelector(spriteBatch);
+            spriteBatch.End();
+
             base.Draw(gameTime);
         }
     }

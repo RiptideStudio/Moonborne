@@ -106,7 +106,7 @@ namespace Moonborne.Graphics
         /// <param name="scale">The scaling factor for the text.</param>
         /// <param name="rotation">The rotation of the text in radians.</param>
         /// <param name="ui">If true, the text is drawn without transformations (for UI elements).</param>
-        public static void DrawText(string text, Vector2 position, Vector2 scale, float rotation, SpriteBatch spriteBatch, SpriteFont font, bool ui = false)
+        public static void DrawText(string text, Vector2 position, Vector2 scale, float rotation, SpriteFont font)
         {
             if (string.IsNullOrEmpty(text) || font == null)
                 return;

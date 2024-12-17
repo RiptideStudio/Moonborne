@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Moonborne.Graphics;
-using Moonborne.Game.Components;
-using System.Collections.Generic;
 using System;
 
 namespace Moonborne.Game.Objects

@@ -8,7 +8,7 @@ namespace Moonborne.Graphics.Camera
     public static class Camera
     {
         public static Vector2 Position = Vector2.Zero;
-        public static float Zoom { get; private set; } = 4f; // Default zoom level
+        public static float Zoom { get; private set; } = 4.0f; // Default zoom level
         public static float MaxZoom { get; private set; } = 10f; // Default zoom level
         public static float Rotation { get; private set; } = 0f; // Default rotation
         public static float InterpolationSpeed { get; private set; } = 0.2f; // How much the camera lags behind

@@ -22,7 +22,7 @@ namespace Moonborne.Game.Dialogue
         {
             if (Open)
             {
-                SpriteManager.DrawText(DisplayText, new Vector2(160, 320), new Vector2(1, 1), 0);
+                SpriteManager.DrawText(DisplayText, new Vector2(160, 320), new Vector2(1, 1), 0, null);
             }
         }
     }
