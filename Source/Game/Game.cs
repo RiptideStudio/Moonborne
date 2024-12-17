@@ -2,9 +2,12 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Moonborne.Graphics;
+using Moonborne.Graphics.Camera;
 using Moonborne.Game.Gameplay;
+using Moonborne.Game.Objects;
 using Moonborne.Input;
 using System;
+using System.Runtime.Serialization;
 
 namespace Moonborne
 {
@@ -25,13 +28,15 @@ namespace Moonborne
         {
             SpriteManager.Initialize(Content,GraphicsDevice);
             GraphicsManager.Initialize(Content, GraphicsDevice, _graphics, this);
+            Camera.Initialize();
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            SpriteManager.LoadAllTextures();
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            SpriteManager.LoadAllTextures();
+            SpriteManager.spriteBatch = spriteBatch;
             player = new Player();
         }
 
@@ -44,16 +49,17 @@ namespace Moonborne
 
             InputManager.Update(dt);
             GraphicsManager.Update(dt);
+            Camera.Update();
+            GameObjectManager.Update(dt);
 
-            player.Update(dt);
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            player.Draw(spriteBatch);
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: Camera.Transform);
+            GameObjectManager.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }

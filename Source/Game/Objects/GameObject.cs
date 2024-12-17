@@ -4,36 +4,43 @@ using Microsoft.Xna.Framework.Input;
 using Moonborne.Graphics;
 using Moonborne.Game.Components;
 using System.Collections.Generic;
+using System;
 
 namespace Moonborne.Game.Objects
 {
     public abstract class GameObject
     {
-        public Sprite sprite; // Sprite object to hold drawing data
+        public Sprite SpriteIndex; // Sprite object to hold drawing data
 
         public Vector2 OldPosition; // Object position
         public Vector2 Position; // Object position
         public Vector2 Scale; // Object scale
         public float Rotation = 0; // Object rotation
+
+        public bool Visible = true;
         public bool IsDestroyed = false; // If we are marked for destroy
         private bool IsDirty = true; // Whether to recalculate transform data
 
         public float Speed = 0;
-        public float LinearFriction = 0.2f;
+        public float LinearFriction = 8;
+        public float AngularDampening = 0.25f;
         public Vector2 Velocity;
         public Vector2 Acceleration;
+        public float AngularVelocity;
+        public float MaxSpeed = 100;
 
         public int Depth = 0;
         public int Frame = 0;
         public float FrameTime = 0;
         public int AnimationSpeed = 0;
 
+
         /// <summary>
         /// Constructor
         /// </summary>
         public GameObject()
         {
-            sprite = new Sprite(null,this);
+            GameObjectManager.Add(this);
             Create();
         }
 
@@ -51,11 +58,36 @@ namespace Moonborne.Game.Objects
         /// <param name="dt"></param>
         public virtual void Update(float dt)
         {
+            // Update our position and velocity
             OldPosition = Position;
-            Position += Velocity * dt;
-            Velocity.X = MathHelper.Lerp(Velocity.X,0.0f,LinearFriction);
-            Velocity.Y = MathHelper.Lerp(Velocity.Y,0.0f, LinearFriction);
 
+            // Apply linear friction to acceleration (multiplicative decay for realism)
+            Velocity += Acceleration;
+
+            // Apply friction to velocity (subtractive falloff)
+            if (Velocity.X > 0)
+                Velocity.X -= LinearFriction;
+            else if (Velocity.X < 0)
+                Velocity.X += LinearFriction;
+
+            if (Velocity.Y > 0)
+                Velocity.Y -= LinearFriction;
+            else if (Velocity.Y < 0)
+                Velocity.Y += LinearFriction;
+
+            // Stop the velocity entirely if it's close to zero (to avoid jittering)
+            if (Math.Abs(Velocity.X) < 0.01f) Velocity.X = 0f;
+            if (Math.Abs(Velocity.Y) < 0.01f) Velocity.Y = 0f;
+
+            // Clamp velocity to maximum speed
+            Velocity.X = MathHelper.Clamp(Velocity.X, -MaxSpeed, MaxSpeed);
+            Velocity.Y = MathHelper.Clamp(Velocity.Y, -MaxSpeed, MaxSpeed);
+
+            // Add to position and rotation
+            Position += Velocity * dt;
+            Rotation += AngularVelocity * dt;
+
+            // Update our animation
             if (AnimationSpeed > 0)
             {
                 FrameTime += AnimationSpeed * dt;
@@ -66,7 +98,7 @@ namespace Moonborne.Game.Objects
                     Frame++;
                 }
 
-                if (Frame >= sprite.MaxFrames)
+                if (Frame >= SpriteIndex.MaxFrames-1)
                 {
                     Frame = 0;
                 }
@@ -78,15 +110,33 @@ namespace Moonborne.Game.Objects
         /// </summary>
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            sprite.Draw(spriteBatch,Position);
+            // Can't draw if invisible
+            if (!Visible)
+            {
+                return;
+            }
+
+            // If the sprite is valid, draw it
+            if (SpriteIndex != null)
+            {
+                SpriteIndex.Draw(spriteBatch, Frame, Position, Scale, Rotation, Depth);
+            }
         }
 
         /// <summary>
         /// Called when an object is destroyed
         /// </summary>
-        public virtual void Destroy()
+        public virtual void OnDestroy()
         {
 
+        }
+
+        /// <summary>
+        /// Destroy an object
+        /// </summary>
+        public void Destroy()
+        {
+            IsDestroyed = true;
         }
     }
 }

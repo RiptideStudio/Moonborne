@@ -11,10 +11,17 @@ namespace Moonborne.Graphics
         public Texture2D Texture { get; set; }
         public GameObject Parent { get; set; }
 
+        public enum Axis
+        {
+            Horizontal,
+            Vertical,
+            None
+        }
+
         public Color Color { get; set; } = Color.White;
-        public int FrameHeight;
-        public int FrameWidth;
-        public int MaxFrames;
+        public int FrameHeight = 16;
+        public int FrameWidth = 16;
+        public int MaxFrames = 1;
         public SpriteEffects CustomSpriteEffect = SpriteEffects.None;
 
         /// <summary>
@@ -29,6 +36,27 @@ namespace Moonborne.Graphics
         }
 
         /// <summary>
+        /// Flips the sprite a given direction
+        /// </summary>
+        public void Flip(Axis dir = Axis.None)
+        {
+            switch (dir)
+            {
+                case Axis.Horizontal:
+                    CustomSpriteEffect = SpriteEffects.FlipHorizontally;
+                    break;                
+                
+                case Axis.Vertical:
+                    CustomSpriteEffect = SpriteEffects.FlipVertically;
+                    break;
+
+                case Axis.None:
+                    CustomSpriteEffect = SpriteEffects.None;
+                    break;
+            }
+        }
+
+        /// <summary>
         /// Set the spritesheet for animation
         /// </summary>
         /// <param name="tex"></param>
@@ -40,21 +68,28 @@ namespace Moonborne.Graphics
             Texture = SpriteManager.GetTexture(tex);
             FrameHeight = frameWidth;
             FrameWidth = frameHeight;
-            MaxFrames = maxFrames-1;
+            MaxFrames = maxFrames;
         }
 
         /// <summary>
-        /// Main draw event
+        /// Main draw event, draws a sprite given parameters
         /// </summary>
-        public void Draw(SpriteBatch spriteBatch, Vector2 position)
+        public void Draw(SpriteBatch spriteBatch, int frame, Vector2 position, Vector2 scale, float rotation=0.0f, int layer=0)
         {
-            int row = Parent.Frame / (Texture.Width / FrameWidth);
-            int column = Parent.Frame % (Texture.Width / FrameWidth);
-            Rectangle sourceRect = new Rectangle(column * FrameWidth, row * FrameHeight, FrameWidth, FrameHeight);
-
+            // Only draw if texture is valid
             if (Texture != null)
             {
-                spriteBatch.Draw(Texture, position, sourceRect, Color, Parent.Rotation, Vector2.Zero, Parent.Scale, CustomSpriteEffect, Parent.Depth);
+                // Wrap back around if our frame goes too high
+                if (frame >= MaxFrames)
+                {
+                    frame = frame % MaxFrames;
+                }
+
+                int row = frame / (Texture.Width / FrameWidth);
+                int column = frame % (Texture.Width / FrameWidth);
+                Rectangle sourceRect = new Rectangle(column * FrameWidth, row * FrameHeight, FrameWidth, FrameHeight);
+
+                spriteBatch.Draw(Texture, position, sourceRect, Color, rotation, Vector2.Zero, scale, CustomSpriteEffect, layer);
             }
         }
     }
