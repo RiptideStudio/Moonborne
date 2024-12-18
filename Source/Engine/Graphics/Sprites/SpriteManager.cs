@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using ImGuiNET;
 
 namespace Moonborne.Graphics
 {
@@ -17,6 +18,7 @@ namespace Moonborne.Graphics
         public static GraphicsDevice graphicsDevice;
         public static SpriteBatch UISpriteBatch;
         public static SpriteBatch spriteBatch;
+        private static Dictionary<Texture2D, IntPtr> textureCache = new Dictionary<Texture2D, IntPtr>();
 
         /// <summary>
         /// Load and initialize all textures

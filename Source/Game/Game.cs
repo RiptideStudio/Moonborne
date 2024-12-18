@@ -10,6 +10,7 @@ using System;
 using System.Runtime.Serialization;
 using Moonborne.Game.Room;
 using System.Collections.Generic;
+using Moonborne.Engine.UI;
 
 namespace Moonborne
 {
@@ -28,9 +29,15 @@ namespace Moonborne
 
         protected override void Initialize()
         {
+            if (GraphicsDevice == null)
+            {
+                throw new Exception("GraphicsDevice is null. Cannot initialize ImGuiManager.");
+            }
             SpriteManager.Initialize(Content,GraphicsDevice);
             GraphicsManager.Initialize(Content, GraphicsDevice, _graphics, this);
             Camera.Initialize();
+            ImGuiManager.Initialize(this, GraphicsDevice);
+
             base.Initialize();
         }
 
@@ -39,7 +46,6 @@ namespace Moonborne
             spriteBatch = new SpriteBatch(GraphicsDevice);
             SpriteManager.LoadAllTextures();
             SpriteManager.spriteBatch = spriteBatch;
-            LevelEditor.LoadTilesets();
             player = new Player();
         }
 
@@ -54,7 +60,6 @@ namespace Moonborne
             GraphicsManager.Update(dt);
             Camera.Update();
             GameObjectManager.Update(dt);
-
             base.Update(gameTime);
         }
 
@@ -62,14 +67,18 @@ namespace Moonborne
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            ImGuiManager.BeginFrame(gameTime);
+
+            // Draw game world objects
             spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: Camera.Transform);
             GameObjectManager.Draw(spriteBatch);
-            RoomManager.CurrentRoom.Draw(spriteBatch);
             spriteBatch.End();
 
+            // Draw UI objects
             spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            LevelEditor.DrawTilesetSelector(spriteBatch);
             spriteBatch.End();
+
+            ImGuiManager.EndFrame(gameTime);
 
             base.Draw(gameTime);
         }

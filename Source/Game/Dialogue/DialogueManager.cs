@@ -9,6 +9,7 @@ namespace Moonborne.Game.Dialogue
         public static int TalkSpeed = 1;
         public static bool Open = false;
         public static string DisplayText;
+
         public static void StartDialogue()
         {
             Open = true;
@@ -16,6 +17,10 @@ namespace Moonborne.Game.Dialogue
         public static void StopDialogue()
         {
             Open = false;
+        }
+        public static void AdvanceDialogue()
+        {
+
         }
 
         public static void DrawDialogueBox()
