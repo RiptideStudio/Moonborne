@@ -21,6 +21,7 @@ namespace Moonborne.Graphics
         public static SpriteBatch spriteBatch;
         private static Dictionary<Texture2D, IntPtr> textureCache = new Dictionary<Texture2D, IntPtr>();
         public static SpriteFont GameFont;
+        public static Texture2D PixelTexture;
 
         /// <summary>
         /// Load and initialize all textures
@@ -31,7 +32,24 @@ namespace Moonborne.Graphics
             content = contentManager;
             graphicsDevice = device;
             UISpriteBatch = new SpriteBatch(graphicsDevice); // Sprite batch for UI
+            PixelTexture = Create1x1Texture(Color.White);
             GameFont = content.Load<SpriteFont>("Fonts/GameFont");
+        }
+
+        /// <summary>
+        /// Creates a 1x1 texture for drawing primitives
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public static Texture2D Create1x1Texture(Color color)
+        {
+            // Create a new 1x1 texture
+            Texture2D texture = new Texture2D(graphicsDevice, 1, 1);
+
+            // Set the pixel data to the specified color
+            texture.SetData(new[] { color });
+
+            return texture;
         }
 
         /// <summary>
@@ -111,30 +129,78 @@ namespace Moonborne.Graphics
         /// <param name="scale">The scaling factor for the text.</param>
         /// <param name="rotation">The rotation of the text in radians.</param>
         /// <param name="ui">If true, the text is drawn without transformations (for UI elements).</param>
-        public static void DrawText(string text, Vector2 position, Vector2 scale, float rotation)
+        public static void DrawText(string text, Vector2 position, Vector2 scale, float rotation, Color color, int maxWidth = 1000)
         {
-            // Check for bad font or no text
-            if (string.IsNullOrEmpty(text))
+            // Check for invalid input
+            if (string.IsNullOrEmpty(text) || GameFont == null)
                 return;
 
+            // Word-wrapping logic
+            string[] words = text.Split(' '); // Split text by spaces
+            List<string> lines = new List<string>();
 
-            // Measure the text size for scaling and centering purposes
-            Vector2 textSize = GameFont.MeasureString(text);
+            string currentLine = "";
+            foreach (var word in words)
+            {
+                string testLine = string.IsNullOrEmpty(currentLine) ? word : $"{currentLine} {word}";
 
-            // Apply transformation matrix for UI or world space
-            Vector2 origin = textSize / 2f; // Origin (centered)
-            Vector2 scaledSize = textSize * scale; // Scale text size
+                // Measure the line width
+                if (GameFont.MeasureString(testLine).X * scale.X > maxWidth)
+                {
+                    // Add the current line to the list and start a new line
+                    lines.Add(currentLine);
+                    currentLine = word;
+                }
+                else
+                {
+                    // Append the word to the current line
+                    currentLine = testLine;
+                }
+            }
 
-            // Draw text using spriteBatch
-            spriteBatch.DrawString(
-                GameFont,                    // The font to use
-                text,                    // The string to draw
-                position,                // The position in world or screen coordinates
-                Color.White);            // Text color
+            // Add the last line
+            if (!string.IsNullOrEmpty(currentLine))
+            {
+                lines.Add(currentLine);
+            }
+
+            // Draw each line with a vertical offset
+            Vector2 linePosition = position;
+            foreach (var line in lines)
+            {
+                spriteBatch.DrawString(GameFont, line, linePosition, color, rotation, Vector2.Zero, scale, SpriteEffects.None, 0);
+                linePosition.Y += GameFont.LineSpacing * scale.Y; // Move down by line spacing
+            }
         }
 
         /// <summary>
-        /// Draws a sprite given a texture name - this is very powerful and can be called from anywhere
+        /// Draw a rectangle with a given color, width, and height
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="color"></param>
+        public static void DrawRectangle(int x, int y, int width, int height, Color color)
+        {
+            Rectangle rectangle = new Rectangle(x, y, width, height);
+            spriteBatch.Draw(PixelTexture, rectangle, color);
+        }
+
+        /// <summary>
+        /// Draw a rectangle given vectors
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="color"></param>
+        public static void DrawRectangle(Vector2 position, int width, int height, Color color)
+        {
+            DrawRectangle((int)position.X, (int)position.Y, width, height, color);
+        }
+
+        /// <summary>
+        /// Draws a sprite given a texture name
         /// </summary>
         /// <param name="sprite"></param>
         public static void DrawTileFromTileset(string tileSet, int tileID, int tileSize, Vector2 position, Vector2 scale)
