@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using ImGuiNET;
+using System.Reflection.Metadata;
 
 namespace Moonborne.Graphics
 {
@@ -19,6 +20,7 @@ namespace Moonborne.Graphics
         public static SpriteBatch UISpriteBatch;
         public static SpriteBatch spriteBatch;
         private static Dictionary<Texture2D, IntPtr> textureCache = new Dictionary<Texture2D, IntPtr>();
+        public static SpriteFont GameFont;
 
         /// <summary>
         /// Load and initialize all textures
@@ -29,6 +31,7 @@ namespace Moonborne.Graphics
             content = contentManager;
             graphicsDevice = device;
             UISpriteBatch = new SpriteBatch(graphicsDevice); // Sprite batch for UI
+            GameFont = content.Load<SpriteFont>("Fonts/GameFont");
         }
 
         /// <summary>
@@ -108,13 +111,15 @@ namespace Moonborne.Graphics
         /// <param name="scale">The scaling factor for the text.</param>
         /// <param name="rotation">The rotation of the text in radians.</param>
         /// <param name="ui">If true, the text is drawn without transformations (for UI elements).</param>
-        public static void DrawText(string text, Vector2 position, Vector2 scale, float rotation, SpriteFont font)
+        public static void DrawText(string text, Vector2 position, Vector2 scale, float rotation)
         {
-            if (string.IsNullOrEmpty(text) || font == null)
+            // Check for bad font or no text
+            if (string.IsNullOrEmpty(text))
                 return;
 
+
             // Measure the text size for scaling and centering purposes
-            Vector2 textSize = font.MeasureString(text);
+            Vector2 textSize = GameFont.MeasureString(text);
 
             // Apply transformation matrix for UI or world space
             Vector2 origin = textSize / 2f; // Origin (centered)
@@ -122,7 +127,7 @@ namespace Moonborne.Graphics
 
             // Draw text using spriteBatch
             spriteBatch.DrawString(
-                font,                    // The font to use
+                GameFont,                    // The font to use
                 text,                    // The string to draw
                 position,                // The position in world or screen coordinates
                 Color.White);            // Text color

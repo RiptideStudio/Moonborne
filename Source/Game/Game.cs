@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 using Moonborne.Game.Room;
 using System.Collections.Generic;
 using Moonborne.Engine.UI;
+using Moonborne.UI.Dialogue;
 
 namespace Moonborne
 {
@@ -37,6 +38,8 @@ namespace Moonborne
             GraphicsManager.Initialize(Content, GraphicsDevice, _graphics, this);
             Camera.Initialize();
             ImGuiManager.Initialize(this, GraphicsDevice);
+            DialogueManager.LoadDialogue();
+            DialogueManager.StartDialogue("Test");
 
             base.Initialize();
         }
@@ -60,6 +63,7 @@ namespace Moonborne
             GraphicsManager.Update(dt);
             Camera.Update();
             GameObjectManager.Update(dt);
+            DialogueManager.WriteDialogue(dt);
             base.Update(gameTime);
         }
 
@@ -76,6 +80,7 @@ namespace Moonborne
 
             // Draw UI objects
             spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            DialogueManager.DrawDialogueBox();
             spriteBatch.End();
 
             ImGuiManager.EndFrame(gameTime);

@@ -61,7 +61,7 @@ namespace Moonborne.Game.Objects
             // Apply linear friction to acceleration (multiplicative decay for realism)
             Velocity += Acceleration;
 
-            // Apply friction to velocity (subtractive falloff)
+            // Apply friction to velocity (subtractive)
             if (Velocity.X > 0)
                 Velocity.X -= LinearFriction;
             else if (Velocity.X < 0)
