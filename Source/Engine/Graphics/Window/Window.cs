@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+ * Author: Callen Betts (2024)
+ * Description: Manages window properties and viewport scaling
+ */
+
+using System;
+using System.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,20 +16,25 @@ namespace Moonborne.Graphics.Window
 {
     public static class WindowManager
     {
-        public static int ViewportWidth { get; private set; } = 640; // Width of the window viewport
+        public static int ViewportWidth { get; private set; } = 640; // Height of the viewport
         public static int ViewportHeight { get; private set; } = 360; // Height of the viewport
-        public static int ViewportScale { get; private set; } = 2; // Scale of the viewport 
-        public static bool StartInFullscreen { get; private set; } = false;
-        public static bool IsFullscreen { get; private set; } = false;
-        private static GraphicsDeviceManager Graphics { get; set; }
+        public static int ViewportScale { get; private set; } = 1; // Scale of the viewport 
+        public static int PreviousViewportScale { get; private set; } = ViewportScale; // Scale of the viewport 
+        public static bool StartInFullscreen { get; private set; } = false; // If we start in fullscreen
+        public static bool IsFullscreen { get; private set; } = false; // If we are in fullscreen
+        public static Rectangle Viewport { get; private set; } // Defines the dimensions of our viewport
+        private static GraphicsDeviceManager Graphics { get; set; } // Graphics device
+        private static MGame Game { get; set; } // Graphics device
+        public static Matrix Transform { get; private set; } // Transformation matrix for UI
 
         /// <summary>
         /// Initialize window manager with graphics
         /// </summary>
         /// <param name="graphics"></param>
-        public static void Initialize(GraphicsDeviceManager graphics)
+        public static void Initialize(GraphicsDeviceManager graphics, MGame game)
         {
             Graphics = graphics;
+            Game = game;
 
             SetResolutionScale(ViewportScale);
 
@@ -51,17 +62,20 @@ namespace Moonborne.Graphics.Window
         /// </summary>
         public static void ToggleFullsceen()
         {
-            Graphics.ToggleFullScreen();
             IsFullscreen = !IsFullscreen;
+            int screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            int screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
             if (IsFullscreen)
             {
-                // Do nothing 
+                PreviousViewportScale = ViewportScale;
+                SetResolutionScale(CalculateMaxScale());
+                Graphics.ToggleFullScreen();
             }
             else
             {
-                // Set our window size
-                SetWindowSize(ViewportWidth, ViewportHeight);
+                SetResolutionScale(PreviousViewportScale);
+                Graphics.ToggleFullScreen();
             }
         }
 
@@ -72,8 +86,26 @@ namespace Moonborne.Graphics.Window
         /// <param name="height"></param>
         public static void SetWindowSize(int width, int height)
         {
+            // Update viewport size
+            ViewportWidth = width;
+            ViewportHeight = height;
+
+            int screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            int screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+
             Graphics.PreferredBackBufferWidth = ViewportWidth;
             Graphics.PreferredBackBufferHeight = ViewportHeight;
+
+            // Letterbox (center the viewport)
+            int viewportX = (screenWidth - ViewportWidth) / 2;
+            int viewportY = (screenHeight - ViewportHeight) / 2;
+            Viewport = new Rectangle(viewportX, viewportY, ViewportWidth, ViewportHeight);
+
+            // Update the graphics device viewport
+            Graphics.GraphicsDevice.Viewport = new Viewport(Viewport);
+
+            // Create a transformation matrix to scale the game world
+            Transform = Matrix.CreateScale(ViewportScale);
             Graphics.ApplyChanges();
         }
 
@@ -85,8 +117,8 @@ namespace Moonborne.Graphics.Window
         {
             int maxDisplayScale = CalculateMaxScale();
             ViewportScale = Math.Clamp(scale, 1, maxDisplayScale);
-            ViewportHeight *= ViewportScale;
-            ViewportWidth *= ViewportScale;
+            ViewportHeight = 360 * ViewportScale;
+            ViewportWidth = 640 * ViewportScale;
 
             SetWindowSize(ViewportWidth, ViewportHeight);
         }

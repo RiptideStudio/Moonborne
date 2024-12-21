@@ -39,7 +39,7 @@ namespace Moonborne
             GraphicsManager.Initialize(Content, GraphicsDevice, _graphics, this);
             Camera.Initialize();
             ImGuiManager.Initialize(this, GraphicsDevice);
-            WindowManager.Initialize(_graphics);
+            WindowManager.Initialize(_graphics,this);
             DialogueManager.LoadDialogue();
             DialogueManager.StartDialogue("Test");
 
@@ -89,7 +89,8 @@ namespace Moonborne
             spriteBatch.Begin(
                 sortMode: SpriteSortMode.Deferred,
                 blendState: BlendState.AlphaBlend,
-                samplerState: SamplerState.PointClamp);
+                samplerState: SamplerState.PointClamp,
+                transformMatrix: WindowManager.Transform);
 
             DialogueManager.DrawDialogueBox();
             spriteBatch.End();

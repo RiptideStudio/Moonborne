@@ -2,21 +2,19 @@
 using Microsoft.Xna.Framework;
 using Moonborne.Game.Objects;
 using Moonborne.Graphics;
+using Moonborne.Graphics.Window;
 
 namespace Moonborne.Graphics.Camera
 {
     public static class Camera
     {
         public static Vector2 Position = Vector2.Zero;
-        public static float Zoom { get; private set; } = 4.0f; // Default zoom level
+        public static float Zoom { get; private set; } = 2.0f; // Default zoom level
         public static float MaxZoom { get; private set; } = 10f; // Default zoom level
         public static float Rotation { get; private set; } = 0f; // Default rotation
         public static float InterpolationSpeed { get; private set; } = 0.2f; // How much the camera lags behind
         public static Matrix Transform { get; private set; } // Transformation matrix
         public static GameObject Target { get; private set; } // Target object to follow
-
-        private static int viewportWidth = 1280;
-        private static int viewportHeight = 720;
 
         public static void Initialize()
         {
@@ -61,13 +59,16 @@ namespace Moonborne.Graphics.Camera
             UpdateTransform();
         }
 
-        private static void UpdateTransform()
+        /// <summary>
+        /// Update the camera's transform matrix
+        /// </summary>
+        public static void UpdateTransform()
         {
             // Create the camera transformation matrix
             Transform = Matrix.CreateTranslation(new Vector3(-Position, 0f)) *
                         Matrix.CreateRotationZ(Rotation) *
-                        Matrix.CreateScale(Zoom, Zoom, 1f) *
-                        Matrix.CreateTranslation(new Vector3(viewportWidth / 2f, viewportHeight / 2f, 0f));
+                        Matrix.CreateScale(WindowManager.ViewportScale*Zoom, WindowManager.ViewportScale*Zoom, 1f) *
+                        Matrix.CreateTranslation(new Vector3(WindowManager.ViewportWidth / 2f, WindowManager.ViewportHeight / 2f, 0f));
         }
     }
 }

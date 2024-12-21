@@ -132,7 +132,7 @@ namespace Moonborne.Graphics
                 return;
 
             // Word-wrapping logic
-            maxWidth -= 32;
+            maxWidth -= (int)(scale.X*GameFont.MeasureString(" ").X);
             string[] words = text.Split(' '); // Split text by spaces
             List<string> lines = new List<string>();
 
@@ -168,7 +168,7 @@ namespace Moonborne.Graphics
             foreach (var line in lines)
             {
                 spriteBatch.DrawString(GameFont, line, linePosition, color, rotation, Vector2.Zero, scale, SpriteEffects.None, 0);
-                linePosition.Y += GameFont.LineSpacing * scale.Y;
+                linePosition.Y += GameFont.LineSpacing * (scale.Y/1.25f);
             }
         }
 

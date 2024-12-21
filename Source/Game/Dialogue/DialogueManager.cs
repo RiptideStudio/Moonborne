@@ -22,8 +22,8 @@ namespace Moonborne.UI.Dialogue
         // Global variables for controlling dialogue
         public static int CharacterIndex { get; set; } = 0;
         public static int LineIndex {  get; set; } = 0;
-        public static int DialogueBoxWidth {  get; set; } = 700;
-        public static int DialogueBoxHeight {  get; set; } = 192;
+        public static int DialogueBoxWidth {  get; set; } = 540;
+        public static int DialogueBoxHeight {  get; set; } = 128;
         public static float TimeElapsed { get; set; } = 0;
         public static bool Open { get; set; } = false;
         public static bool SpeakerIsPlayer { get; set; } = true; // If the speaker is our player, draw portrait and name differently
@@ -32,9 +32,9 @@ namespace Moonborne.UI.Dialogue
         public static string TargetText { get; set; } = ""; // The text that is currently being displayed on the screen
         public static string Speaker { get; set; } = "";
         public static Vector2 FontScale { get; set; } = new Vector2(1,1);
-        public static Vector2 RootPosition { get; } = new Vector2(32,32);
+        public static Vector2 RootPosition { get; } = new Vector2(50,200);
         public static Vector2 NameOffset { get; set; } = new Vector2(16,16);
-        public static Vector2 TextOffset { get; set; } = new Vector2(16,36);
+        public static Vector2 TextOffset { get; set; } = new Vector2(16,32);
         public static Dictionary<string, Dialogue> Dialogue { get; set; } = new Dictionary<string, Dialogue>(); // Keep track of dialogue
         public static Dialogue ActiveDialogue { get; set; }
 
