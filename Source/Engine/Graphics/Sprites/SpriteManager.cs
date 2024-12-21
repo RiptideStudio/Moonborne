@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using ImGuiNET;
 using System.Reflection.Metadata;
+using System.Collections;
 
 namespace Moonborne.Graphics
 {
@@ -19,9 +20,11 @@ namespace Moonborne.Graphics
         public static GraphicsDevice graphicsDevice;
         public static SpriteBatch UISpriteBatch;
         public static SpriteBatch spriteBatch;
+        public static SpriteBatch TargetSpriteBatch;
         private static Dictionary<Texture2D, IntPtr> textureCache = new Dictionary<Texture2D, IntPtr>();
         public static SpriteFont GameFont;
         public static Texture2D PixelTexture;
+        public static byte DrawAlpha = 1;
 
         /// <summary>
         /// Load and initialize all textures
@@ -33,7 +36,7 @@ namespace Moonborne.Graphics
             graphicsDevice = device;
             UISpriteBatch = new SpriteBatch(graphicsDevice); // Sprite batch for UI
             PixelTexture = Create1x1Texture(Color.White);
-            GameFont = content.Load<SpriteFont>("Fonts/GameFont");
+            GameFont = content.Load<SpriteFont>("Fonts/PixelFont");
         }
 
         /// <summary>
@@ -104,21 +107,14 @@ namespace Moonborne.Graphics
         /// Draws a sprite given a texture name - this is very powerful and can be called from anywhere
         /// </summary>
         /// <param name="sprite"></param>
-        public static void DrawSprite(string spriteName, int frame, Vector2 position, Vector2 scale, float rotation, bool ui=false)
+        public static void DrawSprite(string spriteName, int frame, Vector2 position, Vector2 scale, float rotation, Color color)
         {
             Sprite sprite = GetSprite(spriteName);
 
             // Draw a sprite given parameters, and use UI positioning if defined as such
             if (sprite != null)
             {
-                if (ui)
-                {
-                    sprite.Draw(UISpriteBatch, frame, position, scale, rotation);
-                }
-                else
-                {
-                    sprite.Draw(spriteBatch, frame, position, scale, rotation);
-                }
+                sprite.Draw(spriteBatch, frame, position, scale, rotation, color);
             }
         }
 
@@ -129,13 +125,14 @@ namespace Moonborne.Graphics
         /// <param name="scale">The scaling factor for the text.</param>
         /// <param name="rotation">The rotation of the text in radians.</param>
         /// <param name="ui">If true, the text is drawn without transformations (for UI elements).</param>
-        public static void DrawText(string text, Vector2 position, Vector2 scale, float rotation, Color color, int maxWidth = 1000)
+        public static void DrawText(string text, Vector2 position, Vector2 scale, float rotation, Color color, int maxWidth = 9999)
         {
             // Check for invalid input
-            if (string.IsNullOrEmpty(text) || GameFont == null)
+            if (string.IsNullOrEmpty(text))
                 return;
 
             // Word-wrapping logic
+            maxWidth -= 32;
             string[] words = text.Split(' '); // Split text by spaces
             List<string> lines = new List<string>();
 
@@ -166,10 +163,12 @@ namespace Moonborne.Graphics
 
             // Draw each line with a vertical offset
             Vector2 linePosition = position;
+            color *= (float)DrawAlpha/255;
+
             foreach (var line in lines)
             {
                 spriteBatch.DrawString(GameFont, line, linePosition, color, rotation, Vector2.Zero, scale, SpriteEffects.None, 0);
-                linePosition.Y += GameFont.LineSpacing * scale.Y; // Move down by line spacing
+                linePosition.Y += GameFont.LineSpacing * scale.Y;
             }
         }
 
@@ -181,9 +180,10 @@ namespace Moonborne.Graphics
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="color"></param>
-        public static void DrawRectangle(int x, int y, int width, int height, Color color)
+        public static void DrawRectangle(float x, float y, int width, int height, Color color)
         {
-            Rectangle rectangle = new Rectangle(x, y, width, height);
+            color.A = DrawAlpha;
+            Rectangle rectangle = new Rectangle((int)x, (int)y, width, height);
             spriteBatch.Draw(PixelTexture, rectangle, color);
         }
 
@@ -200,21 +200,63 @@ namespace Moonborne.Graphics
         }
 
         /// <summary>
-        /// Draws a sprite given a texture name
+        /// Draw an ellipse given a radius
         /// </summary>
-        /// <param name="sprite"></param>
-        public static void DrawTileFromTileset(string tileSet, int tileID, int tileSize, Vector2 position, Vector2 scale)
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="radius"></param>
+        /// <param name="color"></param>
+        public static void DrawEllipse(float x, float y, float xRadius, float yRadius, Color color)
         {
-            Sprite sprite = GetSprite(tileSet);
+            // Assume EllipseTexture is a preloaded Texture2D of a white ellipse
+            Vector2 position = new Vector2(x - xRadius, y - yRadius); // Top-left corner
+            Vector2 size = new Vector2(xRadius * 2, yRadius * 2); // Scale to match radii
+            color.A = DrawAlpha;
 
-            // Draw a tile given a tileset and tile ID. Tile ID is the frame of the tile we want to draw
-            if (sprite != null)
-            {
-                sprite.FrameWidth = tileSize;
-                sprite.FrameHeight = tileSize;
-                sprite.MaxFrames = (sprite.Texture.Width/ tileSize) * tileSize;
-                sprite.Draw(spriteBatch, tileID, position, scale);
-            }
+            Texture2D EllipseTexture = GetTexture("Ellipse");
+            spriteBatch.Draw(EllipseTexture, position, null, color, 0f, Vector2.Zero, size / new Vector2(EllipseTexture.Width, EllipseTexture.Height), SpriteEffects.None, 0f);
+        }
+
+        /// <summary>
+        /// Draw a line between two points
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="thickness"></param>
+        /// <param name="color"></param>
+        public static void DrawLine(Vector2 start, Vector2 end, int thickness, Color color)
+        {
+            float length = Vector2.Distance(start, end);
+
+            float angle = MathF.Atan2(end.Y - start.Y, end.X - start.X);
+            spriteBatch.Draw(
+            PixelTexture,
+                start,
+                null,
+                color,
+                angle,
+                Vector2.Zero,
+                new Vector2(length, thickness),
+                SpriteEffects.None,
+                0
+            );
+        }
+
+        /// <summary>
+        /// Set the target render alpha. Use ResetDraw() after done!
+        /// </summary>
+        /// <param name="alpha"></param>
+        public static void SetDrawAlpha(float alpha)
+        {
+            DrawAlpha = (byte)(alpha*255);
+        }
+
+        /// <summary>
+        /// Reset the draw properties to default
+        /// </summary>
+        public static void ResetDraw()
+        {
+            DrawAlpha = 255;
         }
 
         /// <summary>

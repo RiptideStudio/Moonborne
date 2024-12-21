@@ -11,6 +11,8 @@ namespace Moonborne.Game.Objects
 
         public Vector2 OldPosition; // Object position
         public Vector2 Position; // Object position
+        public float x;
+        public float y;
         public Vector2 Scale; // Object scale
         public float Rotation = 0; // Object rotation
 
@@ -116,7 +118,7 @@ namespace Moonborne.Game.Objects
             // If the sprite is valid, draw it
             if (SpriteIndex != null)
             {
-                SpriteIndex.Draw(spriteBatch, Frame, Position, Scale, Rotation, Depth);
+                SpriteIndex.Draw(spriteBatch, Frame, Position, Scale, Rotation, SpriteIndex.Color);
             }
         }
 
@@ -129,11 +131,28 @@ namespace Moonborne.Game.Objects
         }
 
         /// <summary>
-        /// Destroy an object
+        /// Marks an object for destruction
         /// </summary>
         public void Destroy()
         {
             IsDestroyed = true;
+        }
+
+        /// <summary>
+        /// Draw a shadow on this object with a given size and position
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        public void DrawShadow(float x, float y, float xRadius, float yRadius)
+        {
+            if (!Visible)
+            {
+                return;
+            }
+
+            // Draw an ellipse given a color
+            SpriteManager.SetDrawAlpha(0.5f);
+            SpriteManager.DrawEllipse(x+xRadius, y+yRadius, xRadius, yRadius, Color.Black);
+            SpriteManager.ResetDraw();
         }
     }
 }

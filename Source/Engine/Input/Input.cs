@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using Moonborne.Game.Room;
 using Moonborne.Graphics;
 using Moonborne.Graphics.Camera;
+using Moonborne.Graphics.Window;
 
 namespace Moonborne.Input
 {
@@ -62,14 +63,13 @@ namespace Moonborne.Input
         public static Vector2 MouseWorldCoords()
         {
             // Center of the screen (viewport center)
-            Vector2 viewportCenter = new Vector2(GraphicsManager.WindowSize.X / 2f, GraphicsManager.WindowSize.Y / 2f);
+            Vector2 viewportCenter = new Vector2(WindowManager.ViewportWidth / 2f, WindowManager.ViewportHeight / 2f);
 
             // Adjust mouse position for camera zoom and position
             Vector2 worldPosition = ((MousePosition - viewportCenter) / Camera.Zoom) + Camera.Position;
 
             return worldPosition;
         }
-
 
         /// <summary>
         /// Update input state given delta time

@@ -15,9 +15,6 @@ namespace Moonborne.Graphics
         public static GraphicsDeviceManager graphics;
         public static MGame game;
 
-        public static bool StartInFullscreen = false;
-        public static bool IsFullscreen = false;
-        public static Point WindowSize = new Point(1280,720);
         public static float TargetFrameRate = 1.0f / 60.0f;
 
         /// <summary>
@@ -33,13 +30,7 @@ namespace Moonborne.Graphics
             graphics = graphics_;
             game = game_;
 
-            SetWindowSize(WindowSize);
             SetTargetFramerate(TargetFrameRate);
-
-            if (StartInFullscreen)
-            {
-                ToggleFullsceen();
-            }
         }
 
         /// <summary>
@@ -49,49 +40,6 @@ namespace Moonborne.Graphics
         public static void SetTargetFramerate(float targetFrameRate)
         {
             game.TargetElapsedTime = TimeSpan.FromSeconds(targetFrameRate);
-        }
-
-        /// <summary>
-        /// Toggles fullscreen
-        /// </summary>
-        public static void ToggleFullsceen()
-        {
-            graphics.ToggleFullScreen();
-            IsFullscreen = !IsFullscreen;
-
-            if (IsFullscreen)
-            {
-                // Do nothing 
-            }
-            else
-            {
-                // Set our window size
-                SetWindowSize(WindowSize);
-            }
-        }
-
-        /// <summary>
-        /// Check for keybinds
-        /// </summary>
-        /// <param name="dt"></param>
-        public static void Update(float dt)
-        {
-            // Fullscreen toggle
-            if (InputManager.KeyTriggered(Keys.F11))
-            {
-                ToggleFullsceen();
-            }
-        }
-
-        /// <summary>
-        /// Set our window size
-        /// </summary>
-        /// <param name="point"></param>
-        public static void SetWindowSize(Point point)
-        {
-            graphics.PreferredBackBufferWidth = point.X;
-            graphics.PreferredBackBufferHeight = point.Y;
-            graphics.ApplyChanges();
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Moonborne.UI.Dialogue
         public static string DisplayText { get; set; } = ""; // The text that is currently being displayed on the screen
         public static string TargetText { get; set; } = ""; // The text that is currently being displayed on the screen
         public static string Speaker { get; set; } = "";
-        public static Vector2 FontSize { get; set; } = new Vector2(1,1);
+        public static Vector2 FontScale { get; set; } = new Vector2(1,1);
         public static Vector2 RootPosition { get; } = new Vector2(32,32);
         public static Vector2 NameOffset { get; set; } = new Vector2(16,16);
         public static Vector2 TextOffset { get; set; } = new Vector2(16,36);
@@ -180,15 +180,18 @@ namespace Moonborne.UI.Dialogue
         }
 
         /// <summary>
-        /// Render the dialogue box and text
+        /// Render the dialogue box and text while open
         /// </summary>
         public static void DrawDialogueBox()
         {
             if (Open)
             {
+                SpriteManager.SetDrawAlpha(0.5f);
                 SpriteManager.DrawRectangle(RootPosition, DialogueBoxWidth, DialogueBoxHeight, Color.Black);
-                SpriteManager.DrawText(Speaker, RootPosition+NameOffset, FontSize, 0, Color.Yellow, DialogueBoxWidth-32);
-                SpriteManager.DrawText(DisplayText, RootPosition+TextOffset, FontSize, 0, Color.Wheat, DialogueBoxWidth-32);
+                SpriteManager.ResetDraw();
+
+                SpriteManager.DrawText(Speaker, RootPosition+NameOffset, FontScale, 0, Color.Yellow, DialogueBoxWidth);
+                SpriteManager.DrawText(DisplayText, RootPosition+TextOffset, FontScale, 0, Color.White, DialogueBoxWidth);
             }
         }
     }

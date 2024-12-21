@@ -39,16 +39,5 @@ namespace Moonborne.UI.Dialogue
         {
             Data = data;
         }   
-
-        /// <summary>
-        /// Debug print out the text
-        /// </summary>
-        public void Print()
-        {
-            foreach (var item in Data.Text)
-            {
-                Console.WriteLine(item);
-            }
-        }
     }
 }

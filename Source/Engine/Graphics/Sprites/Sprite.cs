@@ -22,6 +22,7 @@ namespace Moonborne.Graphics
         public int FrameHeight = 16;
         public int FrameWidth = 16;
         public int MaxFrames = 1;
+        public int LayerDepth = 1;
         public SpriteEffects CustomSpriteEffect = SpriteEffects.None;
 
         /// <summary>
@@ -74,7 +75,7 @@ namespace Moonborne.Graphics
         /// <summary>
         /// Main draw event, draws a sprite given parameters
         /// </summary>
-        public void Draw(SpriteBatch spriteBatch, int frame, Vector2 position, Vector2 scale, float rotation=0.0f, int layer=0)
+        public void Draw(SpriteBatch spriteBatch, int frame, Vector2 position, Vector2 scale, float rotation, Color color)
         {
             // Only draw if texture is valid
             if (Texture != null)
@@ -89,7 +90,7 @@ namespace Moonborne.Graphics
                 int column = frame % (Texture.Width / FrameWidth);
                 Rectangle sourceRect = new Rectangle(column * FrameWidth, row * FrameHeight, FrameWidth, FrameHeight);
 
-                spriteBatch.Draw(Texture, position, sourceRect, Color, rotation, Vector2.Zero, scale, CustomSpriteEffect, layer);
+                spriteBatch.Draw(Texture, position, sourceRect, Color, rotation, Vector2.Zero, scale, CustomSpriteEffect, LayerDepth);
             }
         }
     }
