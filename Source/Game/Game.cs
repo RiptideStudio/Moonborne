@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using Moonborne.Engine.UI;
 using Moonborne.UI.Dialogue;
 using Moonborne.Graphics.Window;
+using Moonborne.Game.Projectiles;
 
 namespace Moonborne
 {
@@ -35,13 +36,13 @@ namespace Moonborne
             {
                 throw new Exception("GraphicsDevice is null. Cannot initialize ImGuiManager.");
             }
+
             SpriteManager.Initialize(Content,GraphicsDevice);
             GraphicsManager.Initialize(Content, GraphicsDevice, _graphics, this);
             Camera.Initialize();
             ImGuiManager.Initialize(this, GraphicsDevice);
             WindowManager.Initialize(_graphics,this);
             DialogueManager.LoadDialogue();
-            DialogueManager.StartDialogue("Test");
 
             base.Initialize();
         }
@@ -65,7 +66,7 @@ namespace Moonborne
             WindowManager.Update(dt);
             Camera.Update();
             GameObjectManager.Update(dt);
-            DialogueManager.WriteDialogue(dt);
+            DialogueManager.Update(dt);
             base.Update(gameTime);
         }
 

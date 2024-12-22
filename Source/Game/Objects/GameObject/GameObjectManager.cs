@@ -12,6 +12,7 @@ namespace Moonborne.Game.Objects
 {
     public static class GameObjectManager
     {
+        static List<GameObject> WaitingList = new List<GameObject>(); // List of all of our objects
         static List<GameObject> Objects = new List<GameObject>(); // List of all of our objects
         static List<GameObject> DestroyedObjects = new List<GameObject>(); // List of all of our objects
 
@@ -21,7 +22,7 @@ namespace Moonborne.Game.Objects
         /// <param name="obj"></param>
         public static void Add(GameObject obj)
         {
-            Objects.Add(obj);
+            WaitingList.Add(obj);
         }
 
         /// <summary>
@@ -51,6 +52,14 @@ namespace Moonborne.Game.Objects
                     Objects.Remove(obj);
                 }
             }
+
+            // Add objects in the waiting queue
+            foreach (GameObject obj in WaitingList)
+            {
+                Objects.Add(obj);
+            }
+
+            WaitingList.Clear();
         }
 
         /// <summary>

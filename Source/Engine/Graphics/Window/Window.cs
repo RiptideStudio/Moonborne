@@ -18,7 +18,7 @@ namespace Moonborne.Graphics.Window
     {
         public static int ViewportWidth { get; private set; } = 640; // Height of the viewport
         public static int ViewportHeight { get; private set; } = 360; // Height of the viewport
-        public static int ViewportScale { get; private set; } = 1; // Scale of the viewport 
+        public static int ViewportScale { get; private set; } = 3; // Scale of the viewport 
         public static int PreviousViewportScale { get; private set; } = ViewportScale; // Scale of the viewport 
         public static bool StartInFullscreen { get; private set; } = false; // If we start in fullscreen
         public static bool IsFullscreen { get; private set; } = false; // If we are in fullscreen
@@ -68,12 +68,16 @@ namespace Moonborne.Graphics.Window
 
             if (IsFullscreen)
             {
+                // Keep track of the previous viewport scale
                 PreviousViewportScale = ViewportScale;
                 SetResolutionScale(CalculateMaxScale());
+
+                // Toggle fullscreen mode for black bars
                 Graphics.ToggleFullScreen();
             }
             else
             {
+                // Reset to what game was like before fullscreen
                 SetResolutionScale(PreviousViewportScale);
                 Graphics.ToggleFullScreen();
             }
@@ -132,8 +136,8 @@ namespace Moonborne.Graphics.Window
             int screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
             // Calculate the maximum scale that fits within the screen dimensions
-            int maxScaleX = screenWidth / ViewportWidth;
-            int maxScaleY = screenHeight / ViewportHeight;
+            int maxScaleX = screenWidth / 640;
+            int maxScaleY = screenHeight / 360;
 
             return Math.Min(maxScaleX, maxScaleY);
         }

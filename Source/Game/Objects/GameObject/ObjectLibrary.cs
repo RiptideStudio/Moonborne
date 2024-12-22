@@ -3,20 +3,23 @@
  * Description: Used as a boilerplate for commonly used functions
  */
 
-using System;
+using Microsoft.Xna.Framework;
 
 namespace Moonborne.Game.Objects
 {
     public static class ObjectLibrary
     {
         /// <summary>
-        /// Creates a new object given a type; this is generalized and probably won't be used much
+        /// Creates a new object given a type
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T CreateObject<T>() where T : GameObject, new()
+        public static T CreateObject<T>(Vector2 position) where T : GameObject, new()
         {
-            return new T();
+            T t = new T();
+            t.Position = position;
+            t.StartPosition = position;
+            return t;
         }
     }
 }

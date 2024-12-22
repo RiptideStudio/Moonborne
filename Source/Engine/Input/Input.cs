@@ -72,6 +72,16 @@ namespace Moonborne.Input
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public static Vector2 MouseDirection(Vector2 position)
+        {
+            return MouseWorldCoords() - position;
+        }
+
+        /// <summary>
         /// Update input state given delta time
         /// </summary>
         /// <param name="dt"></param>

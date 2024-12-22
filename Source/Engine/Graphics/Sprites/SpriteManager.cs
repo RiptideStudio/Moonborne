@@ -209,12 +209,13 @@ namespace Moonborne.Graphics
         public static void DrawEllipse(float x, float y, float xRadius, float yRadius, Color color)
         {
             // Assume EllipseTexture is a preloaded Texture2D of a white ellipse
-            Vector2 position = new Vector2(x - xRadius, y - yRadius); // Top-left corner
+            Vector2 position = new Vector2(x - xRadius*2, y - yRadius); // Top-left corner
             Vector2 size = new Vector2(xRadius * 2, yRadius * 2); // Scale to match radii
             color.A = DrawAlpha;
+            Vector2 origin = new Vector2(xRadius, yRadius);
 
             Texture2D EllipseTexture = GetTexture("Ellipse");
-            spriteBatch.Draw(EllipseTexture, position, null, color, 0f, Vector2.Zero, size / new Vector2(EllipseTexture.Width, EllipseTexture.Height), SpriteEffects.None, 0f);
+            spriteBatch.Draw(EllipseTexture, position, null, color, 0f, origin, size / new Vector2(EllipseTexture.Width, EllipseTexture.Height), SpriteEffects.None, 0f);
         }
 
         /// <summary>

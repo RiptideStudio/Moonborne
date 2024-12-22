@@ -16,16 +16,26 @@ namespace Moonborne.Graphics.Camera
         public static Matrix Transform { get; private set; } // Transformation matrix
         public static GameObject Target { get; private set; } // Target object to follow
 
+        /// <summary>
+        /// Initialize the camera's transform
+        /// </summary>
         public static void Initialize()
         {
             UpdateTransform();
         }
 
+        /// <summary>
+        /// Set the target object
+        /// </summary>
+        /// <param name="newTarget"></param>
         public static void SetTarget(GameObject newTarget)
         {
             Target = newTarget;
         }
 
+        /// <summary>
+        /// Follow the target entity
+        /// </summary>
         public static void FollowTarget()
         {
             if (Target != null)
@@ -34,25 +44,40 @@ namespace Moonborne.Graphics.Camera
             }
         }
 
+        /// <summary>
+        /// Update the camera. Follows the target and updates the transform
+        /// </summary>
         public static void Update()
         {
             FollowTarget();
             UpdateTransform();
         }
 
+        /// <summary>
+        /// Set the position of the camera
+        /// </summary>
+        /// <param name="newPosition"></param>
         public static void SetPosition(Vector2 newPosition)
         {
-            Position.X = MathHelper.Lerp(Position.X,newPosition.X+16,InterpolationSpeed);
-            Position.Y = MathHelper.Lerp(Position.Y,newPosition.Y+16,InterpolationSpeed);
+            Position.X = MathHelper.Lerp(Position.X,newPosition.X,InterpolationSpeed);
+            Position.Y = MathHelper.Lerp(Position.Y,newPosition.Y+8,InterpolationSpeed);
             UpdateTransform();
         }
 
+        /// <summary>
+        /// Set the zoom of our camera
+        /// </summary>
+        /// <param name="newZoom"></param>
         public static void SetZoom(float newZoom)
         {
             Zoom = MathHelper.Clamp(newZoom, 0.1f, MaxZoom);
             UpdateTransform();
         }
 
+        /// <summary>
+        /// Set the rotation of our camera. Used for screen shake
+        /// </summary>
+        /// <param name="newRotation"></param>
         public static void SetRotation(float newRotation)
         {
             Rotation = newRotation;

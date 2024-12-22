@@ -6,11 +6,16 @@ using Moonborne.Game.Objects;
 using Moonborne.Input;
 using System;
 using Moonborne.Graphics.Camera;
+using Moonborne.Game.Projectiles;
+using System.Security.Cryptography;
+using System.Runtime.Serialization;
 
 namespace Moonborne.Game.Gameplay
 {
     public class Player : GameObject
     {
+        public Gun Gun { get; set; }
+        public static Player Instance { get; private set; }
         public override void Create()
         {
             SpriteIndex = SpriteManager.GetSprite("HornetIdle");
@@ -20,20 +25,30 @@ namespace Moonborne.Game.Gameplay
             Position.Y = 400;
             Speed = 100;
             MaxSpeed = 100;
+            Instance = this;
+
             Camera.SetTarget(this);
             Camera.SetPosition(Position);
+            Gun = new Gun(this,250f,10);
+            ObjectLibrary.CreateObject<NPC>(Position);
+            ObjectLibrary.CreateObject<CoreTable>(Position);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            DrawShadow(Position.X+4,Position.Y+24,8,2);
+            DrawShadow(Position.X,Position.Y+20,6,2);
             base.Draw(spriteBatch);
         }
 
         public override void Update(float dt)
         {
             base.Update(dt);
-            Acceleration = Vector2.Zero;
+
+            // Shoot a test projectile
+            if (InputManager.KeyDown(Keys.C))
+            {
+                Gun.Shoot();
+            }
 
             if (InputManager.KeyDown(Keys.W))
             {

@@ -14,6 +14,8 @@ using Moonborne.Input;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Moonborne.Game.Objects;
+using Moonborne.Utils.Math;
 
 namespace Moonborne.UI.Dialogue
 {
@@ -32,11 +34,15 @@ namespace Moonborne.UI.Dialogue
         public static string TargetText { get; set; } = ""; // The text that is currently being displayed on the screen
         public static string Speaker { get; set; } = "";
         public static Vector2 FontScale { get; set; } = new Vector2(1,1);
-        public static Vector2 RootPosition { get; } = new Vector2(50,200);
         public static Vector2 NameOffset { get; set; } = new Vector2(16,16);
         public static Vector2 TextOffset { get; set; } = new Vector2(16,32);
         public static Dictionary<string, Dialogue> Dialogue { get; set; } = new Dictionary<string, Dialogue>(); // Keep track of dialogue
         public static Dialogue ActiveDialogue { get; set; }
+        public static NPC ActiveNPC { get; set; }
+        public static Vector2 OriginalPosition { get; set; } = new Vector2(50, 400); // Positions for dialogue box animations
+        public static Vector2 RootPosition { get; set; } = new Vector2(50, 400);
+        public static Vector2 TargetPosition { get; set; } = new Vector2(50, 200);
+        public static float AnimationInterpolation { get; set; } = 0.12f;
 
         /// <summary>
         /// Load all dialogue data on game start
@@ -93,20 +99,40 @@ namespace Moonborne.UI.Dialogue
             CharacterIndex = 0;
             DisplayText = "";
             TimeElapsed = 0;
+            WaitingForNextLine = false;
+            RootPosition = OriginalPosition;
+        }
+
+        /// <summary>
+        /// Write the dialogue if the manager is active/open
+        /// </summary>
+        /// <param name="dt"></param>
+        public static void Update(float dt)
+        {
+            if (Open)
+            {
+                DialogueManager.WriteDialogue(dt);
+            }
         }
 
         /// <summary>
         /// Start dialogue given a string that corresponds to the dialogue
         /// </summary>
         /// <param name="DialogueName"></param>
-        public static void StartDialogue(string DialogueName)
+        public static void StartDialogue(string DialogueName, NPC npc)
         {
             // Update the active dialogue and set the first target text
             string filePath = DialogueName + ".hjson";
             ActiveDialogue = Dialogue[filePath];
             TargetText = ActiveDialogue.Data.Text[0];
             Speaker = ActiveDialogue.Data.Speaker;
+            ActiveNPC = npc;
             Open = true;
+
+            if (ActiveNPC != null)
+            {
+                ActiveNPC.StartTalking();
+            }
 
             ResetDialogue();
         }
@@ -117,6 +143,14 @@ namespace Moonborne.UI.Dialogue
         public static void StopDialogue()
         {
             Open = false;
+
+            // If this dialogue is linked to an NPC, set it's state back to idle
+            if (ActiveNPC != null)
+            {
+                ActiveNPC.StopTalking();
+            }
+
+            ResetDialogue();
         }
 
         /// <summary>
@@ -186,12 +220,13 @@ namespace Moonborne.UI.Dialogue
         {
             if (Open)
             {
-                SpriteManager.SetDrawAlpha(0.5f);
+                RootPosition = MoonMath.Lerp(RootPosition, TargetPosition, AnimationInterpolation);
+                SpriteManager.SetDrawAlpha(0.75f);
                 SpriteManager.DrawRectangle(RootPosition, DialogueBoxWidth, DialogueBoxHeight, Color.Black);
                 SpriteManager.ResetDraw();
 
-                SpriteManager.DrawText(Speaker, RootPosition+NameOffset, FontScale, 0, Color.Yellow, DialogueBoxWidth);
-                SpriteManager.DrawText(DisplayText, RootPosition+TextOffset, FontScale, 0, Color.White, DialogueBoxWidth);
+                SpriteManager.DrawText(Speaker, RootPosition+NameOffset, FontScale, 0, Color.Yellow);
+                SpriteManager.DrawText(DisplayText, RootPosition+TextOffset, FontScale, 0, Color.White, DialogueBoxWidth-32);
             }
         }
     }

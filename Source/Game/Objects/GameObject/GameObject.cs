@@ -11,9 +11,9 @@ namespace Moonborne.Game.Objects
 
         public Vector2 OldPosition; // Object position
         public Vector2 Position; // Object position
-        public float x;
-        public float y;
-        public Vector2 Scale; // Object scale
+        public Vector2 DrawOffset = Vector2.Zero; // Offset position
+        public Vector2 StartPosition = Vector2.Zero; // Offset position
+        public Vector2 Scale { get; set; } = Vector2.One; // Object scale
         public float Rotation = 0; // Object rotation
 
         public bool Visible = true;
@@ -26,16 +26,15 @@ namespace Moonborne.Game.Objects
         public Vector2 Velocity;
         public Vector2 Acceleration;
         public float AngularVelocity;
-        public float MaxSpeed = 100;
+        public float MaxSpeed = 1000;
 
         public int Depth = 0;
         public int Frame = 0;
         public float FrameTime = 0;
-        public int AnimationSpeed = 0;
-
+        public int AnimationSpeed = 10;
 
         /// <summary>
-        /// Constructor
+        /// Base constructor
         /// </summary>
         public GameObject()
         {
@@ -48,7 +47,7 @@ namespace Moonborne.Game.Objects
         /// </summary>
         public virtual void Create()
         {
-
+            StartPosition = Position;
         }
 
         /// <summary>
@@ -63,20 +62,7 @@ namespace Moonborne.Game.Objects
             // Apply linear friction to acceleration (multiplicative decay for realism)
             Velocity += Acceleration;
 
-            // Apply friction to velocity (subtractive)
-            if (Velocity.X > 0)
-                Velocity.X -= LinearFriction;
-            else if (Velocity.X < 0)
-                Velocity.X += LinearFriction;
-
-            if (Velocity.Y > 0)
-                Velocity.Y -= LinearFriction;
-            else if (Velocity.Y < 0)
-                Velocity.Y += LinearFriction;
-
-            // Stop the velocity entirely if it's close to zero (to avoid jittering)
-            if (Math.Abs(Velocity.X) < 0.01f) Velocity.X = 0f;
-            if (Math.Abs(Velocity.Y) < 0.01f) Velocity.Y = 0f;
+            ApplyFriction();
 
             // Clamp velocity to maximum speed
             Velocity.X = MathHelper.Clamp(Velocity.X, -MaxSpeed, MaxSpeed);
@@ -118,7 +104,7 @@ namespace Moonborne.Game.Objects
             // If the sprite is valid, draw it
             if (SpriteIndex != null)
             {
-                SpriteIndex.Draw(spriteBatch, Frame, Position, Scale, Rotation, SpriteIndex.Color);
+                SpriteIndex.Draw(spriteBatch, Frame, Position+DrawOffset, Scale, Rotation, SpriteIndex.Color);
             }
         }
 
@@ -153,6 +139,51 @@ namespace Moonborne.Game.Objects
             SpriteManager.SetDrawAlpha(0.5f);
             SpriteManager.DrawEllipse(x+xRadius, y+yRadius, xRadius, yRadius, Color.Black);
             SpriteManager.ResetDraw();
+        }
+
+        /// <summary>
+        /// Applies friction to the object
+        /// </summary>
+        public void ApplyFriction()
+        {
+            // Stop the velocity entirely if it's close to zero (to avoid jittering)
+            // Apply friction to velocity (subtractive)
+            if (Velocity.X > 0)
+            {
+                Velocity.X -= LinearFriction;
+                if (Velocity.X < 0)
+                {
+                    Velocity.X = 0;
+                }
+            }
+            else if (Velocity.X < 0)
+            {
+                Velocity.X += LinearFriction;
+                if (Velocity.X > 0)
+                {
+                    Velocity.X = 0;
+                }
+            }
+
+            if (Velocity.Y > 0)
+            {
+                Velocity.Y -= LinearFriction;
+                if (Velocity.Y < 0)
+                {
+                    Velocity.Y = 0;
+                }
+            }
+            else if (Velocity.Y < 0)
+            {
+                Velocity.Y += LinearFriction;
+                if (Velocity.Y > 0)
+                {
+                    Velocity.Y = 0;
+                }
+            }
+
+            if (Math.Abs(Velocity.X) < 0.01f) Velocity.X = 0f;
+            if (Math.Abs(Velocity.Y) < 0.01f) Velocity.Y = 0f;
         }
     }
 }
