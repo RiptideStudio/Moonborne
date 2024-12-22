@@ -19,6 +19,8 @@ namespace Moonborne.UI.Dialogue
         public string Speaker { get; set; }
         public List<string>Text { get; set; }
         public int TalkSpeed { get; set; } = 1;
+        public bool Skip { get; set; } = false;
+        public Action ScriptedEvent { get; set; }
     }
 
     public class Dialogue
@@ -39,5 +41,6 @@ namespace Moonborne.UI.Dialogue
         {
             Data = data;
         }   
+
     }
 }
