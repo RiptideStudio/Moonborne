@@ -1,0 +1,26 @@
+{
+  "TileSize": 16,
+  "TilesetColumns": 10,
+  "Tiles": [
+    {
+      "x": 29,
+      "y": 23,
+      "tileId": 2
+    },
+    {
+      "x": 30,
+      "y": 23,
+      "tileId": 2
+    },
+    {
+      "x": 27,
+      "y": 24,
+      "tileId": 2
+    },
+    {
+      "x": 28,
+      "y": 24,
+      "tileId": 2
+    }
+  ]
+}

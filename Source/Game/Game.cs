@@ -62,6 +62,7 @@ namespace Moonborne
         {
             player = new Player();
             InventoryManager.Initialize();
+            RoomEditor.Initialize();
         }
 
         protected override void Update(GameTime gameTime)
@@ -93,7 +94,7 @@ namespace Moonborne
                 samplerState: SamplerState.PointClamp,
                 transformMatrix: Camera.Transform);
 
-            RoomEditor.DrawGrid(spriteBatch,SpriteManager.GetTexture("JungleTileset"), 16, 10);
+            RoomEditor.DrawTiles(spriteBatch);
             GameObjectManager.Draw(spriteBatch);
 
             spriteBatch.End();
@@ -108,8 +109,7 @@ namespace Moonborne
             GameObjectManager.DrawUI(spriteBatch);
             DialogueManager.DrawDialogueBox();
             InventoryManager.Draw(spriteBatch);
-            RoomEditor.DrawTilesetPreview(spriteBatch, SpriteManager.GetTexture("JungleTileset"), 16, 10, 32, 32);
-            RoomEditor.HandleTileSelection(SpriteManager.GetTexture("JungleTileset"), 16, 10, 32, 32);
+            RoomEditor.DrawEditor(spriteBatch);
             spriteBatch.End();
 
             ImGuiManager.EndFrame(gameTime);
