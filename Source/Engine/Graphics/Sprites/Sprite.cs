@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Moonborne.Game.Objects;
+using Moonborne.Graphics.Window;
 using System.ComponentModel;
 
 namespace Moonborne.Graphics
@@ -22,7 +23,7 @@ namespace Moonborne.Graphics
         public int FrameHeight = 16;
         public int FrameWidth = 16;
         public int MaxFrames = 1;
-        public int LayerDepth = 1;
+        public int LayerDepth = 0;
         public SpriteEffects CustomSpriteEffect = SpriteEffects.None;
 
         /// <summary>

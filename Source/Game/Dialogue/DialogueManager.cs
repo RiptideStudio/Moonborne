@@ -154,35 +154,60 @@ namespace Moonborne.UI.Dialogue
         }
 
         /// <summary>
+        /// Try to skip dialogue if possible
+        /// </summary>
+        public static void SkipDialogue()
+        {
+            if (ActiveDialogue.Data.Skip)
+            {
+                StopDialogue();
+            }
+        }
+
+        /// <summary>
         /// Update our dialogue each frame, writing characters to the screen
         /// </summary>
         /// <param name="dt"></param>
         public static void WriteDialogue(float dt)
         {
+            int charactersRemaining = TargetText.Length - DisplayText.Length;
+
             // If we have finished updating or display text
             if (CharacterIndex >= TargetText.Length)
             {
                 WaitingForNextLine = true;
             }
 
+            // Advance the dialogue to the next frame
+            if (InputManager.KeyTriggered(Keys.Space) || InputManager.MouseLeftPressed())
+            {
+                if (WaitingForNextLine)
+                {
+                    // Next set of dialogue
+                    AdvanceDialogue();
+                }
+                else
+                {
+                    // Quick-skip dialogue
+                    DisplayText = TargetText;
+                    WaitingForNextLine = true;
+                }
+            }
+
             // Check if we are done updating text
             if (WaitingForNextLine)
             {
                 TimeElapsed = 0;
-
-                // Advance the dialogue to the next frame
-                if (InputManager.KeyTriggered(Keys.Space) || InputManager.MouseLeftPressed())
-                {
-                    AdvanceDialogue();
-                }
             }
             else
             {
                 // If we have not finished updating our text, add the next character
                 TimeElapsed += dt;
 
+                int talkSpeed = ActiveDialogue.Data.TalkSpeed;
+
                 // Add the next character
-                if (TimeElapsed >= ActiveDialogue.Data.TalkSpeed * dt)
+                if (TimeElapsed >= talkSpeed * dt)
                 {
                     DisplayText += TargetText[CharacterIndex];
                     CharacterIndex++;

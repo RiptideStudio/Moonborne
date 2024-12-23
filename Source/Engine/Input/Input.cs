@@ -13,6 +13,7 @@ namespace Moonborne.Input
         public static KeyboardState previousKeyboardState;
         public static MouseState MouseState;
         public static Vector2 MousePosition;
+        public static Vector2 MouseUIPosition;
 
         /// <summary>
         /// Check if a key is triggered by comparing previous and current state
@@ -63,10 +64,10 @@ namespace Moonborne.Input
         public static Vector2 MouseWorldCoords()
         {
             // Center of the screen (viewport center)
-            Vector2 viewportCenter = new Vector2(WindowManager.ViewportWidth / 2f, WindowManager.ViewportHeight / 2f);
+            Vector2 viewportCenter = new Vector2(WindowManager.ViewportWidth / WindowManager.ViewportScale/2, WindowManager.ViewportHeight / WindowManager.ViewportScale/2);
 
             // Adjust mouse position for camera zoom and position
-            Vector2 worldPosition = ((MousePosition - viewportCenter) / Camera.Zoom) + Camera.Position;
+            Vector2 worldPosition = ((MouseUIPosition - viewportCenter) / Camera.Zoom) + Camera.Position;
 
             return worldPosition;
         }
@@ -91,6 +92,7 @@ namespace Moonborne.Input
             currentKeyboardState = Keyboard.GetState();
             MouseState = Mouse.GetState();
             MousePosition = MouseState.Position.ToVector2();
+            MouseUIPosition = MouseState.Position.ToVector2() / WindowManager.ViewportScale;
         }
     }
 }

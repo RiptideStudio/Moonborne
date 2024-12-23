@@ -182,7 +182,7 @@ namespace Moonborne.Graphics
         /// <param name="color"></param>
         public static void DrawRectangle(float x, float y, int width, int height, Color color)
         {
-            color.A = DrawAlpha;
+            color *= (float)DrawAlpha / 255;
             Rectangle rectangle = new Rectangle((int)x, (int)y, width, height);
             spriteBatch.Draw(PixelTexture, rectangle, color);
         }

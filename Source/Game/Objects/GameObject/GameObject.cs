@@ -109,6 +109,15 @@ namespace Moonborne.Game.Objects
         }
 
         /// <summary>
+        /// Draw event called from the UI event
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        public virtual void DrawUI(SpriteBatch spriteBatch)
+        {
+
+        }
+
+        /// <summary>
         /// Called when an object is destroyed
         /// </summary>
         public virtual void OnDestroy()

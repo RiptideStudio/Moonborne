@@ -14,6 +14,8 @@ using Moonborne.Engine.UI;
 using Moonborne.UI.Dialogue;
 using Moonborne.Graphics.Window;
 using Moonborne.Game.Projectiles;
+using Moonborne.Game.Inventory;
+using MonoGame.Extended.Tiled;
 
 namespace Moonborne
 {
@@ -52,7 +54,14 @@ namespace Moonborne
             spriteBatch = new SpriteBatch(GraphicsDevice);
             SpriteManager.LoadAllTextures();
             SpriteManager.spriteBatch = spriteBatch;
+            RoomManager.LoadRooms(GraphicsDevice, this);
+            InitializeLater();
+        }
+
+        protected void InitializeLater()
+        {
             player = new Player();
+            InventoryManager.Initialize();
         }
 
         protected override void Update(GameTime gameTime)
@@ -67,6 +76,7 @@ namespace Moonborne
             Camera.Update();
             GameObjectManager.Update(dt);
             DialogueManager.Update(dt);
+            InventoryManager.Update();
             base.Update(gameTime);
         }
 
@@ -83,7 +93,9 @@ namespace Moonborne
                 samplerState: SamplerState.PointClamp,
                 transformMatrix: Camera.Transform);
 
+            RoomEditor.DrawGrid(spriteBatch,SpriteManager.GetTexture("JungleTileset"), 16, 10);
             GameObjectManager.Draw(spriteBatch);
+
             spriteBatch.End();
 
             // Draw UI objects
@@ -93,7 +105,11 @@ namespace Moonborne
                 samplerState: SamplerState.PointClamp,
                 transformMatrix: WindowManager.Transform);
 
+            GameObjectManager.DrawUI(spriteBatch);
             DialogueManager.DrawDialogueBox();
+            InventoryManager.Draw(spriteBatch);
+            RoomEditor.DrawTilesetPreview(spriteBatch, SpriteManager.GetTexture("JungleTileset"), 16, 10, 32, 32);
+            RoomEditor.HandleTileSelection(SpriteManager.GetTexture("JungleTileset"), 16, 10, 32, 32);
             spriteBatch.End();
 
             ImGuiManager.EndFrame(gameTime);

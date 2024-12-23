@@ -4,11 +4,9 @@ using Microsoft.Xna.Framework.Input;
 using Moonborne.Graphics;
 using Moonborne.Game.Objects;
 using Moonborne.Input;
-using System;
 using Moonborne.Graphics.Camera;
 using Moonborne.Game.Projectiles;
-using System.Security.Cryptography;
-using System.Runtime.Serialization;
+using Moonborne.Game.Inventory;
 
 namespace Moonborne.Game.Gameplay
 {
@@ -16,6 +14,7 @@ namespace Moonborne.Game.Gameplay
     {
         public Gun Gun { get; set; }
         public static Player Instance { get; private set; }
+        public string DisplayName { get; set; } = "Player";
         public override void Create()
         {
             SpriteIndex = SpriteManager.GetSprite("HornetIdle");
@@ -32,6 +31,12 @@ namespace Moonborne.Game.Gameplay
             Gun = new Gun(this,250f,10);
             ObjectLibrary.CreateObject<NPC>(Position);
             ObjectLibrary.CreateObject<CoreTable>(Position);
+            ObjectLibrary.CreateObject<LunarCore>(new Vector2(32,32)+Position);
+            ObjectLibrary.CreateObject<LunarCore>(new Vector2(0,32)+Position);
+            ObjectLibrary.CreateObject<LunarCore>(new Vector2(-32,32)+Position);
+            ObjectLibrary.CreateObject<LunarCore>(new Vector2(-32,32)+Position);
+            ObjectLibrary.CreateObject<LunarCore>(new Vector2(-64,32)+Position);
+            ObjectLibrary.CreateObject<LunarCore>(new Vector2(-96,32)+Position);
         }
 
         public override void Draw(SpriteBatch spriteBatch)

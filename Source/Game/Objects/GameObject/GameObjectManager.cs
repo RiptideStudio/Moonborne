@@ -72,5 +72,17 @@ namespace Moonborne.Game.Objects
                 obj.Draw(spriteBatch);
             }
         }
+        
+        /// <summary>
+        /// Execute all draw UI events
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        public static void DrawUI(SpriteBatch spriteBatch)
+        {
+            foreach (GameObject obj in Objects)
+            {
+                obj.DrawUI(spriteBatch);
+            }
+        }
     }
 }

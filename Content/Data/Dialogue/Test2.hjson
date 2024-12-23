@@ -1,9 +1,13 @@
 # Dialogue Test
 Speaker: "Lord Garbulch"
-TalkSpeed: 10
+TalkSpeed: 1
 Skip: true
 Text:
 [
     "Glubba! Hubblah Gooblah? BLOOBAH!!!"
+    "AIFJEEEEEEEEEEEEEEEEEEEEEfaefeafafaefafeafaefhieajgaioegnheoigjoi"
+    "ghiaoepgheoagjagjaeoi;g;najlnh ajkhn ahnlaehna"
+    "egijaogj;agneao;hnaem;ohna;kleh;alkhae"
+    "geoiahjnoeiaJhojI:Hjeiphapjaowh;n;ohaK"
 ]
 ScriptedEvent: ""

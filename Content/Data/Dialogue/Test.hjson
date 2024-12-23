@@ -1,5 +1,6 @@
 # Dialogue Test
 Speaker: "Jack"
+TalkSpeed: 1
 Text:
 [
     "Do you know who my father is?",

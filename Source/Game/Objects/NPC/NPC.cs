@@ -198,7 +198,7 @@ namespace Moonborne.Game.Objects
 
             if (playerDistance >= InteractDistance)
             {
-                DialogueManager.StopDialogue();
+                DialogueManager.SkipDialogue();
             }
         }
 
@@ -223,7 +223,7 @@ namespace Moonborne.Game.Objects
             else
             {
                 // Stop dialogue (quick skip if possible)
-                DialogueManager.StopDialogue();
+                DialogueManager.SkipDialogue();
             }
         }
 

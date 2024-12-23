@@ -18,7 +18,7 @@ namespace Moonborne.Graphics.Window
     {
         public static int ViewportWidth { get; private set; } = 640; // Height of the viewport
         public static int ViewportHeight { get; private set; } = 360; // Height of the viewport
-        public static int ViewportScale { get; private set; } = 3; // Scale of the viewport 
+        public static int ViewportScale { get; private set; } = 2; // Scale of the viewport 
         public static int PreviousViewportScale { get; private set; } = ViewportScale; // Scale of the viewport 
         public static bool StartInFullscreen { get; private set; } = false; // If we start in fullscreen
         public static bool IsFullscreen { get; private set; } = false; // If we are in fullscreen
