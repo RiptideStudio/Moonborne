@@ -44,6 +44,11 @@ namespace Moonborne.Game.Room
         /// <param name="tilesetColumns"></param>
         public void DrawGrid(SpriteBatch spriteBatch)
         {
+            if (InputManager.KeyTriggered(Keys.T))
+            {
+                DebugDraw = !DebugDraw;
+            }
+
             for (int y = 0; y < grid.GetLength(1); y++)
             {
                 for (int x = 0; x < grid.GetLength(0); x++)
@@ -62,7 +67,7 @@ namespace Moonborne.Game.Room
                         continue;
 
                     int tilesetX = (tileId % tilesetColumns) * tileSize;
-                    int tilesetY = (tileId / tilesetColumns) * tileSize;
+                    int tilesetY = (tileId / tilesetColumns) * tileSize+1;
 
                     spriteBatch.Draw(
                         tileset,
@@ -84,11 +89,6 @@ namespace Moonborne.Game.Room
         /// <param name="previewY"></param>
         public void HandleTileSelection(int previewX, int previewY)
         {
-            if (InputManager.KeyTriggered(Keys.T))
-            {
-                DebugDraw = !DebugDraw;
-            }
-
             if (InputManager.MouseLeftPressed())
             {
                 int mouseX = (int)InputManager.MouseUIPosition.X;
@@ -132,7 +132,7 @@ namespace Moonborne.Game.Room
         /// <param name="previewY"></param>
         public void DrawTilesetPreview(SpriteBatch spriteBatch, int previewX, int previewY)
         {
-            int rows = tileset.Height / tileSize;
+            int rows = tileset.Height / tileSize; // Assuming same dimensions
             int columns = tilesetColumns;
 
             for (int y = 0; y < rows; y++)

@@ -4,14 +4,12 @@ using Microsoft.Xna.Framework;
 using Moonborne.Graphics;
 using Moonborne.Input;
 using Microsoft.Xna.Framework.Input;
+using System.IO;
 
 namespace Moonborne.Game.Room
 {
     public static class RoomEditor
     {
-        public static bool DebugDraw = true;
-        public static int SelectedTile = 0;
-        public static int[,] grid = new int[100,100];
         public static Tilemap Tilemap;
 
         /// <summary>
@@ -19,7 +17,12 @@ namespace Moonborne.Game.Room
         /// </summary>
         public static void Initialize()
         {
-            Tilemap = new Tilemap(SpriteManager.GetTexture("JungleTileset"), new int[100,100],16,10);
+            Tilemap = new Tilemap(SpriteManager.GetTexture("TilesetTest"), new int[100,100],16,10);
+
+            if (File.Exists("Content/Rooms/Tilemap.json"))
+            {
+                Tilemap.Load("Tilemap");
+            }
         }
 
         /// <summary>
@@ -36,12 +39,14 @@ namespace Moonborne.Game.Room
         /// <param name="spriteBatch"></param>
         public static void DrawEditor(SpriteBatch spriteBatch)
         {
-            Tilemap.DrawTilesetPreview(spriteBatch,32,32);
-            Tilemap.HandleTileSelection(32, 32);
+            if (Tilemap.DebugDraw)
+            {
+                Tilemap.DrawTilesetPreview(spriteBatch, 32, 32);
+                Tilemap.HandleTileSelection(32, 32);
+            }
 
             if (InputManager.KeyDown(Keys.LeftControl))
             {
-
                 if (InputManager.KeyTriggered(Keys.S))
                 {
                     Tilemap.Save(Tilemap.Name);
