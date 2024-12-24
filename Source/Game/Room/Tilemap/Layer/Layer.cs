@@ -4,10 +4,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Moonborne.Game.Inventory;
 using Moonborne.Game.Objects;
+using Moonborne.Graphics;
 using Moonborne.Graphics.Window;
 using Moonborne.UI.Dialogue;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
 
 namespace Moonborne.Game.Room
@@ -92,6 +94,22 @@ namespace Moonborne.Game.Room
 
                 case LayerType.Tile:
                     ImGui.Checkbox("Collidable", ref Collideable);
+
+                    // Select tileset texture
+                    var textures = SpriteManager.textures.ToList();
+
+                    if (ImGui.TreeNodeEx("Texture"))
+                    {
+                        foreach (var tex in textures)
+                        {
+                            if (ImGui.Selectable(tex.Key))
+                            {
+                                Tilemap tilemap = Tilemaps[0];
+                                tilemap.SetTexture(tex.Key);
+                            }
+                        }
+                        ImGui.TreePop();
+                    }
                     break;
             }
 

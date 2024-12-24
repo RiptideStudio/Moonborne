@@ -277,6 +277,12 @@ namespace Moonborne.Graphics
         /// <returns></returns>
         public static Texture2D GetTexture(string name)
         {
+            // Return an empty texture if not found
+            if (name == null || !textures.ContainsKey(name))
+            {
+                return textures["None"];
+            }
+
             return textures.TryGetValue(name, out var texture) ? texture : null;
         }        
         

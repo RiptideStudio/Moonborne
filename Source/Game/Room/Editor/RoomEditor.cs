@@ -14,6 +14,8 @@ using System.Text.Json;
 using Moonborne.Graphics.Window;
 using MonoGame.Extended.Collisions.Layers;
 using Moonborne.Game.Objects;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Moonborne.Game.Room
 {
@@ -31,6 +33,9 @@ namespace Moonborne.Game.Room
         public static float ZoomScale = 0.2f; // How much we zoom when scrolling mouse
         public static string NewLayerName = "Layer";
         public static Layer selectedLayer = null;
+        public static string selectedObject;
+        public static bool Dragging = false;
+        public static bool HoveringOverGameWorld = false;
 
         /// <summary>
         /// Create a default SelectedTilemap
@@ -46,7 +51,7 @@ namespace Moonborne.Game.Room
             else
             {
                 // No room data was found, generate a base tileset to work from
-                SelectedTilemap = new Tilemap(SpriteManager.GetTexture("TilesetTest"), new int[100, 100], 16, 10, "Tile");
+                SelectedTilemap = new Tilemap("TilesetTest", new int[100, 100], 16, "Tile");
             }
         }
 
@@ -56,6 +61,9 @@ namespace Moonborne.Game.Room
         public static void DrawGrid(SpriteBatch spriteBatch)
         {
             // Draw the world grid
+            if (SelectedTilemap == null)
+                return;
+
             SelectedTilemap.DrawGrid();
 
             // Draw the selected tile preview
@@ -86,7 +94,11 @@ namespace Moonborne.Game.Room
             // Render the ImGui buttons for toggling different
             ImGui.Begin("Tile Editor");
 
-            ImGui.Text($"Active Layer: {SelectedTilemap.LayerName}");
+            if (selectedLayer != null)
+            {
+                ImGui.Text($"Active Layer: {selectedLayer.Name}");
+            }
+
             ImGui.Checkbox("Show Preview", ref ShowPreview);
             ImGui.Checkbox("Show Grid", ref DebugDraw);
             ImGui.Checkbox("Can Edit", ref CanEdit);
@@ -95,6 +107,7 @@ namespace Moonborne.Game.Room
             if (ImGui.IsWindowHovered() || ImGui.IsAnyItemHovered())
             {
                 CanPlaceTile = false;
+                HoveringOverGameWorld = false;
             }
             ImGui.NewLine();
 
@@ -118,7 +131,7 @@ namespace Moonborne.Game.Room
                         }
                         else if (layer.Value.Type == LayerType.Object)
                         {
-                            
+                            SelectedTilemap = null;
                         }
                         selectedLayer = layer.Value;
                     }
@@ -152,6 +165,7 @@ namespace Moonborne.Game.Room
                     if (ImGui.IsWindowHovered() || ImGui.IsAnyItemHovered())
                     {
                         CanPlaceTile = false;
+                        HoveringOverGameWorld = false;
                     }
                     // Display a list of all objects, and allow us to drag them into the game
                     var list = ObjectLibrary.GetAllGameObjectNames();
@@ -161,16 +175,28 @@ namespace Moonborne.Game.Room
                         foreach (var name in list)
                         {
                             // Select the object we want to drag into the game
-                            if (ImGui.Button(name))
+                            ImGui.Selectable(name, selectedObject == name);
+
+                            if (ImGui.BeginDragDropSource())
                             {
-                                Vector2 position = InputManager.MouseWorldCoords();
-                                var newObject = ObjectLibrary.CreateObject(name, position, selectedLayer.Name);
-                                Console.WriteLine($"Created {name} at {newObject.Position}");
+                                ImGui.Text($"Place: {name}"); // Visual feedback during dragging
+                                Dragging = true;
+                                selectedObject = name;
+                                ImGui.EndDragDropSource();
                             }
                         }
                         ImGui.TreePop();
                     }
 
+                    // Drag object into world
+                    if (InputManager.MouseLeftReleased() && Dragging)
+                    {
+                        Vector2 position = InputManager.MouseWorldCoords();
+                        Dragging = false;
+                        var newObject = ObjectLibrary.CreateObject(selectedObject, position, selectedLayer.Name);
+                    }
+
+                    // Show a list of all objects on this layer
                     if (ImGui.TreeNodeEx("Objects"))
                     {
                         foreach (GameObject obj in selectedLayer.Objects)
@@ -190,6 +216,7 @@ namespace Moonborne.Game.Room
             {
                 CanPlaceTile = false;
             }
+
             if (ImGui.InputText("Layer Name", ref NewLayerName, 20))
             {
             }
@@ -198,61 +225,19 @@ namespace Moonborne.Game.Room
             {
                 string layerName = NewLayerName;
                 Layer layer = new Layer(1, () => Camera.Transform, LayerType.Tile);
-                Tilemap tilemap = new Tilemap(SpriteManager.GetTexture("TilesetTest"), new int[100, 100], 16, 10, layerName);
+                Tilemap tilemap = new Tilemap("TilesetTest", new int[100, 100], 16, layerName);
                 LayerManager.AddTilemapLayer(layer, tilemap, layerName);
             }
 
             // Create a new object layer
             if (ImGui.Button("Add Object Layer"))
             {
-                LayerManager.AddLayer(new Layer(1, () => Camera.Transform, LayerType.Object), "TestObjectLayer");
+                LayerManager.AddLayer(new Layer(1, () => Camera.Transform, LayerType.Object), NewLayerName);
             }
 
             ImGui.End();
 
-
-            // Show the tileset preview for selecting tiles
-            if (ShowPreview)
-            {
-                SelectedTilemap.DrawTilesetPreview(spriteBatch, PreviewX, PreviewY);
-            }
-
-            // Actually place tiles
-            if (CanEdit)
-            {
-                SelectedTilemap.HandleTileSelection(spriteBatch,PreviewX, PreviewY);
-            }
-
-            // Hotkeys
-            if (InputManager.KeyDown(Keys.LeftControl))
-            {
-                // Quick save
-                if (InputManager.KeyTriggered(Keys.S))
-                {
-                    CurrentRoom.Save(CurrentRoom.Name);
-                }                
-                
-                // Quick load
-                if (InputManager.KeyTriggered(Keys.L))
-                {
-                    CurrentRoom.Load(CurrentRoom.Name);
-                }
-            }
-
-            // Toggle the debug drawing of grid
-            if (InputManager.KeyTriggered(Keys.G))
-            {
-                DebugDraw = !DebugDraw;
-            }
-            
-            // Disable editor
-            if (InputManager.KeyTriggered(Keys.T))
-            {
-                ShowPreview = !ShowPreview;
-                CanEdit = ShowPreview;
-            }
-
-            if (CanPlaceTile)
+            if (HoveringOverGameWorld)
             {
                 // Zoom in and out from the world
                 if (InputManager.MouseWheelDown())
@@ -266,8 +251,59 @@ namespace Moonborne.Game.Room
                 }
             }
 
-            // Update SelectedTilemap with values
+            // Hotkeys
+            if (InputManager.KeyDown(Keys.LeftControl))
+            {
+                // Quick save
+                if (InputManager.KeyTriggered(Keys.S))
+                {
+                    CurrentRoom.Save(CurrentRoom.Name);
+                }
+
+                // Quick load
+                if (InputManager.KeyTriggered(Keys.L))
+                {
+                    CurrentRoom.Load(CurrentRoom.Name);
+                }
+            }
+
             Camera.TargetZoom = Math.Clamp(Camera.TargetZoom, 0.25f, 4f);
+
+            // Update our tile selector
+            if (SelectedTilemap != null)
+            {
+                UpdateTileSelector(spriteBatch);
+            }
+        }
+
+        public static void UpdateTileSelector(SpriteBatch spriteBatch)
+        {
+            // Show the tileset preview for selecting tiles
+            if (ShowPreview)
+            {
+                SelectedTilemap.DrawTilesetPreview(spriteBatch, PreviewX, PreviewY);
+            }
+
+            // Actually place tiles
+            if (CanEdit)
+            {
+                SelectedTilemap.HandleTileSelection(spriteBatch, PreviewX, PreviewY);
+            }
+
+            // Toggle the debug drawing of grid
+            if (InputManager.KeyTriggered(Keys.G))
+            {
+                DebugDraw = !DebugDraw;
+            }
+
+            // Disable editor
+            if (InputManager.KeyTriggered(Keys.T))
+            {
+                ShowPreview = !ShowPreview;
+                CanEdit = ShowPreview;
+            }
+
+            // Update SelectedTilemap with values
             PreviewZoom = Math.Clamp(PreviewZoom, 0.5f, 2f);
             SelectedTilemap.PreviewZoom = PreviewZoom;
         }

@@ -22,6 +22,7 @@ namespace Moonborne.Game.Room
         public int tilesetColumns = 10;
         public float PreviewZoom = 1f;
         public string LayerName;
+        public string TilesetTextureName;
         public Rectangle SelectedDestTileRectangle;
         public Rectangle SelectedSourceTileRectangle;
 
@@ -29,13 +30,24 @@ namespace Moonborne.Game.Room
         /// New tilemap
         /// </summary>
         /// <param name="grid_"></param>
-        public Tilemap(Texture2D tileset_, int[,] grid_,int tileSize_,int columns_,string layerName)
+        public Tilemap(string tileset_, int[,] grid_,int tileSize_,string layerName)
         {
-            tileset = tileset_;
+            TilesetTextureName = tileset_;
+            tileset = SpriteManager.GetTexture(tileset_);
             grid = grid_;
             tileSize = tileSize_;
-            tilesetColumns = columns_;
             LayerName = layerName;
+            tilesetColumns = tileset.Width / 16;
+        }
+
+        /// <summary>
+        /// Recalculates tileset properties
+        /// </summary>
+        public void SetTexture(string tex)
+        {
+            tileset = SpriteManager.GetTexture(tex);
+            TilesetTextureName = tex;
+            tilesetColumns = tileset.Width / 16;
         }
 
         /// <summary>
@@ -112,12 +124,12 @@ namespace Moonborne.Game.Room
                 // Zoom in and out on the tileset preview
                 if (InputManager.MouseWheelDown())
                 {
-                    PreviewZoom -= 0.25f;
+                    RoomEditor.PreviewZoom -= 0.25f;
                 }
 
                 if (InputManager.MouseWheelUp())
                 {
-                    PreviewZoom += 0.25f;
+                    RoomEditor.PreviewZoom += 0.25f;
                 }
 
                 // Determine the selected tile ID
@@ -141,7 +153,12 @@ namespace Moonborne.Game.Room
                     );
                 }
 
+                RoomEditor.HoveringOverGameWorld = false;
                 RoomEditor.CanPlaceTile = false;
+            }
+            else
+            {
+                RoomEditor.HoveringOverGameWorld = true;
             }
 
             // Paint the tile into the world 

@@ -71,9 +71,9 @@ namespace Moonborne.Game.Room
                         // Add this tilemap's data to the tilemaps list
                         tilemaps.Add(new
                         {
-                            LayerName = tilemap.LayerName,
                             TileSize = tilemap.tileSize,
-                            TilesetColumns = tilemap.tilesetColumns,
+                            TilesetName = tilemap.TilesetTextureName,
+                            LayerName = tilemap.LayerName,
                             Depth = LayerManager.Layers[tilemap.LayerName].Depth,
                             Collideable = LayerManager.Layers[tilemap.LayerName].Collideable,
                             Visible = LayerManager.Layers[tilemap.LayerName].Visible,
@@ -144,10 +144,9 @@ namespace Moonborne.Game.Room
             {
                 // Create a new Tilemap instance
                 Tilemap tilemap = new Tilemap(
-                    SpriteManager.GetTexture("TilesetTest"),
+                    tilemapData.TilesetName,
                     new int[100, 100], 
                     tilemapData.TileSize,
-                    tilemapData.TilesetColumns,
                     tilemapData.LayerName
                 );
 

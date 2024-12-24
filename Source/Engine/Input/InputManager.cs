@@ -64,6 +64,15 @@ namespace Moonborne.Input
         public static bool MouseLeftDown()
         {
             return MouseState.LeftButton == ButtonState.Pressed;
+        }                
+        
+        /// <summary>
+        /// If the mouse was released
+        /// </summary>
+        /// <returns></returns>
+        public static bool MouseLeftReleased()
+        {
+            return MouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed;
         }        
         
         /// <summary>

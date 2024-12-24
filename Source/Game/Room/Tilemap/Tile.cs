@@ -12,7 +12,7 @@ namespace Moonborne.Game.Room
     public class TilemapData
     {
         public int TileSize { get; set; }
-        public int TilesetColumns { get; set; }
+        public string TilesetName { get; set; }
         public string LayerName {  get; set; }
         public int Depth { get; set; }
         public bool Collideable { get; set; }

@@ -119,6 +119,9 @@ namespace Moonborne.Game.Room
         {
             foreach (var layer in Layers)
             {
+                if (!layer.Value.Visible)
+                    continue;
+
                 layer.Value.Update(dt);
             }
         }
@@ -157,7 +160,7 @@ namespace Moonborne.Game.Room
             AddLayer(new Layer(5, () => Camera.Transform, LayerType.Object, true), "Object");
             AddLayer(new Layer(4, () => Camera.Transform, LayerType.Object, true), "Tiles");
             AddLayer(new Layer(3, () => Camera.Transform, LayerType.Object, true), "Player");
-            AddLayer(new Layer(9999, () => Camera.Transform, LayerType.Tile, true), "TileEditorWorld");
+            AddLayer(new Layer(1000, () => Camera.Transform, LayerType.Tile, true), "TileEditorWorld");
             AddLayer(new Layer(9999, () => WindowManager.Transform, LayerType.UI, true), "UI");
             AddLayer(new Layer(9999, () => WindowManager.Transform, LayerType.UI, true), "Dialogue");
             AddLayer(new Layer(1002, () => WindowManager.Transform, LayerType.UI, true), "Inventory");

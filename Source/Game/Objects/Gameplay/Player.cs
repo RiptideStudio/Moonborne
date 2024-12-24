@@ -31,14 +31,6 @@ namespace Moonborne.Game.Gameplay
             Camera.SetPosition(Position);
             Gun = new Gun(this,250f,10);
             LayerManager.AddInstance(Gun, "Object");
-            ObjectLibrary.CreateObject<NPC>(Position);
-            ObjectLibrary.CreateObject<CoreTable>(Position,"Tiles");
-            ObjectLibrary.CreateObject<LunarCore>(new Vector2(32,32)+Position);
-            ObjectLibrary.CreateObject<LunarCore>(new Vector2(0,32)+Position);
-            ObjectLibrary.CreateObject<LunarCore>(new Vector2(-32,32)+Position);
-            ObjectLibrary.CreateObject<LunarCore>(new Vector2(-32,32)+Position);
-            ObjectLibrary.CreateObject<LunarCore>(new Vector2(-64,32)+Position);
-            ObjectLibrary.CreateObject<LunarCore>(new Vector2(-96,32)+Position);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
