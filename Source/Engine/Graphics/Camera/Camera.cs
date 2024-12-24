@@ -9,11 +9,12 @@ namespace Moonborne.Graphics.Camera
     public static class Camera
     {
         public static Vector2 Position = Vector2.Zero;
-        public static float Zoom { get; private set; } = 2.0f; // Default zoom level
+        public static float Zoom = 2.0f; // Default zoom level
+        public static float TargetZoom = 2.0f; // Default zoom level
         public static float MaxZoom { get; private set; } = 10f; // Default zoom level
         public static float Rotation { get; private set; } = 0f; // Default rotation
         public static float InterpolationSpeed { get; private set; } = 0.2f; // How much the camera lags behind
-        public static Matrix Transform { get; private set; } // Transformation matrix
+        public static Matrix Transform; // Transformation matrix
         public static GameObject Target { get; private set; } // Target object to follow
 
         /// <summary>
@@ -51,6 +52,7 @@ namespace Moonborne.Graphics.Camera
         {
             FollowTarget();
             UpdateTransform();
+            Zoom = MathHelper.Lerp(Zoom, TargetZoom, 0.25f);
         }
 
         /// <summary>

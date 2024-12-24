@@ -16,6 +16,7 @@ using Moonborne.Graphics.Window;
 using Moonborne.Game.Projectiles;
 using Moonborne.Game.Inventory;
 using MonoGame.Extended.Tiled;
+using ImGuiNET;
 
 namespace Moonborne
 {
@@ -45,13 +46,20 @@ namespace Moonborne
             ImGuiManager.Initialize(this, GraphicsDevice);
             WindowManager.Initialize(_graphics,this);
             DialogueManager.LoadDialogue();
-
+            Window.TextInput += OnTextInput;
             base.Initialize();
+        }
+
+        private void OnTextInput(object sender, TextInputEventArgs e)
+        {
+            // Log the character and key
+            ImGui.GetIO().AddInputCharacter(e.Character);
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            LayerManager.Initialize();
             SpriteManager.LoadAllTextures();
             SpriteManager.spriteBatch = spriteBatch;
             RoomManager.LoadRooms(GraphicsDevice, this);
@@ -60,9 +68,10 @@ namespace Moonborne
 
         protected void InitializeLater()
         {
-            player = new Player();
             InventoryManager.Initialize();
             RoomEditor.Initialize();
+            player = new Player();
+            LayerManager.AddInstance(player, "Player");
         }
 
         protected override void Update(GameTime gameTime)
@@ -72,48 +81,32 @@ namespace Moonborne
 
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            ImGuiManager.UpdateInput();
             InputManager.Update(dt);
+
             WindowManager.Update(dt);
             Camera.Update();
-            GameObjectManager.Update(dt);
             DialogueManager.Update(dt);
             InventoryManager.Update();
+
+            // Update everything
+            LayerManager.Update(dt);
+
             base.Update(gameTime);
+
         }
 
         protected override void Draw(GameTime gameTime)
         {
+            // Start drawing
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
             ImGuiManager.BeginFrame(gameTime);
 
-            // Draw game world objects
-            spriteBatch.Begin(
-                sortMode: SpriteSortMode.Deferred,
-                blendState: BlendState.AlphaBlend,
-                samplerState: SamplerState.PointClamp,
-                transformMatrix: Camera.Transform);
+            // Render everything in all layers
+            LayerManager.Draw(spriteBatch);
 
-            RoomEditor.DrawTiles(spriteBatch);
-            GameObjectManager.Draw(spriteBatch);
-
-            spriteBatch.End();
-
-            // Draw UI objects
-            spriteBatch.Begin(
-                sortMode: SpriteSortMode.Deferred,
-                blendState: BlendState.AlphaBlend,
-                samplerState: SamplerState.PointClamp,
-                transformMatrix: WindowManager.Transform);
-
-            GameObjectManager.DrawUI(spriteBatch);
-            DialogueManager.DrawDialogueBox();
-            InventoryManager.Draw(spriteBatch);
-            RoomEditor.DrawEditor(spriteBatch);
-            spriteBatch.End();
-
+            // End drawing
             ImGuiManager.EndFrame(gameTime);
-
             base.Draw(gameTime);
         }
     }

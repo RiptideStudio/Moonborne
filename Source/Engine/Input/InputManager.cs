@@ -11,9 +11,12 @@ namespace Moonborne.Input
     {
         public static KeyboardState currentKeyboardState;
         public static KeyboardState previousKeyboardState;
+        public static MouseState PreviousMouseState;
         public static MouseState MouseState;
         public static Vector2 MousePosition;
         public static Vector2 MouseUIPosition;
+        public static int PreviousScrollValue;
+        public static int ScrollValue;
 
         /// <summary>
         /// Check if a key is triggered by comparing previous and current state
@@ -46,12 +49,57 @@ namespace Moonborne.Input
         }
 
         /// <summary>
-        /// Check if 
+        /// Check if left mouse pressed
         /// </summary>
         /// <returns></returns>
         public static bool MouseLeftPressed()
         {
+            return MouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released;
+        }        
+        
+        /// <summary>
+        /// Check if mouse left is held down
+        /// </summary>
+        /// <returns></returns>
+        public static bool MouseLeftDown()
+        {
             return MouseState.LeftButton == ButtonState.Pressed;
+        }        
+        
+        /// <summary>
+        /// Check if mouse right is held down
+        /// </summary>
+        /// <returns></returns>
+        public static bool MouseRightDown()
+        {
+            return MouseState.RightButton == ButtonState.Pressed;
+        }
+
+        /// <summary>
+        /// Check if mouse right was pressed
+        /// </summary>
+        /// <returns></returns>
+        public static bool MouseRightPressed()
+        {
+            return MouseState.RightButton == ButtonState.Pressed && PreviousMouseState.RightButton == ButtonState.Released;
+        }
+
+        /// <summary>
+        /// If the mouse is wheeled up
+        /// </summary>
+        /// <returns></returns>
+        public static bool MouseWheelUp()
+        {
+            return ScrollValue > PreviousScrollValue;
+        }
+
+        /// <summary>
+        /// If the mouse is wheeled down
+        /// </summary>
+        /// <returns></returns>
+        public static bool MouseWheelDown()
+        {
+            return ScrollValue < PreviousScrollValue;
         }
 
         /// <summary>
@@ -90,9 +138,12 @@ namespace Moonborne.Input
         {
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
+            PreviousMouseState = MouseState;
             MouseState = Mouse.GetState();
             MousePosition = MouseState.Position.ToVector2();
             MouseUIPosition = MouseState.Position.ToVector2() / WindowManager.ViewportScale;
+            PreviousScrollValue = ScrollValue;
+            ScrollValue = MouseState.ScrollWheelValue;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Moonborne.Graphics.Window
         public static Rectangle Viewport { get; private set; } // Defines the dimensions of our viewport
         private static GraphicsDeviceManager Graphics { get; set; } // Graphics device
         private static MGame Game { get; set; } // Graphics device
-        public static Matrix Transform { get; private set; } // Transformation matrix for UI
+        public static Matrix Transform; // Transformation matrix for UI
 
         /// <summary>
         /// Initialize window manager with graphics

@@ -12,7 +12,7 @@ namespace Moonborne.Game.Projectiles
     public abstract class Projectile : GameObject
     {
         public bool CanCollide { get; set; } = true;
-        public int LifeTime { get; set; } = 180; // Lifetime in ticks (60/s)
+        public int LifeTime { get; set; } = 3; // Lifetime in seconds
         public float ElapsedTime { get; set; } = 0;
 
         /// <summary>

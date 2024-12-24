@@ -197,6 +197,16 @@ namespace Moonborne.Graphics
         public static void DrawRectangle(Vector2 position, int width, int height, Color color)
         {
             DrawRectangle((int)position.X, (int)position.Y, width, height, color);
+        }       
+        
+        /// <summary>
+        /// Draw a rectangle given a rectangle struct
+        /// </summary>
+        /// <param name="rectangle"></param>
+        /// <param name="color"></param>
+        public static void DrawRectangle(Rectangle rectangle, Color color)
+        {
+            DrawRectangle(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height, color);
         }
 
         /// <summary>

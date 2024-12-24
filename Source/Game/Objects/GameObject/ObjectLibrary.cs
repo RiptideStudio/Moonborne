@@ -4,6 +4,7 @@
  */
 
 using Microsoft.Xna.Framework;
+using Moonborne.Game.Room;
 
 namespace Moonborne.Game.Objects
 {
@@ -14,12 +15,14 @@ namespace Moonborne.Game.Objects
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T CreateObject<T>(Vector2 position) where T : GameObject, new()
+        public static T CreateObject<T>(Vector2 position, string layer = "Object") where T : GameObject, new()
         {
-            T t = new T();
-            t.Position = position;
-            t.StartPosition = position;
-            return t;
+            T gameObject = new T();
+            gameObject.Position = position;
+            gameObject.StartPosition = position;
+            LayerManager.AddInstance(gameObject, layer);
+
+            return gameObject;
         }
     }
 }

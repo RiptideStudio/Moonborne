@@ -8,6 +8,8 @@ using ImGuiNET;
 using Moonborne.Graphics;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.ImGui;
+using Microsoft.Xna.Framework.Input;
+using Moonborne.Input;
 
 namespace Moonborne.Engine.UI
 {
@@ -24,7 +26,6 @@ namespace Moonborne.Engine.UI
         {
             game = game_;
             ImGui.CreateContext();
-
             imGuiRenderer = new ImGUIRenderer(game);
             imGuiRenderer.RebuildFontAtlas();
         }
@@ -35,6 +36,14 @@ namespace Moonborne.Engine.UI
         public static void BeginFrame(GameTime gameTime)
         {
             imGuiRenderer.BeginLayout(gameTime);
+        }
+
+        /// <summary>
+        /// Send input to ImGui
+        /// </summary>
+        public static void UpdateInput()
+        {
+
         }
 
         /// <summary>

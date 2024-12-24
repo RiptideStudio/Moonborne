@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Moonborne.Game.Room;
 using Moonborne.Graphics;
 using System;
 
@@ -38,7 +39,6 @@ namespace Moonborne.Game.Objects
         /// </summary>
         public GameObject()
         {
-            GameObjectManager.Add(this);
             Create();
         }
 

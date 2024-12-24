@@ -54,8 +54,7 @@ namespace Moonborne.Game.Projectiles
                 return;
             }
 
-            Bullet bullet = new Bullet();
-            bullet.Position = Position;
+            Bullet bullet = ObjectLibrary.CreateObject<Bullet>(Position);
             bullet.Launch(InputManager.MouseDirection(Position), ShootSpeed);
             CanShoot = false;
         }
