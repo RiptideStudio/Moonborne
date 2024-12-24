@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using Moonborne.Graphics.Window;
 using MonoGame.Extended.Collisions.Layers;
+using Moonborne.Game.Objects;
 
 namespace Moonborne.Game.Room
 {
@@ -98,22 +99,28 @@ namespace Moonborne.Game.Room
             ImGui.NewLine();
 
             // Display a list of all SelectedTilemap layers and let us select the one we are working on
-            bool selected = false;
-
             if (ImGui.TreeNodeEx("Select Layers"))
             {
                 foreach (var layer in LayerManager.Layers)
                 {
-                    if (layer.Value.Tilemaps.Count > 0 && layer.Value.Type == LayerType.Tile)
-                    {
-                        Vector2 buttonSize = new Vector2(160, 24);
+                    // Can't edit locked layers
+                    if (layer.Value.Locked)
+                        continue;
 
-                        selected = SelectedTilemap == layer.Value.Tilemaps[0];
-                        if (ImGui.Selectable(layer.Value.Name,selected))
+                    Vector2 buttonSize = new Vector2(160, 24);
+
+                    if (ImGui.Selectable(layer.Value.Name, selectedLayer == layer.Value))
+                    {
+                        // Select different tile layers
+                        if (layer.Value.Type == LayerType.Tile)
                         {
                             SelectedTilemap = layer.Value.Tilemaps[0];
-                            selectedLayer = layer.Value;
                         }
+                        else if (layer.Value.Type == LayerType.Object)
+                        {
+                            
+                        }
+                        selectedLayer = layer.Value;
                     }
                 }
 
@@ -122,48 +129,87 @@ namespace Moonborne.Game.Room
                 ImGui.TreePop();
             }
 
+            // Display the properties of each layer
             if (selectedLayer != null)
             {
                 if (ImGui.TreeNodeEx("Properties")) // Start properties tree
                 {
-                    ImGui.Checkbox("Visible", ref selectedLayer.Visible);
-                    ImGui.Checkbox("Collidable", ref selectedLayer.Collideable);
-                    if (ImGui.InputInt("Depth", ref selectedLayer.Depth))
-                    {
-                        LayerManager.Sort();
-                    }
+                    selectedLayer.DrawSettings();
 
                     ImGui.TreePop(); // End properties tree
                 }
             }
             ImGui.NewLine();
 
-            // Menu for creating a new layer
-            if (ImGui.TreeNodeEx("Create New Layer"))
+            ImGui.End();
+
+            // Give us a dropdown for creating objects
+            if (selectedLayer != null)
             {
-                // Create a new tile layer
-                if (ImGui.InputText("Layer Name", ref NewLayerName, 20))
+                if (selectedLayer.Type == LayerType.Object)
                 {
-                }
+                    ImGui.Begin("Game Objects");
+                    if (ImGui.IsWindowHovered() || ImGui.IsAnyItemHovered())
+                    {
+                        CanPlaceTile = false;
+                    }
+                    // Display a list of all objects, and allow us to drag them into the game
+                    var list = ObjectLibrary.GetAllGameObjectNames();
 
-                if (ImGui.Button("Add Tile Layer"))
-                {
-                    string layerName = NewLayerName;
-                    Layer layer = new Layer(1, () => Camera.Transform, LayerType.Tile);
-                    Tilemap tilemap = new Tilemap(SpriteManager.GetTexture("TilesetTest"), new int[100, 100], 16, 10, layerName);
-                    LayerManager.AddTilemapLayer(layer,tilemap, layerName);
-                }
+                    if (ImGui.TreeNodeEx("Create Object"))
+                    {
+                        foreach (var name in list)
+                        {
+                            // Select the object we want to drag into the game
+                            if (ImGui.Button(name))
+                            {
+                                Vector2 position = InputManager.MouseWorldCoords();
+                                var newObject = ObjectLibrary.CreateObject(name, position, selectedLayer.Name);
+                                Console.WriteLine($"Created {name} at {newObject.Position}");
+                            }
+                        }
+                        ImGui.TreePop();
+                    }
 
-                // Create a new object layer
-                if (ImGui.Button("Add Object Layer"))
-                {
-                    LayerManager.AddLayer(new Layer(1, () => Camera.Transform, LayerType.Object, true), "TestObjectLayer");
-                }
+                    if (ImGui.TreeNodeEx("Objects"))
+                    {
+                        foreach (GameObject obj in selectedLayer.Objects)
+                        {
+                            ImGui.Selectable(obj.GetType().Name);
+                        }
+                        ImGui.TreePop();
+                    }
 
-                ImGui.TreePop();
+                    ImGui.End();
+                }
+            }
+
+            // Create a new layer
+            ImGui.Begin("Create Layer");
+            if (ImGui.IsWindowHovered() || ImGui.IsAnyItemHovered())
+            {
+                CanPlaceTile = false;
+            }
+            if (ImGui.InputText("Layer Name", ref NewLayerName, 20))
+            {
+            }
+
+            if (ImGui.Button("Add Tile Layer"))
+            {
+                string layerName = NewLayerName;
+                Layer layer = new Layer(1, () => Camera.Transform, LayerType.Tile);
+                Tilemap tilemap = new Tilemap(SpriteManager.GetTexture("TilesetTest"), new int[100, 100], 16, 10, layerName);
+                LayerManager.AddTilemapLayer(layer, tilemap, layerName);
+            }
+
+            // Create a new object layer
+            if (ImGui.Button("Add Object Layer"))
+            {
+                LayerManager.AddLayer(new Layer(1, () => Camera.Transform, LayerType.Object), "TestObjectLayer");
             }
 
             ImGui.End();
+
 
             // Show the tileset preview for selecting tiles
             if (ShowPreview)
@@ -206,20 +252,7 @@ namespace Moonborne.Game.Room
                 CanEdit = ShowPreview;
             }
 
-            if (!CanPlaceTile)
-            {
-                // Zoom in and out on the tileset preview
-                if (InputManager.MouseWheelDown())
-                {
-                    PreviewZoom -= 0.25f;
-                }
-
-                if (InputManager.MouseWheelUp())
-                {
-                    PreviewZoom += 0.25f;
-                }
-            }
-            else
+            if (CanPlaceTile)
             {
                 // Zoom in and out from the world
                 if (InputManager.MouseWheelDown())

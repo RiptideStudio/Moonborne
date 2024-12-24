@@ -109,6 +109,17 @@ namespace Moonborne.Game.Room
             if (mouseX >= previewX && mouseX < previewX + tilesetColumns * tileSize &&
                 mouseY >= previewY && mouseY < previewY + rows * tileSize)
             {
+                // Zoom in and out on the tileset preview
+                if (InputManager.MouseWheelDown())
+                {
+                    PreviewZoom -= 0.25f;
+                }
+
+                if (InputManager.MouseWheelUp())
+                {
+                    PreviewZoom += 0.25f;
+                }
+
                 // Determine the selected tile ID
                 if (InputManager.MouseLeftPressed())
                 {

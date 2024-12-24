@@ -1,4 +1,5 @@
 ﻿
+using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Moonborne.Game.Inventory;
@@ -70,6 +71,38 @@ namespace Moonborne.Game.Room
         }
 
         /// <summary>
+        /// Draw a layer's settings
+        /// </summary>
+        public void DrawSettings()
+        {
+            // Global layer flags
+            ImGui.Checkbox("Visible", ref Visible);
+            if (ImGui.InputInt("Depth", ref Depth))
+            {
+                LayerManager.Sort();
+            }
+
+            // Type specific flags
+            switch (Type)
+            {
+                case LayerType.Object:
+
+                    break;
+
+
+                case LayerType.Tile:
+                    ImGui.Checkbox("Collidable", ref Collideable);
+                    break;
+            }
+
+            // End global layer flags
+            if (ImGui.Button("Delete"))
+            {
+                LayerManager.RemoveLayer(this);
+            }
+        }
+
+        /// <summary>
         /// Begin drawing
         /// </summary>
         /// <param name="spriteBatch"></param>
@@ -126,9 +159,23 @@ namespace Moonborne.Game.Room
         /// <param name="dt"></param>
         public void Update(float dt)
         {
+            var objectsToRemove = new List<GameObject>();
+
             foreach (var obj in Objects)
             {
                 obj.Update(dt);
+
+                // Defer destruction
+                if (obj.IsDestroyed)
+                {
+                    objectsToRemove.Add(obj);
+                }
+            }
+
+            // Destroy all objects marked for destroy
+            foreach (var obj in objectsToRemove)
+            {
+                Objects.Remove(obj);
             }
         }
     }

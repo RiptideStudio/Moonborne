@@ -7,6 +7,7 @@ using Moonborne.Input;
 using Moonborne.Graphics.Camera;
 using Moonborne.Game.Projectiles;
 using Moonborne.Game.Inventory;
+using Moonborne.Game.Room;
 
 namespace Moonborne.Game.Gameplay
 {
@@ -29,6 +30,7 @@ namespace Moonborne.Game.Gameplay
             Camera.SetTarget(this);
             Camera.SetPosition(Position);
             Gun = new Gun(this,250f,10);
+            LayerManager.AddInstance(Gun, "Object");
             ObjectLibrary.CreateObject<NPC>(Position);
             ObjectLibrary.CreateObject<CoreTable>(Position,"Tiles");
             ObjectLibrary.CreateObject<LunarCore>(new Vector2(32,32)+Position);

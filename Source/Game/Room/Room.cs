@@ -1,10 +1,14 @@
 ﻿
 using ImGuiNET;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Collisions.Layers;
+using MonoGame.Extended.Tiled;
+using Moonborne.Game.Objects;
 using Moonborne.Graphics;
 using Moonborne.Graphics.Camera;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using System.Text.Json;
 
 namespace Moonborne.Game.Room
@@ -13,6 +17,7 @@ namespace Moonborne.Game.Room
     {
         public string RoomName { get; set; }
         public List<TilemapData> Tilemaps { get; set; }
+        public List<GameObjectData> Objects { get; set; }
     }
 
     public class Room
@@ -30,10 +35,14 @@ namespace Moonborne.Game.Room
             string filePath = Path.Combine(contentFolderPath, name + ".json");
 
             var tilemaps = new List<object>(); // List to store serialized tilemaps
+            var objects = new List<object>();
 
             // Iterate over all layers in the LayerManager
             foreach (var layer in LayerManager.Layers)
             {
+                if (layer.Value.Locked)
+                    continue;
+
                 if (layer.Value.Type == LayerType.Tile) // Only process Tile layers
                 {
                     foreach (var tilemap in layer.Value.Tilemaps) // Handle multiple tilemaps in the layer
@@ -72,13 +81,28 @@ namespace Moonborne.Game.Room
                         });
                     }
                 }
+                else if (layer.Value.Type == LayerType.Object)
+                {
+                    // Save objects on the layer
+                    foreach (var obj in layer.Value.Objects)
+                    {
+                        objects.Add(new
+                        {
+                            PositionX = obj.Position.X,
+                            PositionY = obj.Position.Y,
+                            Name = obj.GetType().Name,
+                            LayerName = layer.Value.Name
+                        });
+                    }
+                }
             }
 
             // Create a JSON object for the room
             var roomData = new
             {
                 RoomName = name,
-                Tilemaps = tilemaps
+                Tilemaps = tilemaps,
+                Objects = objects
             };
 
             // Serialize the room data to JSON
@@ -141,6 +165,19 @@ namespace Moonborne.Game.Room
                 foreach (var tile in tilemapData.Tiles)
                 {
                     tilemap.grid[tile["x"], tile["y"]] = tile["tileId"];
+                }
+            }
+
+            // Reconstruct objects in each layer
+            if (roomData.Objects != null) 
+            {
+                foreach (var objectData in roomData.Objects)
+                {
+                    Layer layer = new Layer(1, () => Camera.Transform, LayerType.Object);
+                    LayerManager.AddLayer(layer, objectData.LayerName);
+
+                    Vector2 position = new Vector2(objectData.PositionX, objectData.PositionY);
+                    ObjectLibrary.CreateObject(objectData.Name, position, objectData.LayerName);
                 }
             }
         }

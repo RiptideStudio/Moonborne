@@ -3955,11 +3955,780 @@
           "tileId": 129
         },
         {
+          "x": 36,
+          "y": 31,
+          "tileId": 10
+        },
+        {
+          "x": 37,
+          "y": 31,
+          "tileId": 10
+        },
+        {
+          "x": 36,
+          "y": 32,
+          "tileId": 10
+        },
+        {
+          "x": 37,
+          "y": 32,
+          "tileId": 10
+        },
+        {
+          "x": 38,
+          "y": 32,
+          "tileId": 10
+        },
+        {
+          "x": 37,
+          "y": 33,
+          "tileId": 10
+        },
+        {
+          "x": 38,
+          "y": 33,
+          "tileId": 10
+        },
+        {
+          "x": 39,
+          "y": 33,
+          "tileId": 10
+        },
+        {
+          "x": 40,
+          "y": 33,
+          "tileId": 10
+        },
+        {
+          "x": 41,
+          "y": 33,
+          "tileId": 10
+        },
+        {
+          "x": 42,
+          "y": 33,
+          "tileId": 10
+        },
+        {
+          "x": 43,
+          "y": 33,
+          "tileId": 10
+        },
+        {
+          "x": 44,
+          "y": 33,
+          "tileId": 10
+        },
+        {
+          "x": 45,
+          "y": 33,
+          "tileId": 10
+        },
+        {
+          "x": 46,
+          "y": 33,
+          "tileId": 10
+        },
+        {
+          "x": 39,
+          "y": 34,
+          "tileId": 10
+        },
+        {
+          "x": 40,
+          "y": 34,
+          "tileId": 10
+        },
+        {
+          "x": 41,
+          "y": 34,
+          "tileId": 10
+        },
+        {
+          "x": 47,
+          "y": 34,
+          "tileId": 10
+        },
+        {
+          "x": 48,
+          "y": 34,
+          "tileId": 10
+        },
+        {
+          "x": 40,
+          "y": 35,
+          "tileId": 10
+        },
+        {
+          "x": 41,
+          "y": 35,
+          "tileId": 10
+        },
+        {
+          "x": 42,
+          "y": 35,
+          "tileId": 10
+        },
+        {
+          "x": 49,
+          "y": 35,
+          "tileId": 10
+        },
+        {
+          "x": 40,
+          "y": 36,
+          "tileId": 10
+        },
+        {
+          "x": 41,
+          "y": 36,
+          "tileId": 10
+        },
+        {
+          "x": 42,
+          "y": 36,
+          "tileId": 10
+        },
+        {
+          "x": 44,
+          "y": 36,
+          "tileId": 10
+        },
+        {
+          "x": 45,
+          "y": 36,
+          "tileId": 10
+        },
+        {
+          "x": 50,
+          "y": 36,
+          "tileId": 10
+        },
+        {
+          "x": 51,
+          "y": 36,
+          "tileId": 10
+        },
+        {
+          "x": 40,
+          "y": 37,
+          "tileId": 10
+        },
+        {
+          "x": 41,
+          "y": 37,
+          "tileId": 10
+        },
+        {
+          "x": 42,
+          "y": 37,
+          "tileId": 10
+        },
+        {
+          "x": 43,
+          "y": 37,
+          "tileId": 10
+        },
+        {
+          "x": 46,
+          "y": 37,
+          "tileId": 10
+        },
+        {
+          "x": 47,
+          "y": 37,
+          "tileId": 10
+        },
+        {
+          "x": 51,
+          "y": 37,
+          "tileId": 10
+        },
+        {
+          "x": 41,
+          "y": 38,
+          "tileId": 10
+        },
+        {
+          "x": 43,
+          "y": 38,
+          "tileId": 10
+        },
+        {
+          "x": 44,
+          "y": 38,
+          "tileId": 10
+        },
+        {
+          "x": 48,
+          "y": 38,
+          "tileId": 10
+        },
+        {
+          "x": 51,
+          "y": 38,
+          "tileId": 10
+        },
+        {
+          "x": 42,
+          "y": 39,
+          "tileId": 10
+        },
+        {
+          "x": 44,
+          "y": 39,
+          "tileId": 10
+        },
+        {
+          "x": 45,
+          "y": 39,
+          "tileId": 10
+        },
+        {
           "x": 46,
           "y": 39,
           "tileId": 76
+        },
+        {
+          "x": 48,
+          "y": 39,
+          "tileId": 10
+        },
+        {
+          "x": 49,
+          "y": 39,
+          "tileId": 10
+        },
+        {
+          "x": 51,
+          "y": 39,
+          "tileId": 10
+        },
+        {
+          "x": 42,
+          "y": 40,
+          "tileId": 10
+        },
+        {
+          "x": 43,
+          "y": 40,
+          "tileId": 10
+        },
+        {
+          "x": 45,
+          "y": 40,
+          "tileId": 10
+        },
+        {
+          "x": 46,
+          "y": 40,
+          "tileId": 10
+        },
+        {
+          "x": 49,
+          "y": 40,
+          "tileId": 10
+        },
+        {
+          "x": 50,
+          "y": 40,
+          "tileId": 10
+        },
+        {
+          "x": 51,
+          "y": 40,
+          "tileId": 10
+        },
+        {
+          "x": 43,
+          "y": 41,
+          "tileId": 10
+        },
+        {
+          "x": 44,
+          "y": 41,
+          "tileId": 10
+        },
+        {
+          "x": 46,
+          "y": 41,
+          "tileId": 10
+        },
+        {
+          "x": 47,
+          "y": 41,
+          "tileId": 10
+        },
+        {
+          "x": 48,
+          "y": 41,
+          "tileId": 10
+        },
+        {
+          "x": 49,
+          "y": 41,
+          "tileId": 10
+        },
+        {
+          "x": 50,
+          "y": 41,
+          "tileId": 10
+        },
+        {
+          "x": 51,
+          "y": 41,
+          "tileId": 10
+        },
+        {
+          "x": 44,
+          "y": 42,
+          "tileId": 10
+        },
+        {
+          "x": 45,
+          "y": 42,
+          "tileId": 10
+        },
+        {
+          "x": 49,
+          "y": 42,
+          "tileId": 10
+        },
+        {
+          "x": 50,
+          "y": 42,
+          "tileId": 10
+        },
+        {
+          "x": 51,
+          "y": 42,
+          "tileId": 10
+        },
+        {
+          "x": 46,
+          "y": 43,
+          "tileId": 10
+        },
+        {
+          "x": 47,
+          "y": 43,
+          "tileId": 10
+        },
+        {
+          "x": 48,
+          "y": 43,
+          "tileId": 10
+        },
+        {
+          "x": 49,
+          "y": 43,
+          "tileId": 10
         }
       ]
+    }
+  ],
+  "Objects": [
+    {
+      "PositionX": 379.92188,
+      "PositionY": 457.0822,
+      "Name": "NPC",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 294.08463,
+      "PositionY": 447.83585,
+      "Name": "NPC",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 453.32935,
+      "PositionY": 418.56644,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 438.90036,
+      "PositionY": 381.51642,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 385.41577,
+      "PositionY": 317.09747,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 316.4171,
+      "PositionY": 345.8736,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 284.67682,
+      "PositionY": 378.05032,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 280.97742,
+      "PositionY": 407.18335,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 305.32343,
+      "PositionY": 433.24988,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 398.8167,
+      "PositionY": 508.5448,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 463.21637,
+      "PositionY": 475.03113,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 528.6898,
+      "PositionY": 422.49295,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 521.60614,
+      "PositionY": 371.91675,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 478.94897,
+      "PositionY": 328.98364,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 443.68298,
+      "PositionY": 293.71716,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 400.74988,
+      "PositionY": 259.41174,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 360.88342,
+      "PositionY": 251.34775,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 340.9502,
+      "PositionY": 269.99222,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 331.75024,
+      "PositionY": 279.13687,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 322.5503,
+      "PositionY": 288.32233,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 301.08374,
+      "PositionY": 309.78394,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 288.81714,
+      "PositionY": 322.05038,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 279.6172,
+      "PositionY": 331.25034,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 267.3506,
+      "PositionY": 343.51694,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 258.15063,
+      "PositionY": 352.7169,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 250.70996,
+      "PositionY": 363.45016,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 255.75543,
+      "PositionY": 374.18344,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 258.5226,
+      "PositionY": 384.91672,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 251.34149,
+      "PositionY": 395.65,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 241.96649,
+      "PositionY": 406.38327,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 246.23073,
+      "PositionY": 418.64987,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 254.24036,
+      "PositionY": 427.84982,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 263.12827,
+      "PositionY": 437.04977,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 275.27594,
+      "PositionY": 449.31638,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 273.1137,
+      "PositionY": 461.58298,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 263.9902,
+      "PositionY": 472.31625,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 256.80838,
+      "PositionY": 483.04953,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 263.9227,
+      "PositionY": 495.31613,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 273.83517,
+      "PositionY": 506.02274,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 284.39627,
+      "PositionY": 514.47394,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 307.3521,
+      "PositionY": 504.3636,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 319.61737,
+      "PositionY": 492.5013,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 328.8171,
+      "PositionY": 483.3615,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 342.61703,
+      "PositionY": 469.58008,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 353.3503,
+      "PositionY": 458.8491,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 365.6169,
+      "PositionY": 446.58298,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 374.19055,
+      "PositionY": 435.84973,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 368.15976,
+      "PositionY": 423.58313,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 358.41995,
+      "PositionY": 412.84985,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 349.83365,
+      "PositionY": 400.58325,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 357.03754,
+      "PositionY": 388.31665,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 366.9642,
+      "PositionY": 377.58337,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 377.52832,
+      "PositionY": 366.8501,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 389.7576,
+      "PositionY": 354.5835,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 402.01794,
+      "PositionY": 344.00284,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 414.28348,
+      "PositionY": 346.10028,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 425.0166,
+      "PositionY": 355.21344,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 437.2832,
+      "PositionY": 367.12222,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 461.8164,
+      "PositionY": 391.58533,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 472.54968,
+      "PositionY": 402.31702,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 409.68365,
+      "PositionY": 533.049,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 409.6834,
+      "PositionY": 533.049,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 409.68335,
+      "PositionY": 533.049,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 409.68335,
+      "PositionY": 533.049,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 409.68335,
+      "PositionY": 533.049,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 409.68335,
+      "PositionY": 533.049,
+      "Name": "CoreTable",
+      "LayerName": "TestObjectLayer"
+    },
+    {
+      "PositionX": 803.66266,
+      "PositionY": 663.8168,
+      "Name": "NPC",
+      "LayerName": "TestObjectLayer"
     }
   ]
 }

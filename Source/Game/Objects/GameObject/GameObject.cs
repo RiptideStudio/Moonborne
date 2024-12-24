@@ -6,6 +6,14 @@ using System;
 
 namespace Moonborne.Game.Objects
 {
+    public class GameObjectData
+    {
+        public float PositionX { get; set; }
+        public float PositionY { get; set; }
+        public string Name { get; set; }
+        public string LayerName { get; set; }
+    }
+
     public abstract class GameObject
     {
         public Sprite SpriteIndex; // Sprite object to hold drawing data

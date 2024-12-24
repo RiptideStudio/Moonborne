@@ -12,7 +12,7 @@ namespace Moonborne.Game.Projectiles
     public abstract class Projectile : GameObject
     {
         public bool CanCollide { get; set; } = true;
-        public int LifeTime { get; set; } = 3; // Lifetime in seconds
+        public int LifeTime { get; set; } = 2; // Lifetime in seconds
         public float ElapsedTime { get; set; } = 0;
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Moonborne.Game.Projectiles
 
             ElapsedTime += dt;
 
-            if (ElapsedTime >= LifeTime*dt)
+            if (ElapsedTime >= LifeTime)
             {
                 // Kill projectile
                 Destroy();
