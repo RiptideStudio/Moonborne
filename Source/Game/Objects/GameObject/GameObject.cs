@@ -70,6 +70,13 @@ namespace Moonborne.Game.Objects
             // Apply linear friction to acceleration (multiplicative decay for realism)
             Velocity += Acceleration;
 
+            // Clamp the magnitude of the velocity vector to the maximum speed
+            float speed = Velocity.Length();
+            if (speed > Speed)
+            {
+                Velocity *= Speed / speed;
+            }
+
             ApplyFriction();
 
             // Clamp velocity to maximum speed

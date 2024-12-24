@@ -16,6 +16,7 @@ using MonoGame.Extended.Collisions.Layers;
 using Moonborne.Game.Objects;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Moonborne.Engine;
 
 namespace Moonborne.Game.Room
 {
@@ -36,6 +37,8 @@ namespace Moonborne.Game.Room
         public static string selectedObject;
         public static bool Dragging = false;
         public static bool HoveringOverGameWorld = false;
+        public static bool InEditor = true; // Flag for if we're in editor mode or not
+        public static float PanSpeed = 8f;
 
         /// <summary>
         /// Create a default SelectedTilemap
@@ -91,6 +94,22 @@ namespace Moonborne.Game.Room
         /// <param name="spriteBatch"></param>
         public static void DrawEditor(SpriteBatch spriteBatch)
         {
+            // If we are in editor mode, no logic is executed
+            if (InputManager.KeyTriggered(Keys.Q))
+            {
+                if (InEditor)
+                {
+                    GameManager.Start();
+                }
+                else
+                {
+                    GameManager.Stop();
+                }
+            }
+
+            if (!InEditor)
+                return;
+
             // Render the ImGui buttons for toggling different
             ImGui.Begin("Tile Editor");
 
@@ -267,7 +286,28 @@ namespace Moonborne.Game.Room
                 }
             }
 
+            // Update our camera. We want to pan with WASD 
             Camera.TargetZoom = Math.Clamp(Camera.TargetZoom, 0.25f, 4f);
+
+            if (InputManager.KeyDown(Keys.W))
+            {
+                Camera.Position.Y -= PanSpeed;
+            }            
+            
+            if (InputManager.KeyDown(Keys.A))
+            {
+                Camera.Position.X -= PanSpeed;
+            }            
+            
+            if (InputManager.KeyDown(Keys.S))
+            {
+                Camera.Position.Y += PanSpeed;
+            }            
+            
+            if (InputManager.KeyDown(Keys.D))
+            {
+                Camera.Position.X += PanSpeed;
+            }
 
             // Update our tile selector
             if (SelectedTilemap != null)

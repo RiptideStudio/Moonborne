@@ -177,6 +177,11 @@ namespace Moonborne.Game.Room
         /// <param name="dt"></param>
         public void Update(float dt)
         {
+            // If we are in editor, we only want to draw our layers
+            // This way we have no game logic execute
+            if (RoomEditor.InEditor)
+                return;
+
             var objectsToRemove = new List<GameObject>();
 
             foreach (var obj in Objects)
