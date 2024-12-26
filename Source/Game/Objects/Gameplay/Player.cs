@@ -8,6 +8,7 @@ using Moonborne.Graphics.Camera;
 using Moonborne.Game.Projectiles;
 using Moonborne.Game.Inventory;
 using Moonborne.Game.Room;
+using System;
 
 namespace Moonborne.Game.Gameplay
 {
@@ -23,6 +24,7 @@ namespace Moonborne.Game.Gameplay
             Scale = new Vector2(1, 1);
             Position.X = 400;
             Position.Y = 400;
+            Collideable = true;
             Speed = 100;
             MaxSpeed = 100;
             Instance = this;

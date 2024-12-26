@@ -1,6 +1,8 @@
 ﻿
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Moonborne.Engine;
+using Moonborne.Engine.Collision;
 using Moonborne.Game.Inventory;
 using Moonborne.Game.Objects;
 using Moonborne.Graphics.Camera;
@@ -117,6 +119,14 @@ namespace Moonborne.Game.Room
         /// <param name="dt"></param>
         public static void Update(float dt)
         {
+            // If we are in editor, we only want to draw our layers
+            // This way we have no game logic execute
+            if (GameManager.Paused)
+                return;
+
+            // Deal with collisions
+            CollisionHandler.HandleCollisions(dt);
+
             foreach (var layer in Layers)
             {
                 if (!layer.Value.Visible)

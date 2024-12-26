@@ -5181,8 +5181,8 @@
       "TilesetName": "CollisionTiles",
       "LayerName": "Collision",
       "Depth": 5,
-      "Collideable": false,
-      "Visible": false,
+      "Collideable": true,
+      "Visible": true,
       "Tiles": [
         {
           "x": 33,
@@ -5550,11 +5550,6 @@
           "tileId": 3
         },
         {
-          "x": 25,
-          "y": 24,
-          "tileId": 3
-        },
-        {
           "x": 31,
           "y": 24,
           "tileId": 3
@@ -5565,36 +5560,6 @@
           "tileId": 3
         },
         {
-          "x": 25,
-          "y": 25,
-          "tileId": 3
-        },
-        {
-          "x": 26,
-          "y": 25,
-          "tileId": 3
-        },
-        {
-          "x": 27,
-          "y": 25,
-          "tileId": 3
-        },
-        {
-          "x": 28,
-          "y": 25,
-          "tileId": 3
-        },
-        {
-          "x": 29,
-          "y": 25,
-          "tileId": 3
-        },
-        {
-          "x": 30,
-          "y": 25,
-          "tileId": 3
-        },
-        {
           "x": 31,
           "y": 25,
           "tileId": 3
@@ -5602,36 +5567,6 @@
         {
           "x": 42,
           "y": 25,
-          "tileId": 3
-        },
-        {
-          "x": 25,
-          "y": 26,
-          "tileId": 3
-        },
-        {
-          "x": 26,
-          "y": 26,
-          "tileId": 3
-        },
-        {
-          "x": 27,
-          "y": 26,
-          "tileId": 3
-        },
-        {
-          "x": 28,
-          "y": 26,
-          "tileId": 3
-        },
-        {
-          "x": 29,
-          "y": 26,
-          "tileId": 3
-        },
-        {
-          "x": 30,
-          "y": 26,
           "tileId": 3
         },
         {
@@ -5795,20 +5730,20 @@
       "LayerName": "Objects"
     },
     {
-      "PositionX": 734.10815,
-      "PositionY": 561.4616,
+      "PositionX": 732.61383,
+      "PositionY": 549.6593,
       "Name": "NPC",
       "LayerName": "Objects"
     },
     {
-      "PositionX": 372.33228,
-      "PositionY": 324.55847,
+      "PositionX": 388.51797,
+      "PositionY": 324.26422,
       "Name": "NPC",
       "LayerName": "Objects"
     },
     {
-      "PositionX": 381.80795,
-      "PositionY": 439.6937,
+      "PositionX": 400.13828,
+      "PositionY": 417.2791,
       "Name": "NPC",
       "LayerName": "Objects"
     },
@@ -5819,14 +5754,14 @@
       "LayerName": "Objects"
     },
     {
-      "PositionX": 635.5799,
-      "PositionY": 267.69104,
+      "PositionX": 630.0054,
+      "PositionY": 287.02383,
       "Name": "NPC",
       "LayerName": "Objects"
     },
     {
       "PositionX": 680.99646,
-      "PositionY": 329.26144,
+      "PositionY": 319.81155,
       "Name": "NPC",
       "LayerName": "Objects"
     }

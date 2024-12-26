@@ -2,6 +2,7 @@
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Moonborne.Engine.Collision;
 using Moonborne.Game.Inventory;
 using Moonborne.Game.Objects;
 using Moonborne.Graphics;
@@ -177,16 +178,20 @@ namespace Moonborne.Game.Room
         /// <param name="dt"></param>
         public void Update(float dt)
         {
-            // If we are in editor, we only want to draw our layers
-            // This way we have no game logic execute
-            if (RoomEditor.InEditor)
-                return;
-
             var objectsToRemove = new List<GameObject>();
+            var collideableObjects = new List<GameObject>();
 
+            // Iterate over each object and update them
             foreach (var obj in Objects)
             {
+                // Call the update function
                 obj.Update(dt);
+
+                // Defer collisions
+                if (obj.Collideable)
+                {
+                    CollisionHandler.Collisions.Add(obj);
+                }
 
                 // Defer destruction
                 if (obj.IsDestroyed)

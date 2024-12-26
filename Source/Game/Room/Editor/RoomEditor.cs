@@ -118,20 +118,24 @@ namespace Moonborne.Game.Room
                 ImGui.Text($"Active Layer: {selectedLayer.Name}");
             }
 
-            ImGui.Checkbox("Show Preview", ref ShowPreview);
-            ImGui.Checkbox("Show Grid", ref DebugDraw);
-            ImGui.Checkbox("Can Edit", ref CanEdit);
-            
+            // Properties of tile editor
+            if (ImGui.CollapsingHeader("Properties"))
+            {
+                ImGui.Checkbox("Show Preview", ref ShowPreview);
+                ImGui.Checkbox("Show Grid", ref DebugDraw);
+                ImGui.Checkbox("Can Edit", ref CanEdit);
+                ImGui.Checkbox("Debug Mode", ref GameManager.DebugMode);
+            }
+
             // Do not allow us to place tiles if we are hovering over or interacting w/editor
             if (ImGui.IsWindowHovered() || ImGui.IsAnyItemHovered())
             {
                 CanPlaceTile = false;
                 HoveringOverGameWorld = false;
             }
-            ImGui.NewLine();
 
             // Display a list of all SelectedTilemap layers and let us select the one we are working on
-            if (ImGui.TreeNodeEx("Select Layers"))
+            if (ImGui.CollapsingHeader("Layers"))
             {
                 foreach (var layer in LayerManager.Layers)
                 {
@@ -158,34 +162,32 @@ namespace Moonborne.Game.Room
 
                 // Add a new layer
                 Vector2 newTilemapButton = new Vector2(160, 48);
-                ImGui.TreePop();
             }
 
             // Display the properties of each layer
             if (selectedLayer != null)
             {
-                if (ImGui.TreeNodeEx("Properties")) // Start properties tree
+                if (ImGui.CollapsingHeader("Layer Properties"))
                 {
                     selectedLayer.DrawSettings();
-
-                    ImGui.TreePop(); // End properties tree
                 }
-            }
-            ImGui.NewLine();
 
-            ImGui.End();
-
-            // Give us a dropdown for creating objects
-            if (selectedLayer != null)
-            {
-                if (selectedLayer.Type == LayerType.Object)
+                // Let us pan!
+                if (selectedLayer.Type != LayerType.Tile)
                 {
-                    ImGui.Begin("Game Objects");
+                    HoveringOverGameWorld = true;
+
                     if (ImGui.IsWindowHovered() || ImGui.IsAnyItemHovered())
                     {
-                        CanPlaceTile = false;
                         HoveringOverGameWorld = false;
                     }
+                }
+            }
+
+            if (selectedLayer != null && selectedLayer.Type == LayerType.Object)
+            {
+                if (ImGui.CollapsingHeader("Manage Objects"))
+                {
                     // Display a list of all objects, and allow us to drag them into the game
                     var list = ObjectLibrary.GetAllGameObjectNames();
 
@@ -225,35 +227,33 @@ namespace Moonborne.Game.Room
                         ImGui.TreePop();
                     }
 
-                    ImGui.End();
                 }
             }
 
-            // Create a new layer
-            ImGui.Begin("Create Layer");
-            if (ImGui.IsWindowHovered() || ImGui.IsAnyItemHovered())
+
+            if (ImGui.CollapsingHeader("Create New Layer"))
             {
-                CanPlaceTile = false;
+
+                if (ImGui.InputText("Layer Name", ref NewLayerName, 20))
+                {
+                }
+
+                if (ImGui.Button("Add Tile Layer"))
+                {
+                    string layerName = NewLayerName;
+                    Layer layer = new Layer(1, () => Camera.Transform, LayerType.Tile);
+                    Tilemap tilemap = new Tilemap("TilesetTest", new int[100, 100], 16, layerName);
+                    LayerManager.AddTilemapLayer(layer, tilemap, layerName);
+                }
+
+                // Create a new object layer
+                if (ImGui.Button("Add Object Layer"))
+                {
+                    LayerManager.AddLayer(new Layer(1, () => Camera.Transform, LayerType.Object), NewLayerName);
+                }
             }
 
-            if (ImGui.InputText("Layer Name", ref NewLayerName, 20))
-            {
-            }
-
-            if (ImGui.Button("Add Tile Layer"))
-            {
-                string layerName = NewLayerName;
-                Layer layer = new Layer(1, () => Camera.Transform, LayerType.Tile);
-                Tilemap tilemap = new Tilemap("TilesetTest", new int[100, 100], 16, layerName);
-                LayerManager.AddTilemapLayer(layer, tilemap, layerName);
-            }
-
-            // Create a new object layer
-            if (ImGui.Button("Add Object Layer"))
-            {
-                LayerManager.AddLayer(new Layer(1, () => Camera.Transform, LayerType.Object), NewLayerName);
-            }
-
+            ImGui.NewLine();
             ImGui.End();
 
             if (HoveringOverGameWorld)
@@ -267,6 +267,26 @@ namespace Moonborne.Game.Room
                 if (InputManager.MouseWheelUp())
                 {
                     Camera.TargetZoom += ZoomScale;
+                }
+
+                if (InputManager.KeyDown(Keys.W))
+                {
+                    Camera.Position.Y -= PanSpeed;
+                }
+
+                if (InputManager.KeyDown(Keys.A))
+                {
+                    Camera.Position.X -= PanSpeed;
+                }
+
+                if (InputManager.KeyDown(Keys.S))
+                {
+                    Camera.Position.Y += PanSpeed;
+                }
+
+                if (InputManager.KeyDown(Keys.D))
+                {
+                    Camera.Position.X += PanSpeed;
                 }
             }
 
@@ -288,26 +308,6 @@ namespace Moonborne.Game.Room
 
             // Update our camera. We want to pan with WASD 
             Camera.TargetZoom = Math.Clamp(Camera.TargetZoom, 0.25f, 4f);
-
-            if (InputManager.KeyDown(Keys.W))
-            {
-                Camera.Position.Y -= PanSpeed;
-            }            
-            
-            if (InputManager.KeyDown(Keys.A))
-            {
-                Camera.Position.X -= PanSpeed;
-            }            
-            
-            if (InputManager.KeyDown(Keys.S))
-            {
-                Camera.Position.Y += PanSpeed;
-            }            
-            
-            if (InputManager.KeyDown(Keys.D))
-            {
-                Camera.Position.X += PanSpeed;
-            }
 
             // Update our tile selector
             if (SelectedTilemap != null)

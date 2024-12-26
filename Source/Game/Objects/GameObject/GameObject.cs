@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Moonborne.Engine;
 using Moonborne.Game.Room;
 using Moonborne.Graphics;
 using System;
@@ -12,6 +13,15 @@ namespace Moonborne.Game.Objects
         public float PositionY { get; set; }
         public string Name { get; set; }
         public string LayerName { get; set; }
+    }
+
+    /// <summary>
+    /// Handle collision states
+    /// </summary>
+    public enum ECollisionState
+    {
+        Colliding,
+        None
     }
 
     public abstract class GameObject
@@ -41,6 +51,11 @@ namespace Moonborne.Game.Objects
         public int Frame = 0;
         public float FrameTime = 0;
         public int AnimationSpeed = 10;
+
+        public Rectangle Hitbox = new Rectangle(0, 0, 16, 16);
+        public bool Collideable = true;
+        public bool IsStatic = false; // Static collisions don't get updated
+        public ECollisionState CollisionState = ECollisionState.None;
 
         /// <summary>
         /// Base constructor
@@ -87,6 +102,19 @@ namespace Moonborne.Game.Objects
             Position += Velocity * dt;
             Rotation += AngularVelocity * dt;
 
+            // Update our hitbox if we are moving
+            if (!IsStatic)
+            {
+                Hitbox.X = (int)Position.X;
+                Hitbox.Y = (int)Position.Y;
+
+                if (SpriteIndex != null)
+                {
+                    Hitbox.Width = SpriteIndex.FrameWidth;
+                    Hitbox.Height = SpriteIndex.FrameHeight;
+                }
+            }
+
             // Update our animation
             if (AnimationSpeed > 0)
             {
@@ -116,6 +144,14 @@ namespace Moonborne.Game.Objects
                 return;
             }
 
+            // Draw the hitbox of our object
+            if (GameManager.DebugMode)
+            {
+                SpriteManager.SetDrawAlpha(0.25f);
+                SpriteManager.DrawRectangle(Hitbox.X - Hitbox.Width / 2, Hitbox.Y - Hitbox.Height / 2, Hitbox.Width, Hitbox.Height, Color.Red);
+                SpriteManager.ResetDraw();
+            }
+
             // If the sprite is valid, draw it
             if (SpriteIndex != null)
             {
@@ -137,7 +173,6 @@ namespace Moonborne.Game.Objects
         /// </summary>
         public virtual void OnDestroy()
         {
-
         }
 
         /// <summary>
@@ -146,6 +181,36 @@ namespace Moonborne.Game.Objects
         public void Destroy()
         {
             IsDestroyed = true;
+        }
+
+        /// <summary>
+        /// While an object is colliding with another
+        /// </summary>
+        public virtual void OnCollide()
+        {
+            // Triggers a collision event once on enter
+            if (CollisionState == ECollisionState.None)
+            {
+                OnCollisionStart();
+            }
+        }
+
+        /// <summary>
+        /// When an object enters another (single frame trigger)
+        /// </summary>
+        public virtual void OnCollisionStart()
+        {
+            CollisionState = ECollisionState.Colliding;
+            Console.WriteLine("Started");
+        }
+
+        /// <summary>
+        /// When we leave the collision
+        /// </summary>
+        public virtual void OnCollisionEnd()
+        {
+            Console.WriteLine("Left");
+            CollisionState = ECollisionState.None;
         }
 
         /// <summary>

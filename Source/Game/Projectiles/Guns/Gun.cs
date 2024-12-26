@@ -33,6 +33,7 @@ namespace Moonborne.Game.Projectiles
             Parent = parent;
             ShootSpeed = shootSpeed;
             ShootDelay = shootDelay;
+            Collideable = false;
         }
 
         /// <summary>

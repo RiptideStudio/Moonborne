@@ -6,11 +6,15 @@ namespace Moonborne.Engine
 {
     public static class GameManager
     {
+        public static bool Paused = true;
+        public static bool DebugMode = true;
+
         /// <summary>
         /// Called when the game is started (or toggled from editor mode)
         /// </summary>
         public static void Start()
         {
+            Resume();
             Camera.SetTarget(Player.Instance);
             RoomEditor.InEditor = false;
         }
@@ -20,8 +24,31 @@ namespace Moonborne.Engine
         /// </summary>
         public static void Stop()
         {
+            Pause();
             Camera.SetTarget(null);
             RoomEditor.InEditor = true;
+        }
+
+        /// <summary>
+        /// Pause the game
+        /// </summary>
+        public static void Pause()
+        {
+            if (!Paused)
+            {
+                Paused = true;
+            }
+        }
+
+        /// <summary>
+        /// Resume a paused game
+        /// </summary>
+        public static void Resume()
+        {
+            if (Paused)
+            {
+                Paused = false;
+            }
         }
     }
 }
