@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Moonborne.Game.Objects;
 using Moonborne.Utils.Math;
+using Moonborne.Game.Room;
 
 namespace Moonborne.UI.Dialogue
 {

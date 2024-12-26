@@ -15,6 +15,8 @@ namespace Moonborne.Engine
         public static void Start()
         {
             Resume();
+            Camera.Zoom = Camera.DefaultZoom;
+            Camera.TargetZoom = Camera.DefaultZoom;
             Camera.SetTarget(Player.Instance);
             RoomEditor.InEditor = false;
         }

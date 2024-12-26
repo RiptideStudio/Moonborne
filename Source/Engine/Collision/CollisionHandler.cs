@@ -77,9 +77,11 @@ namespace Moonborne.Engine.Collision
 
                     int cellX = (int)((newPosition.X) / tilemap.tileSize);
                     int cellY = (int)((newPosition.Y) / tilemap.tileSize);
+                    int nextX = cellX + (int)(obj.Velocity.X * dt);
+                    int nextY = cellY + (int)(obj.Velocity.Y * dt);
 
-                    bool horizontalCollision = tilemap.grid[cellX+(int)(obj.Velocity.X * dt), cellY] > 0;
-                    bool verticalCollision = tilemap.grid[cellX, cellY + (int)(obj.Velocity.Y * dt)] > 0;
+                    bool horizontalCollision = tilemap.grid[nextX, cellY] > 0;
+                    bool verticalCollision = tilemap.grid[cellX, nextY] > 0;
 
                     // Horizontal collision
                     if (horizontalCollision)

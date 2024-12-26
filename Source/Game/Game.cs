@@ -17,6 +17,7 @@ using Moonborne.Game.Projectiles;
 using Moonborne.Game.Inventory;
 using MonoGame.Extended.Tiled;
 using ImGuiNET;
+using Moonborne.Engine.Audio;
 
 namespace Moonborne
 {
@@ -45,6 +46,7 @@ namespace Moonborne
             Camera.Initialize();
             ImGuiManager.Initialize(this, GraphicsDevice);
             WindowManager.Initialize(_graphics,this);
+            AudioManager.Initialize();
             DialogueManager.LoadDialogue();
             Window.TextInput += OnTextInput;
             base.Initialize();
@@ -83,11 +85,11 @@ namespace Moonborne
 
             ImGuiManager.UpdateInput();
             InputManager.Update(dt);
-
             WindowManager.Update(dt);
             Camera.Update();
             DialogueManager.Update(dt);
             InventoryManager.Update();
+            AudioManager.Update(dt);
 
             // Update everything
             LayerManager.Update(dt);

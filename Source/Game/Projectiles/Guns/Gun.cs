@@ -29,7 +29,7 @@ namespace Moonborne.Game.Projectiles
         /// <param name="shootDelay"></param>
         public Gun (GameObject parent, float shootSpeed = 10f, int shootDelay = 5) : base()
         {
-            SpriteIndex = SpriteManager.GetSprite("Gun");
+            SpriteIndex = SpriteManager.GetSprite("None");
             Parent = parent;
             ShootSpeed = shootSpeed;
             ShootDelay = shootDelay;

@@ -9,8 +9,10 @@ namespace Moonborne.Graphics.Camera
     public static class Camera
     {
         public static Vector2 Position = Vector2.Zero;
+        public static Vector2 TargetPosition = Vector2.Zero;
         public static float Zoom = 2.0f; // Default zoom level
         public static float TargetZoom = 2.0f; // Default zoom level
+        public static float DefaultZoom = 2.0f; // Default zoom level
         public static float MaxZoom { get; private set; } = 10f; // Default zoom level
         public static float Rotation { get; private set; } = 0f; // Default rotation
         public static float InterpolationSpeed { get; private set; } = 0.2f; // How much the camera lags behind
@@ -41,7 +43,7 @@ namespace Moonborne.Graphics.Camera
         {
             if (Target != null)
             {
-                SetPosition(Target.Position);
+                TargetPosition = Target.Position;
             }
         }
 
@@ -52,7 +54,10 @@ namespace Moonborne.Graphics.Camera
         {
             FollowTarget();
             UpdateTransform();
+
             Zoom = MathHelper.Lerp(Zoom, TargetZoom, 0.25f);
+            Position.X = MathHelper.Lerp(Position.X, TargetPosition.X, InterpolationSpeed);
+            Position.Y = MathHelper.Lerp(Position.Y, TargetPosition.Y + 8, InterpolationSpeed);
         }
 
         /// <summary>
@@ -61,9 +66,8 @@ namespace Moonborne.Graphics.Camera
         /// <param name="newPosition"></param>
         public static void SetPosition(Vector2 newPosition)
         {
-            Position.X = MathHelper.Lerp(Position.X,newPosition.X,InterpolationSpeed);
-            Position.Y = MathHelper.Lerp(Position.Y,newPosition.Y+8,InterpolationSpeed);
-            UpdateTransform();
+            TargetPosition = newPosition;
+            Position = newPosition;
         }
 
         /// <summary>

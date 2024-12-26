@@ -29,7 +29,7 @@ namespace Moonborne.Game.Gameplay
             MaxSpeed = 100;
             Instance = this;
 
-            Camera.Position = Position;
+            Camera.SetPosition(Position);
             Gun = new Gun(this,250f,10);
             LayerManager.AddInstance(Gun, "Object");
         }

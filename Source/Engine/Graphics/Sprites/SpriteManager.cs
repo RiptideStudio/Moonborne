@@ -182,7 +182,7 @@ namespace Moonborne.Graphics
         /// <param name="color"></param>
         public static void DrawRectangle(float x, float y, int width, int height, Color color)
         {
-            color *= (float)DrawAlpha / 255;
+            color.A = (byte)(255-(DrawAlpha * 255));
             Rectangle rectangle = new Rectangle((int)x, (int)y, width, height);
             spriteBatch.Draw(PixelTexture, rectangle, color);
         }
@@ -196,7 +196,7 @@ namespace Moonborne.Graphics
         /// <param name="color"></param>
         public static void DrawRectangle(Vector2 position, int width, int height, Color color)
         {
-            DrawRectangle((int)position.X, (int)position.Y, width, height, color);
+            DrawRectangle(position.X, position.Y, width, height, color);
         }       
         
         /// <summary>

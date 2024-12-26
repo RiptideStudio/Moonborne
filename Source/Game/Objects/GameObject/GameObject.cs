@@ -37,7 +37,6 @@ namespace Moonborne.Game.Objects
 
         public bool Visible = true;
         public bool IsDestroyed = false; // If we are marked for destroy
-        private bool IsDirty = true; // Whether to recalculate transform data
 
         public float Speed = 0;
         public float LinearFriction = 8;

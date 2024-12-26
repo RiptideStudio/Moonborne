@@ -31,7 +31,7 @@ namespace Moonborne.Game.Room
         public static int PreviewX = 0;
         public static int PreviewY = 0;
         public static float PreviewZoom = 1f;
-        public static float ZoomScale = 0.2f; // How much we zoom when scrolling mouse
+        public static float ZoomScale = 0.25f; // How much we zoom when scrolling mouse
         public static string NewLayerName = "Layer";
         public static Layer selectedLayer = null;
         public static string selectedObject;
@@ -271,22 +271,22 @@ namespace Moonborne.Game.Room
 
                 if (InputManager.KeyDown(Keys.W))
                 {
-                    Camera.Position.Y -= PanSpeed;
+                    Camera.TargetPosition.Y -= PanSpeed;
                 }
 
                 if (InputManager.KeyDown(Keys.A))
                 {
-                    Camera.Position.X -= PanSpeed;
+                    Camera.TargetPosition.X -= PanSpeed;
                 }
 
                 if (InputManager.KeyDown(Keys.S))
                 {
-                    Camera.Position.Y += PanSpeed;
+                    Camera.TargetPosition.Y += PanSpeed;
                 }
 
                 if (InputManager.KeyDown(Keys.D))
                 {
-                    Camera.Position.X += PanSpeed;
+                    Camera.TargetPosition.X += PanSpeed;
                 }
             }
 

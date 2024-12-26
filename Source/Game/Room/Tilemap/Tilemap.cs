@@ -10,6 +10,7 @@ using System.IO;
 using Moonborne.Game.Room;
 using System;
 using MonoGame.Extended.Tiled;
+using Moonborne.Game.Gameplay;
 
 namespace Moonborne.Game.Room
 {
@@ -83,19 +84,20 @@ namespace Moonborne.Game.Room
         /// </summary>
         public void DrawGrid()
         {
+            if (!RoomEditor.DebugDraw)
+                return;
+
+            SpriteManager.SetDrawAlpha(0.33f);
+
             for (int y = 0; y < grid.GetLength(1); y++)
             {
-                for (int x = 0; x < grid.GetLength(0); x++)
-                {
-                    if (RoomEditor.DebugDraw)
-                    {
-                        Vector2 gridPosX = new Vector2(0, y * tileSize);
-                        Vector2 gridPosY = new Vector2(x * tileSize, 0);
-                        SpriteManager.DrawRectangle(gridPosX, tileSize * grid.GetLength(0), 1, Color.White);
-                        SpriteManager.DrawRectangle(gridPosY, 1, tileSize * grid.GetLength(1), Color.White);
-                    }
-                }
+                Vector2 gridPosX = new Vector2(0, y * tileSize);
+                Vector2 gridPosY = new Vector2(y * tileSize, 0);
+                SpriteManager.DrawRectangle(gridPosX, tileSize * grid.GetLength(0), 1, Color.White);
+                SpriteManager.DrawRectangle(gridPosY, 1, tileSize * grid.GetLength(1), Color.White);
             }
+
+            SpriteManager.ResetDraw();
         }
 
         /// <summary>
