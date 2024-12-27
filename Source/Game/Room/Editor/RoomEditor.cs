@@ -39,6 +39,7 @@ namespace Moonborne.Game.Room
         public static bool HoveringOverGameWorld = false;
         public static bool InEditor = true; // Flag for if we're in editor mode or not
         public static float PanSpeed = 8f;
+        public static int BrushSize = 1;
 
         /// <summary>
         /// Create a default SelectedTilemap
@@ -74,14 +75,33 @@ namespace Moonborne.Game.Room
             {
                 Vector2 worldMouse = InputManager.MouseWorldCoords();
                 int tileSize = SelectedTilemap.tileSize;
-                Color PreviewColor = new Color(255, 255, 255, 200);
-                int drawX = (int)worldMouse.X;
-                int drawY = (int)worldMouse.Y;
+                Color PreviewColor = new Color(128, 255, 128, 200);
 
-                Rectangle rect = new Rectangle((drawX / 16) * 16, (drawY / 16) * 16, tileSize, tileSize);
+                // Calculate the center tile grid position
+                int centerX = (int)worldMouse.X / tileSize;
+                int centerY = (int)worldMouse.Y / tileSize;
 
-                spriteBatch.Draw(SelectedTilemap.tileset, rect, SelectedTilemap.SelectedSourceTileRectangle, PreviewColor);
+                // Determine the brush size range
+                int halfBrush = BrushSize / 2;
+
+                // Loop through the brush size area
+                for (int x = centerX - halfBrush; x <= centerX + halfBrush; x++)
+                {
+                    for (int y = centerY - halfBrush; y <= centerY + halfBrush; y++)
+                    {
+                        // Calculate the screen position of the tile
+                        int drawX = x * tileSize;
+                        int drawY = y * tileSize;
+
+                        // Define the rectangle for the tile
+                        Rectangle rect = new Rectangle(drawX, drawY, tileSize, tileSize);
+
+                        // Draw the preview tile
+                        spriteBatch.Draw(SelectedTilemap.tileset, rect, SelectedTilemap.SelectedSourceTileRectangle, PreviewColor);
+                    }
+                }
             }
+
 
             CanPlaceTile = true;
         }
@@ -115,7 +135,26 @@ namespace Moonborne.Game.Room
 
             if (selectedLayer != null)
             {
-                ImGui.Text($"Active Layer: {selectedLayer.Name}");
+                ImGui.Text($"Active Layer: {selectedLayer.Name} ({selectedLayer.Type.ToString()})");
+            }
+
+            // Settings
+            if (ImGui.CollapsingHeader("Settings"))
+            {
+                if (ImGui.Button("Save"))
+                {
+                    CurrentRoom.Save(CurrentRoom.Name);
+                }                
+                if (ImGui.Button("Load"))
+                {
+                    CurrentRoom.Load(CurrentRoom.Name);
+                }
+            }
+
+            // Brush settings
+            if (ImGui.CollapsingHeader("Brush Settings"))
+            {
+                ImGui.SliderInt("Brush Size", ref BrushSize, 1, 10);
             }
 
             // Properties of tile editor

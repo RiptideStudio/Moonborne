@@ -16,6 +16,7 @@ namespace Moonborne.Game.Inventory
     public abstract class Item : GameObject
     {
         public float PickupRange { get; set; } = 32f;
+        public string Name;
 
         /// <summary>
         /// Extend the create method
@@ -57,7 +58,7 @@ namespace Moonborne.Game.Inventory
         /// </summary>
         public virtual void OnPickup()
         {
-            InventoryManager.AddItem(this);
+            InventoryManager.AddItem(this,1);
             Destroy();
         }
     }

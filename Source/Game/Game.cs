@@ -26,6 +26,7 @@ namespace Moonborne
         private GraphicsDeviceManager _graphics;
         private SpriteBatch spriteBatch;
         public Player player;
+        public static float DeltaTime;
 
         public MGame()
         {
@@ -82,6 +83,7 @@ namespace Moonborne
             Exit();
 
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            DeltaTime = dt;
 
             ImGuiManager.UpdateInput();
             InputManager.Update(dt);

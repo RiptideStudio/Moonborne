@@ -25,6 +25,7 @@ namespace Moonborne.Graphics
         public static SpriteFont GameFont;
         public static Texture2D PixelTexture;
         public static byte DrawAlpha = 1;
+        public static bool DrawCentered = false;
 
         /// <summary>
         /// Load and initialize all textures
@@ -165,9 +166,18 @@ namespace Moonborne.Graphics
             Vector2 linePosition = position;
             color *= (float)DrawAlpha/255;
 
+            Vector2 origin = Vector2.Zero;
+
+            if (DrawCentered)
+            {
+                Vector2 stringSize = GameFont.MeasureString(lines[0]);
+                origin.X = stringSize.X / 2;
+                origin.Y = stringSize.Y / 2;
+            }
+
             foreach (var line in lines)
             {
-                spriteBatch.DrawString(GameFont, line, linePosition, color, rotation, Vector2.Zero, scale, SpriteEffects.None, 0);
+                spriteBatch.DrawString(GameFont, line, linePosition, color, rotation, origin, scale, SpriteEffects.None, 0);
                 linePosition.Y += GameFont.LineSpacing * (scale.Y/1.25f);
             }
         }
@@ -182,7 +192,8 @@ namespace Moonborne.Graphics
         /// <param name="color"></param>
         public static void DrawRectangle(float x, float y, int width, int height, Color color)
         {
-            color.A = (byte)(255-(DrawAlpha * 255));
+            color.A = (byte)Math.Clamp((int)(color.A * (DrawAlpha / 255f)), 0, 255);
+
             Rectangle rectangle = new Rectangle((int)x, (int)y, width, height);
             spriteBatch.Draw(PixelTexture, rectangle, color);
         }
@@ -275,11 +286,21 @@ namespace Moonborne.Graphics
         }
 
         /// <summary>
+        /// Set the draw alignment
+        /// </summary>
+        /// <param name="centered"></param>
+        public static void DrawSetAlignment(bool centered)
+        {
+            DrawCentered = centered;
+        }
+
+        /// <summary>
         /// Reset the draw properties to default
         /// </summary>
         public static void ResetDraw()
         {
             DrawAlpha = 255;
+            DrawCentered = false;
         }
 
         /// <summary>

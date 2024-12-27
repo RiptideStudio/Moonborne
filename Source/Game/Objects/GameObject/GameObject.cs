@@ -55,6 +55,7 @@ namespace Moonborne.Game.Objects
         public bool Collideable = true;
         public bool IsStatic = false; // Static collisions don't get updated
         public ECollisionState CollisionState = ECollisionState.None;
+        public Color Tint = Color.White;
 
         /// <summary>
         /// Base constructor
@@ -104,8 +105,8 @@ namespace Moonborne.Game.Objects
             // Update our hitbox if we are moving
             if (!IsStatic)
             {
-                Hitbox.X = (int)Position.X;
-                Hitbox.Y = (int)Position.Y;
+                Hitbox.X = (int)Position.X-Hitbox.Width/2;
+                Hitbox.Y = (int)Position.Y-Hitbox.Height/2;
 
                 if (SpriteIndex != null)
                 {
@@ -115,7 +116,7 @@ namespace Moonborne.Game.Objects
             }
 
             // Update our animation
-            if (AnimationSpeed > 0)
+            if (SpriteIndex != null && AnimationSpeed > 0)
             {
                 FrameTime += AnimationSpeed * dt;
 
@@ -147,13 +148,14 @@ namespace Moonborne.Game.Objects
             if (GameManager.DebugMode)
             {
                 SpriteManager.SetDrawAlpha(0.25f);
-                SpriteManager.DrawRectangle(Hitbox.X - Hitbox.Width / 2, Hitbox.Y - Hitbox.Height / 2, Hitbox.Width, Hitbox.Height, Color.Red);
+                SpriteManager.DrawRectangle(Hitbox.X, Hitbox.Y, Hitbox.Width, Hitbox.Height, Color.Red);
                 SpriteManager.ResetDraw();
             }
 
             // If the sprite is valid, draw it
             if (SpriteIndex != null)
             {
+                SpriteIndex.Color = Tint;
                 SpriteIndex.Draw(spriteBatch, Frame, Position+DrawOffset, Scale, Rotation, SpriteIndex.Color);
             }
         }

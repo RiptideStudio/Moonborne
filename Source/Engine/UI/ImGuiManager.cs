@@ -53,5 +53,28 @@ namespace Moonborne.Engine.UI
         {
             imGuiRenderer.EndLayout();
         }
+
+        /// <summary>
+        /// Wrapper for drawing a button at any position
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="position"></param>
+        /// <param name="scale"></param>
+        /// <returns></returns>
+        public static bool Button(string name, Vector2 position, Vector2 scale)
+        {
+            ImGui.SetNextWindowPos(position.ToNumerics());
+            return ImGui.Button(name, scale.ToNumerics());
+        }
+
+
+        /// <summary>
+        /// Begin a new window with no background
+        /// </summary>
+        /// <param name="background"></param>
+        public static void BeginInvisibleWindow(string name = "InvisibleWindow")
+        {
+            ImGui.Begin("Invisible Window", ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBackground);
+        }
     }
 }

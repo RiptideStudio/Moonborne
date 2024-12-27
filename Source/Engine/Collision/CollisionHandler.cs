@@ -77,12 +77,15 @@ namespace Moonborne.Engine.Collision
 
                     int cellX = (int)((newPosition.X) / tilemap.tileSize);
                     int cellY = (int)((newPosition.Y) / tilemap.tileSize);
+
                     int nextX = cellX + (int)(obj.Velocity.X * dt);
                     int nextY = cellY + (int)(obj.Velocity.Y * dt);
 
                     // Never index outside the grid
-                    nextX = Math.Clamp(nextX, 0, tilemap.grid.GetLength(0));
-                    nextY = Math.Clamp(nextY, 0, tilemap.grid.GetLength(1));
+                    nextX = Math.Clamp(nextX, 0, tilemap.grid.GetLength(0)-1);
+                    nextY = Math.Clamp(nextY, 0, tilemap.grid.GetLength(1)-1);
+                    cellX = Math.Clamp(cellX, 0, tilemap.grid.GetLength(0)-1);
+                    nextY = Math.Clamp(nextY, 0, tilemap.grid.GetLength(1)-1);
 
                     bool horizontalCollision = tilemap.grid[nextX, cellY] > 0;
                     bool verticalCollision = tilemap.grid[cellX, nextY] > 0;
@@ -101,7 +104,6 @@ namespace Moonborne.Engine.Collision
                 }
             }
 
-            // Clear collisions for next frame
             Collisions.Clear();
         }
     }

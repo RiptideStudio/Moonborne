@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Moonborne.Engine.Collision;
 using Moonborne.Game.Room;
 using Moonborne.Graphics;
 using Moonborne.Graphics.Camera;
@@ -17,6 +18,7 @@ namespace Moonborne.Input
         public static Vector2 MouseUIPosition;
         public static int PreviousScrollValue;
         public static int ScrollValue;
+        public static Rectangle MouseHitbox = new Rectangle(0,0,24,24);
 
         /// <summary>
         /// Check if a key is triggered by comparing previous and current state
@@ -140,6 +142,16 @@ namespace Moonborne.Input
         }
 
         /// <summary>
+        /// If our mouse is hovering over a target rectangle
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static bool MouseIsHovering(Rectangle target)
+        {
+            return CollisionHandler.IsColliding(MouseHitbox, target);
+        }
+
+        /// <summary>
         /// Update input state given delta time
         /// </summary>
         /// <param name="dt"></param>
@@ -153,6 +165,8 @@ namespace Moonborne.Input
             MouseUIPosition = MouseState.Position.ToVector2() / WindowManager.ViewportScale;
             PreviousScrollValue = ScrollValue;
             ScrollValue = MouseState.ScrollWheelValue;
+            MouseHitbox.X = (int)MouseUIPosition.X;
+            MouseHitbox.Y = (int)MouseUIPosition.Y;
         }
     }
 }

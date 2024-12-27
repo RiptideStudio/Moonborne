@@ -168,14 +168,23 @@ namespace Moonborne.Game.Room
             {
                 // Get the grid cell we want to place the tile in
                 Vector2 worldMouse = InputManager.MouseWorldCoords();
-                gridX = ((int)worldMouse.X) / tileSize;
-                gridY = ((int)worldMouse.Y) / tileSize;
+                int centerX = (int)worldMouse.X / tileSize;
+                int centerY = (int)worldMouse.Y / tileSize;
 
-                // Ensure the click is within the grid bounds
-                if (gridX >= 0 && gridX < grid.GetLength(0) && gridY >= 0 && gridY < grid.GetLength(1))
+                // Iterate over the area defined by the brush size
+                int halfBrush = RoomEditor.BrushSize / 2;
+                for (int x = centerX - halfBrush; x <= centerX + halfBrush; x++)
                 {
-                    grid[gridX, gridY] = SelectedTile; // Place the selected tile in the grid
+                    for (int y = centerY - halfBrush; y <= centerY + halfBrush; y++)
+                    {
+                        // Ensure the brush stays within grid bounds
+                        if (x >= 0 && x < grid.GetLength(0) && y >= 0 && y < grid.GetLength(1))
+                        {
+                            grid[x, y] = SelectedTile; // Place the selected tile in the grid
+                        }
+                    }
                 }
+
             }
 
             // Erase the tile with right-click
@@ -225,7 +234,7 @@ namespace Moonborne.Game.Room
                     spriteBatch.Draw(tileset, new Rectangle(drawX, drawY, (int)(tileSize * PreviewZoom), (int)(tileSize * PreviewZoom)), sourceRectangle, Color.White);
 
                     Color gridLineColor = new Color(255, 0, 0, 75);
-                    Color selectedColor = new Color(0, 255, 0, 25);
+                    Color selectedColor = new Color(0, 255, 0, 75);
 
                     spriteBatch.Draw(
                         SpriteManager.PixelTexture,
