@@ -19,7 +19,8 @@ namespace Moonborne.Game.Gameplay
         public string DisplayName { get; set; } = "Player";
         public override void Create()
         {
-            SpriteIndex = SpriteManager.GetSprite("HornetIdle");
+            base.Create();
+
             AnimationSpeed = 10;
             Scale = new Vector2(1, 1);
             Position.X = 400;
@@ -29,6 +30,13 @@ namespace Moonborne.Game.Gameplay
             MaxSpeed = 100;
             Instance = this;
 
+            // Set our sprites
+            IdleSprites[Direction.Left] = SpriteManager.GetSprite("PlayerIdleLeft");
+            IdleSprites[Direction.Right] = SpriteManager.GetSprite("PlayerIdleRight");
+            IdleSprites[Direction.Up] = SpriteManager.GetSprite("PlayerIdleUp");
+            IdleSprites[Direction.Down] = SpriteManager.GetSprite("PlayerIdleDown");
+            SpriteIndex = IdleSprites[Direction.Down];
+
             Camera.SetPosition(Position);
             Gun = new Gun(this,250f,10);
             LayerManager.AddInstance(Gun, "Object");
@@ -36,7 +44,7 @@ namespace Moonborne.Game.Gameplay
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            DrawShadow(Position.X,Position.Y+20,6,2);
+            DrawShadow(Position.X+1,Position.Y+6,6,2);
             base.Draw(spriteBatch);
         }
 
@@ -53,21 +61,22 @@ namespace Moonborne.Game.Gameplay
             if (InputManager.KeyDown(Keys.W))
             {
                 Velocity.Y = -Speed;
-                SpriteIndex = SpriteManager.GetSprite("HornetIdle");
+                Direction = Direction.Up;
             }
             if (InputManager.KeyDown(Keys.A))
             {
-                SpriteIndex.Flip(Sprite.Axis.Horizontal);
                 Velocity.X = -Speed;
+                Direction = Direction.Left;
             }
             if (InputManager.KeyDown(Keys.S))
             {
                 Velocity.Y = Speed;
+                Direction = Direction.Down;
             }
             if (InputManager.KeyDown(Keys.D))
             {
-                SpriteIndex.Flip(Sprite.Axis.None);
                 Velocity.X = Speed;
+                Direction = Direction.Right;
             }
         }
     }

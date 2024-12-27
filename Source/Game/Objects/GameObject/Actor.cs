@@ -6,9 +6,22 @@ using Moonborne.Graphics;
 using Moonborne.Input;
 using Moonborne.Utils.Math;
 using System;
+using System.Collections.Generic;
 
 namespace Moonborne.Game.Objects
 {
+    
+    /// <summary>
+    /// Sprites are directional
+    /// </summary>
+    public enum Direction
+    {
+        Right,
+        Left,
+        Up,
+        Down
+    }
+
     /// <summary>
     /// Extension of game object class. Has better interaction capabilities and more properties
     /// </summary>
@@ -25,6 +38,19 @@ namespace Moonborne.Game.Objects
         public bool Friendly = true; // If we are friendly
         public int InvincibilityFrames = 10;
         public bool IsHurt = false;
+        public Direction Direction = Direction.Down;
+
+        public Dictionary<Direction, Sprite> IdleSprites = new Dictionary<Direction, Sprite>(); // Use the sprite index associated with direction we are in
+        public Dictionary<Direction, Sprite> WalkSprites = new Dictionary<Direction, Sprite>(); // When we are walking
+
+
+        /// <summary>
+        /// Extend the create method
+        /// </summary>
+        public override void Create()
+        {
+            base.Create();
+        }
 
         /// <summary>
         /// Called when the actor is interacted with
@@ -83,6 +109,12 @@ namespace Moonborne.Game.Objects
                     LeaveInteract();
                     InteractingWith = false;
                 }
+            }
+
+            // Update spritesheet based on direction
+            if (IdleSprites.Count > 0)
+            {
+                SpriteIndex = IdleSprites[Direction];
             }
         }
 

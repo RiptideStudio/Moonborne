@@ -127,6 +127,11 @@ namespace Moonborne.Game.Room
                 }
             }
 
+            if (InputManager.KeyTriggered(Keys.B))
+            {
+                GameManager.DebugMode = !GameManager.DebugMode;
+            }
+
             if (!InEditor)
                 return;
 
