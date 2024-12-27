@@ -9,28 +9,52 @@ using Microsoft.Xna.Framework;
 
 namespace Moonborne.Game.Projectiles
 {
-    public abstract class Projectile : GameObject
+    public abstract class Projectile : Actor
     {
         public bool CanCollide { get; set; } = true;
         public int LifeTime { get; set; } = 2; // Lifetime in seconds
         public float ElapsedTime { get; set; } = 0;
+        public int Penetration = 1;
+        public int PenetrationCount = 0;
 
         /// <summary>
         /// Called when a projectile hits a tile
         /// </summary>
         public virtual void OnTileCollide()
         {
-            Destroy();
+            if (CanCollide)
+            {
+                Destroy();
+            }
         }
 
         /// <summary>
-        /// Called when a projectile collides with an object that is marked as collideable
+        /// Hurt the other object
         /// </summary>
         /// <param name="other"></param>
-        /// <returns></returns>
-        public virtual void OnEnemyCollide(GameObject other)
+        public override void OnCollisionStart(GameObject other)
         {
+            base.OnCollisionStart(other);
 
+            // Damage the other object
+            if (other is Actor)
+            {
+                Actor actor = (Actor)other;
+
+                // Do not hurt friendly actors
+                if (actor.Friendly)
+                    return;
+
+                // Hurt the other object
+                actor.Hurt(Damage);
+
+                // Keep going if we have a large penetration value
+                PenetrationCount++;
+                if (PenetrationCount >= Penetration)
+                {
+                    Kill();
+                }
+            }
         }
 
         /// <summary>

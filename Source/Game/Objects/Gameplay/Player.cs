@@ -12,7 +12,7 @@ using System;
 
 namespace Moonborne.Game.Gameplay
 {
-    public class Player : GameObject
+    public class Player : Actor
     {
         public Gun Gun { get; set; }
         public static Player Instance { get; private set; }

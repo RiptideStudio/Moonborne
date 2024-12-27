@@ -177,19 +177,19 @@ namespace Moonborne.Game.Objects
         /// <summary>
         /// While an object is colliding with another
         /// </summary>
-        public virtual void OnCollision()
+        public virtual void OnCollision(GameObject other)
         {
             // Triggers a collision event once on enter
             if (CollisionState == ECollisionState.None)
             {
-                OnCollisionStart();
+                OnCollisionStart(other);
             }
         }
 
         /// <summary>
         /// When an object enters another (single frame trigger)
         /// </summary>
-        public virtual void OnCollisionStart()
+        public virtual void OnCollisionStart(GameObject other)
         {
             CollisionState = ECollisionState.Colliding;
         }

@@ -28,7 +28,7 @@ namespace Moonborne.Game.Objects
         Attack
     }
 
-    public class NPC : GameObject
+    public class NPC : Actor
     {
         public Gun Gun { get; set; }
         public State State { get; set; } = State.Idle;
@@ -37,10 +37,8 @@ namespace Moonborne.Game.Objects
         public Dictionary<int, string> Dialogue { get; set; } = new Dictionary<int, string>(); // List of our Dialogue objects
         public bool CanInteract { get; set; } = true; // Default, we can interact
         public bool CanTalk { get; set; } = false; 
-        public bool Hostile { get; set; } = false; // Default, we are not hostile, meaning we won't aggro
         public float AggroDistance { get; set; } = 100f;
         public float WanderDistance { get; set; } = 80f;
-        public float InteractDistance { get; set; } = 32f;
         public float ElapsedTime { get; set; } = 0;
         public int WanderTimeMin { get; set; } = 120;
         public int WanderTimeMax { get; set; } = 180;
@@ -86,6 +84,7 @@ namespace Moonborne.Game.Objects
             base.Create();
             SpriteIndex = SpriteManager.GetSprite("NPC");
             WanderPosition = Position;
+            Friendly = false;
             Speed = 33;
             Dialogue[0] = "Test";
             Dialogue[1] = "Test2";
@@ -176,7 +175,7 @@ namespace Moonborne.Game.Objects
         /// </summary>
         public virtual void Attack()
         {
-            if (Target != null && Hostile)
+            if (Target != null && !Friendly)
             {
                 Target = Player.Instance;
                 Vector2 targetDirection = Target.Position-Position;
@@ -192,6 +191,11 @@ namespace Moonborne.Game.Objects
         {
             // Talk to NPC
             InteractWithNpc();
+        }
+
+        public override void LeaveInteract()
+        {
+            base.LeaveInteract();
 
             // Stop dialogue if we walk away
             float playerDistance = MoonMath.Distance(Position, Player.Instance.Position);
@@ -205,8 +209,10 @@ namespace Moonborne.Game.Objects
         /// <summary>
         /// Called when an NPC is talked to
         /// </summary>
-        public virtual void OnInteract()
+        public override void OnInteract()
         {
+            base.OnInteract();
+
             // Some NPCs don't have dialogue. In this case, do nothing
             if (Dialogue.Count == 0 || DialogueState >= Dialogue.Count)
             {

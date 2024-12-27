@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Moonborne.Game.Gameplay;
 using Moonborne.Graphics;
@@ -18,6 +19,13 @@ namespace Moonborne.Game.Objects
         public bool InteractingWith = false; // If we are currently interacting with this object
         public int InteractDistance = 48;
 
+        public int Health = 5; // Default health is 10
+        public int MaxHealth = 5;
+        public int Damage = 1;
+        public bool Friendly = true; // If we are friendly
+        public int InvincibilityFrames = 10;
+        public bool IsHurt = false;
+
         /// <summary>
         /// Called when the actor is interacted with
         /// </summary>
@@ -32,6 +40,22 @@ namespace Moonborne.Game.Objects
         public virtual void LeaveInteract()
         {
 
+        }
+
+        /// <summary>
+        /// Extend the draw method 
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch);
+            
+            if (IsHurt)
+            {
+                Vector2 healthbarPosition = Position + new Vector2(0, -16);
+                SpriteManager.DrawRectangle(healthbarPosition, 36, 8, Color.Black);
+                SpriteManager.DrawRectangle(healthbarPosition, ((float)Health/MaxHealth)*36, 8, Color.Green);
+            }
         }
 
         /// <summary>
@@ -60,6 +84,29 @@ namespace Moonborne.Game.Objects
                     InteractingWith = false;
                 }
             }
+        }
+
+        /// <summary>
+        /// Damage an actor
+        /// </summary>
+        /// <param name="damage"></param>
+        public virtual void Hurt(int damage)
+        {
+            Health -= damage;
+            IsHurt = true;
+
+            if (Health <= 0)
+            {
+                Kill();
+            }
+        }
+
+        /// <summary>
+        /// Called when an actor reaches 0 health
+        /// </summary>
+        public virtual void Kill()
+        {
+            Destroy();
         }
     }
 }

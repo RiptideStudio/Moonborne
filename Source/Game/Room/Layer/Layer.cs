@@ -202,7 +202,6 @@ namespace Moonborne.Game.Room
         public void Update(float dt)
         {
             var objectsToRemove = new List<GameObject>();
-            var collideableObjects = new List<GameObject>();
 
             // Iterate over each object and update them
             foreach (var obj in Objects)
@@ -228,6 +227,8 @@ namespace Moonborne.Game.Room
             {
                 Objects.Remove(obj);
             }
+
+            objectsToRemove.Clear();
         }
     }
 }

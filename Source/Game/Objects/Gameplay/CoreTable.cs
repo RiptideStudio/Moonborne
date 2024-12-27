@@ -10,25 +10,33 @@ using System;
 using static Moonborne.Graphics.SpriteManager;
 using Microsoft.Xna.Framework.Audio;
 using Moonborne.Engine.Audio;
+using ImGuiNET;
 
 namespace Moonborne.Game.Gameplay
 {
     public class CoreTable : Actor
     {
-
+        private Vector2 DisplayPosition = new Vector2(120,120);
         public override void Create()
         {
             base.Create();
-            SpriteIndex = SpriteManager.GetSprite("CoreTable");
+            SpriteIndex = GetSprite("CoreTable");
             Interactable = true;
             InteractDistance = 32;
+            Collideable = false;
         }
 
         public override void DrawUI(SpriteBatch spriteBatch)
         {
             if (InteractingWith)
             {
-                DrawRectangle(new Rectangle(16,16,380,100),Color.Black);
+                DrawRectangle(DisplayPosition, 400, 160, Color.Black);
+                DrawText("Core Table", DisplayPosition, new Vector2(2, 2), 0, Color.White);
+
+                if (ImGui.Button("Upgrade Gun"))
+                {
+                    Player.Instance.Gun.Upgrade();
+                }
             }
         }
 

@@ -197,6 +197,18 @@ namespace Moonborne.Graphics
         public static void DrawRectangle(Vector2 position, int width, int height, Color color)
         {
             DrawRectangle(position.X, position.Y, width, height, color);
+        }               
+        
+        /// <summary>
+        /// Draw rectangle that uses floats
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="color"></param>
+        public static void DrawRectangle(Vector2 position, float width, float height, Color color)
+        {
+            DrawRectangle(position.X, position.Y, (int)width, (int)height, color);
         }       
         
         /// <summary>

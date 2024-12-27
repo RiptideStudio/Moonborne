@@ -76,8 +76,6 @@ namespace Moonborne.Engine.Audio
                     Sounds.Add(fileName, gameSound);
                 }
             }
-
-            PlaySound(SoundID.Earthward);
         }
 
         /// <summary>

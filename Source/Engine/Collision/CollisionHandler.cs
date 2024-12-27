@@ -48,8 +48,8 @@ namespace Moonborne.Engine.Collision
                     // Check if two objects are colliding
                     if (IsColliding(obj.Hitbox, obj2.Hitbox))
                     {
-                        obj.OnCollision();
-                        obj2.OnCollision();
+                        obj.OnCollision(obj2);
+                        obj2.OnCollision(obj);
                         isColliding = true;
                     }
                 }
@@ -79,6 +79,10 @@ namespace Moonborne.Engine.Collision
                     int cellY = (int)((newPosition.Y) / tilemap.tileSize);
                     int nextX = cellX + (int)(obj.Velocity.X * dt);
                     int nextY = cellY + (int)(obj.Velocity.Y * dt);
+
+                    // Never index outside the grid
+                    nextX = Math.Clamp(nextX, 0, tilemap.grid.GetLength(0));
+                    nextY = Math.Clamp(nextY, 0, tilemap.grid.GetLength(1));
 
                     bool horizontalCollision = tilemap.grid[nextX, cellY] > 0;
                     bool verticalCollision = tilemap.grid[cellX, nextY] > 0;

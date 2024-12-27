@@ -20,6 +20,8 @@ namespace Moonborne.Game.Projectiles
         public float ShootSpeed { get; set; } = 10f; // Speed of shot
         private float TimeElapsed { get; set; } = 0f; // Used for cooldowns
         private bool CanShoot { get; set; } = true; // Check whether or not we can shoot
+        public int Level = 1; // How much this gun has been upgraded
+        public int Damage = 1;
 
         /// <summary>
         /// Constructor for making a new gun
@@ -46,6 +48,15 @@ namespace Moonborne.Game.Projectiles
         }
 
         /// <summary>
+        /// Upgrade this gun
+        /// </summary>
+        public virtual void Upgrade()
+        {
+            Level++;
+            Damage++;
+        }
+
+        /// <summary>
         /// Shoot a projectile from the gun
         /// </summary>
         public virtual void Shoot()
@@ -56,6 +67,7 @@ namespace Moonborne.Game.Projectiles
             }
 
             Bullet bullet = ObjectLibrary.CreateObject<Bullet>(Position);
+            bullet.Damage = Damage;
             bullet.Launch(InputManager.MouseDirection(Position), ShootSpeed);
             CanShoot = false;
         }
