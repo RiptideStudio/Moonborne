@@ -48,8 +48,8 @@ namespace Moonborne.Engine.Collision
                     // Check if two objects are colliding
                     if (IsColliding(obj.Hitbox, obj2.Hitbox))
                     {
-                        obj.OnCollide();
-                        obj2.OnCollide();
+                        obj.OnCollision();
+                        obj2.OnCollision();
                         isColliding = true;
                     }
                 }

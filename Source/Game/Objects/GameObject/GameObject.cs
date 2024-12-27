@@ -159,7 +159,7 @@ namespace Moonborne.Game.Objects
         }
 
         /// <summary>
-        /// Draw event called from the UI event
+        /// Draw event that draws using the Window's UI transform
         /// </summary>
         /// <param name="spriteBatch"></param>
         public virtual void DrawUI(SpriteBatch spriteBatch)
@@ -175,17 +175,9 @@ namespace Moonborne.Game.Objects
         }
 
         /// <summary>
-        /// Marks an object for destruction
-        /// </summary>
-        public void Destroy()
-        {
-            IsDestroyed = true;
-        }
-
-        /// <summary>
         /// While an object is colliding with another
         /// </summary>
-        public virtual void OnCollide()
+        public virtual void OnCollision()
         {
             // Triggers a collision event once on enter
             if (CollisionState == ECollisionState.None)
@@ -200,7 +192,6 @@ namespace Moonborne.Game.Objects
         public virtual void OnCollisionStart()
         {
             CollisionState = ECollisionState.Colliding;
-            Console.WriteLine("Started");
         }
 
         /// <summary>
@@ -208,8 +199,15 @@ namespace Moonborne.Game.Objects
         /// </summary>
         public virtual void OnCollisionEnd()
         {
-            Console.WriteLine("Left");
             CollisionState = ECollisionState.None;
+        }
+
+                /// <summary>
+        /// Marks an object for destruction
+        /// </summary>
+        public void Destroy()
+        {
+            IsDestroyed = true;
         }
 
         /// <summary>

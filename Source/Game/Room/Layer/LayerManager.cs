@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Collisions.Layers;
 using Moonborne.Engine;
 using Moonborne.Engine.Collision;
 using Moonborne.Game.Inventory;
@@ -104,12 +105,23 @@ namespace Moonborne.Game.Room
 
             foreach (var layer in snapShot) 
             {
+                // Don't draw invisible layers
                 if (!layer.Visible)
                     continue;
 
                 layer.DrawBegin(spriteBatch);
                 layer.Draw(spriteBatch);
                 layer.DrawEnd(spriteBatch);
+            }
+
+            // Render only our draw UI events from objects
+            foreach (var layer in snapShot)
+            {
+                // Don't draw invisible layers
+                if (!layer.Visible || layer.Type != LayerType.Object)
+                    continue;
+
+                layer.DrawUI(spriteBatch);
             }
         }
 
@@ -171,7 +183,6 @@ namespace Moonborne.Game.Room
             AddLayer(new Layer(4, () => Camera.Transform, LayerType.Object, true), "Tiles");
             AddLayer(new Layer(3, () => Camera.Transform, LayerType.Object, true), "Player");
             AddLayer(new Layer(1000, () => Camera.Transform, LayerType.Tile, true), "TileEditorWorld");
-            AddLayer(new Layer(9999, () => WindowManager.Transform, LayerType.UI, true), "UI");
             AddLayer(new Layer(9999, () => WindowManager.Transform, LayerType.UI, true), "Dialogue");
             AddLayer(new Layer(1002, () => WindowManager.Transform, LayerType.UI, true), "Inventory");
             AddLayer(new Layer(1003, () => WindowManager.Transform, LayerType.UI, true), "RoomEditor");

@@ -136,20 +136,43 @@ namespace Moonborne.Game.Room
         /// <param name="spriteBatch"></param>
         public void Draw(SpriteBatch spriteBatch)
         {
-            // Render each object
-            foreach (var obj in Objects)
-            {
-                obj.Draw(spriteBatch);
-            }
-
             // Render each tilemap
             foreach (var tileMap in Tilemaps)
             {
                 tileMap.Draw(spriteBatch);
             }
 
+            // Render each object
+            foreach (var obj in Objects)
+            {
+                // Execute object's world draw event
+                obj.Draw(spriteBatch);
+            }
+
             // Render static managers
             DrawStaticManagers(spriteBatch);
+        }
+
+        /// <summary>
+        /// Call UI draw calls from objects
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        public void DrawUI(SpriteBatch spriteBatch)
+        {
+            // Only objects have UI draw methods
+            if (Objects.Count == 0)
+                return;
+
+            // Use our window's transform
+            spriteBatch.Begin(SortMode, BlendState, SamplerState, transformMatrix: WindowManager.Transform);
+
+            foreach (var obj in Objects)
+            {
+                // Execute object's world draw event
+                obj.DrawUI(spriteBatch);
+            }
+
+            spriteBatch.End();
         }
 
         /// <summary>

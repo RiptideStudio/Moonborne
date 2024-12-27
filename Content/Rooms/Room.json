@@ -5182,7 +5182,7 @@
       "LayerName": "Collision",
       "Depth": 5,
       "Collideable": true,
-      "Visible": true,
+      "Visible": false,
       "Tiles": [
         {
           "x": 33,
@@ -5730,20 +5730,20 @@
       "LayerName": "Objects"
     },
     {
-      "PositionX": 732.61383,
-      "PositionY": 549.6593,
+      "PositionX": 737.5001,
+      "PositionY": 522.66986,
       "Name": "NPC",
       "LayerName": "Objects"
     },
     {
-      "PositionX": 388.51797,
-      "PositionY": 324.26422,
+      "PositionX": 400.10416,
+      "PositionY": 301.38586,
       "Name": "NPC",
       "LayerName": "Objects"
     },
     {
-      "PositionX": 400.13828,
-      "PositionY": 417.2791,
+      "PositionX": 406.61542,
+      "PositionY": 383.79254,
       "Name": "NPC",
       "LayerName": "Objects"
     },
@@ -5754,8 +5754,8 @@
       "LayerName": "Objects"
     },
     {
-      "PositionX": 630.0054,
-      "PositionY": 287.02383,
+      "PositionX": 672.13196,
+      "PositionY": 293.4018,
       "Name": "NPC",
       "LayerName": "Objects"
     },

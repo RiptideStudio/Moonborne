@@ -20,7 +20,8 @@ namespace Moonborne.Engine.Audio
     /// </summary>
     public enum SoundID
     {
-        Earthward
+        Earthward,
+        CoreTable
     }
 
 
