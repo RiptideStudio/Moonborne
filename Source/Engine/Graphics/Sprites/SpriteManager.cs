@@ -90,12 +90,11 @@ namespace Moonborne.Graphics
                         textures[textureName] = texture;
 
                         // Spritesheets should be uniform width and height
-                        int maxFrames = texture.Width/texture.Height;
                         Sprite sprite = new Sprite(texture);
 
                         // Assuming same dimensions for width and height by default
-                        sprite.MaxFrames = maxFrames;
-                        sprite.FrameWidth = texture.Height;
+                        sprite.MaxFrames = 1;
+                        sprite.FrameWidth = texture.Width;
                         sprite.FrameHeight = texture.Height;
 
                         sprites[textureName] = sprite;
@@ -194,8 +193,16 @@ namespace Moonborne.Graphics
         {
             color.A = (byte)Math.Clamp((int)(color.A * (DrawAlpha / 255f)), 0, 255);
 
+            Vector2 origin = Vector2.Zero;
+
+            if (DrawCentered)
+            {
+                origin.X = width/ 2;
+                origin.Y = height / 2;
+            }
+
             Rectangle rectangle = new Rectangle((int)x, (int)y, width, height);
-            spriteBatch.Draw(PixelTexture, rectangle, color);
+            spriteBatch.Draw(PixelTexture, rectangle, rectangle, color, 0, origin,SpriteEffects.None, 0);
         }
 
         /// <summary>
@@ -327,6 +334,27 @@ namespace Moonborne.Graphics
         public static Sprite GetSprite(string name)
         {
             return sprites.TryGetValue(name, out var sprite) ? sprite : null;
+        }
+
+        /// <summary>
+        /// Get a sprite and set its values for animation, returning that newly modified sprite
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="frameWidth"></param>
+        /// <param name="frameHeight"></param>
+        /// <returns></returns>
+        public static Sprite AssignSprite(string name, int frameWidth, int frameHeight)
+        {
+            Sprite sprite = GetSprite(name);
+
+            if (sprite != null)
+            {
+                sprite.FrameHeight = frameHeight;
+                sprite.FrameWidth = frameWidth;
+                sprite.MaxFrames = sprite.Texture.Width / frameHeight;
+            }
+
+            return sprite;
         }
     }
 }

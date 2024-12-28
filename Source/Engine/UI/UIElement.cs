@@ -70,7 +70,7 @@ namespace Moonborne.Engine.UI
             }
 
             // Click the element
-            if (InputManager.MouseLeftPressed())
+            if (InputManager.MouseLeftReleased())
             {
                 if (Hover)
                 {

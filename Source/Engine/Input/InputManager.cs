@@ -18,7 +18,7 @@ namespace Moonborne.Input
         public static Vector2 MouseUIPosition;
         public static int PreviousScrollValue;
         public static int ScrollValue;
-        public static Rectangle MouseHitbox = new Rectangle(0,0,24,24);
+        public static Rectangle MouseHitbox = new Rectangle(0,0,6,6);
 
         /// <summary>
         /// Check if a key is triggered by comparing previous and current state
@@ -165,8 +165,8 @@ namespace Moonborne.Input
             MouseUIPosition = MouseState.Position.ToVector2() / WindowManager.ViewportScale;
             PreviousScrollValue = ScrollValue;
             ScrollValue = MouseState.ScrollWheelValue;
-            MouseHitbox.X = (int)MouseUIPosition.X;
-            MouseHitbox.Y = (int)MouseUIPosition.Y;
+            MouseHitbox.X = (int)MouseUIPosition.X-MouseHitbox.Width/2;
+            MouseHitbox.Y = (int)MouseUIPosition.Y-MouseHitbox.Height/2;
         }
     }
 }

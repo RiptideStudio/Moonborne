@@ -24,14 +24,14 @@ namespace Moonborne.Game.Objects
     {
         Idle,
         Wander,
+        Move,
         Talking,
         Attack
     }
 
-    public class NPC : Actor
+    public class NPC : Lifeform
     {
         public Gun Gun { get; set; }
-        public State State { get; set; } = State.Idle;
         public State PreviousState { get; set; } = State.Idle;
         public int DialogueState { get; set; } = 0; // Allows us to cycle through dialogue
         public Dictionary<int, string> Dialogue { get; set; } = new Dictionary<int, string>(); // List of our Dialogue objects
@@ -82,12 +82,17 @@ namespace Moonborne.Game.Objects
         public override void Create()
         {
             base.Create();
-            SpriteIndex = SpriteManager.GetSprite("NPC");
             WanderPosition = Position;
             Friendly = false;
             Speed = 33;
             Dialogue[0] = "Test";
             Dialogue[1] = "Test2";
+
+            SetSprite("NpcIdleLeft", 16, 16, State.Idle, Direction.Left);
+            SetSprite("NpcIdleRight", 16, 16, State.Idle, Direction.Right);
+            SetSprite("NpcIdleDown", 16, 16, State.Idle, Direction.Down);
+            SetSprite("NpcIdleUp", 16, 16, State.Idle, Direction.Up);
+            SpriteIndex = GetSprites(State.Idle, Direction.Down);
         }
 
         /// <summary>
@@ -126,7 +131,7 @@ namespace Moonborne.Game.Objects
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
-            DrawShadow(Position.X, Position.Y+16, 6, 2);
+            DrawShadow(Position.X, Position.Y+5, 6, 2);
         }
 
         /// <summary>

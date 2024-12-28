@@ -65,12 +65,12 @@ namespace Moonborne.Graphics
         /// <param name="frameHeight"></param>
         /// <param name="frameWidth"></param>
         /// <param name="maxFrames"></param>
-        public void SetSpritesheet(string tex, int frameHeight, int frameWidth, int maxFrames)
+        public void SetSpritesheet(string tex, int frameHeight, int frameWidth)
         {
             Texture = SpriteManager.GetTexture(tex);
             FrameHeight = frameWidth;
             FrameWidth = frameHeight;
-            MaxFrames = maxFrames;
+            MaxFrames = Texture.Width/Texture.Height;
         }
 
         /// <summary>

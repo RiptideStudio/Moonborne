@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Moonborne.Game.Gameplay;
+using Moonborne.Game.Inventory;
 using Moonborne.Graphics;
 using Moonborne.Input;
 using Moonborne.Utils.Math;
@@ -38,11 +39,39 @@ namespace Moonborne.Game.Objects
         public bool Friendly = true; // If we are friendly
         public int InvincibilityFrames = 10;
         public bool IsHurt = false;
+        public int HealthbarWidth = 32;
+        public int HealthbarHeight = 4;
+
         public Direction Direction = Direction.Down;
+        public State State = State.Idle;
 
-        public Dictionary<Direction, Sprite> IdleSprites = new Dictionary<Direction, Sprite>(); // Use the sprite index associated with direction we are in
-        public Dictionary<Direction, Sprite> WalkSprites = new Dictionary<Direction, Sprite>(); // When we are walking
+        public Sprite[,] Sprites = new Sprite[Enum.GetValues<State>().Length, Enum.GetValues<Direction>().Length];
 
+        public List<Item> ItemsToDrop = new List<Item>();
+
+        /// <summary>
+        /// Set a sprite for a state and direction
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="frameWidth"></param>
+        /// <param name="frameHeight"></param>
+        /// <param name="state"></param>
+        /// <param name="direction"></param>
+        public void SetSprite(string name, int frameWidth, int frameHeight, State state, Direction direction)
+        {
+            Sprites[(int)state, (int)direction] = SpriteManager.AssignSprite(name, frameWidth, frameHeight);
+        }
+
+        /// <summary>
+        /// Get a sprite from sprites
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="direction"></param>
+        /// <returns></returns>
+        public Sprite GetSprites(State state, Direction direction)
+        {
+            return Sprites[(int)state,(int)direction];
+        }
 
         /// <summary>
         /// Extend the create method
@@ -78,9 +107,9 @@ namespace Moonborne.Game.Objects
             
             if (IsHurt)
             {
-                Vector2 healthbarPosition = Position + new Vector2(0, -16);
-                SpriteManager.DrawRectangle(healthbarPosition, 36, 8, Color.Black);
-                SpriteManager.DrawRectangle(healthbarPosition, ((float)Health/MaxHealth)*36, 8, Color.Green);
+                Vector2 healthbarPosition = Position + new Vector2(-16, -16);
+                SpriteManager.DrawRectangle(healthbarPosition, HealthbarWidth, HealthbarHeight, Color.Black);
+                SpriteManager.DrawRectangle(healthbarPosition, ((float)Health/MaxHealth)* HealthbarWidth, HealthbarHeight, Color.Green);
             }
         }
 
@@ -110,12 +139,6 @@ namespace Moonborne.Game.Objects
                     InteractingWith = false;
                 }
             }
-
-            // Update spritesheet based on direction
-            if (IdleSprites.Count > 0)
-            {
-                SpriteIndex = IdleSprites[Direction];
-            }
         }
 
         /// <summary>
@@ -138,6 +161,11 @@ namespace Moonborne.Game.Objects
         /// </summary>
         public virtual void Kill()
         {
+            foreach (Item item in ItemsToDrop)
+            {
+
+            }
+
             Destroy();
         }
     }

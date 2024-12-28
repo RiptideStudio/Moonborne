@@ -126,7 +126,7 @@ namespace Moonborne.Game.Objects
                     Frame++;
                 }
 
-                if (Frame >= SpriteIndex.MaxFrames-1)
+                if (Frame >= SpriteIndex.MaxFrames)
                 {
                     Frame = 0;
                 }

@@ -47,6 +47,10 @@ namespace Moonborne.Game.Inventory
                 return;
             }
 
+            SpriteManager.SetDrawAlpha(0.75f);
+            SpriteManager.DrawRectangle(new Vector2(16,16), 128,240, Color.Black);
+            SpriteManager.SetDrawAlpha(1);
+
             // Iterate over each item and draw it
             for (int i = 0; i < Slots.Count; ++i)
             {

@@ -7,7 +7,7 @@ namespace Moonborne.Engine
     public static class GameManager
     {
         public static bool Paused = true;
-        public static bool DebugMode = true;
+        public static bool DebugMode = false;
 
         /// <summary>
         /// Called when the game is started (or toggled from editor mode)

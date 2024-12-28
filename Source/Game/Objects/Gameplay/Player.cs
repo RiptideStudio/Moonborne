@@ -12,11 +12,12 @@ using System;
 
 namespace Moonborne.Game.Gameplay
 {
-    public class Player : Actor
+    public class Player : Lifeform
     {
         public Gun Gun { get; set; }
         public static Player Instance { get; private set; }
         public string DisplayName { get; set; } = "Player";
+
         public override void Create()
         {
             base.Create();
@@ -30,12 +31,18 @@ namespace Moonborne.Game.Gameplay
             MaxSpeed = 100;
             Instance = this;
 
-            // Set our sprites
-            IdleSprites[Direction.Left] = SpriteManager.GetSprite("PlayerIdleLeft");
-            IdleSprites[Direction.Right] = SpriteManager.GetSprite("PlayerIdleRight");
-            IdleSprites[Direction.Up] = SpriteManager.GetSprite("PlayerIdleUp");
-            IdleSprites[Direction.Down] = SpriteManager.GetSprite("PlayerIdleDown");
-            SpriteIndex = IdleSprites[Direction.Down];
+            // Set our directional sprites
+            SetSprite("PlayerIdleLeft", 16, 16, State.Idle, Direction.Left);
+            SetSprite("PlayerIdleRight", 16, 16, State.Idle, Direction.Right);
+            SetSprite("PlayerIdleDown", 16, 16, State.Idle, Direction.Down);
+            SetSprite("PlayerIdleUp", 16, 16, State.Idle, Direction.Up);
+
+            SetSprite("PlayerWalkLeft", 16, 16, State.Move, Direction.Left);
+            SetSprite("PlayerWalkRight", 16, 16, State.Move, Direction.Right);
+            SetSprite("PlayerWalkDown", 16, 16, State.Move, Direction.Down);
+            SetSprite("PlayerWalkUp", 16, 16, State.Move, Direction.Up);
+
+            SpriteIndex = GetSprites(State.Idle, Direction.Down);
 
             Camera.SetPosition(Position);
             Gun = new Gun(this,250f,10);
@@ -58,25 +65,40 @@ namespace Moonborne.Game.Gameplay
                 Gun.Shoot();
             }
 
+            bool moving = false;
+
             if (InputManager.KeyDown(Keys.W))
             {
                 Velocity.Y = -Speed;
                 Direction = Direction.Up;
-            }
-            if (InputManager.KeyDown(Keys.A))
-            {
-                Velocity.X = -Speed;
-                Direction = Direction.Left;
+                moving = true;
             }
             if (InputManager.KeyDown(Keys.S))
             {
                 Velocity.Y = Speed;
                 Direction = Direction.Down;
+                moving = true;
+            }
+            if (InputManager.KeyDown(Keys.A))
+            {
+                Velocity.X = -Speed;
+                moving = true;
+                Direction = Direction.Left;
             }
             if (InputManager.KeyDown(Keys.D))
             {
                 Velocity.X = Speed;
+                moving = true;
                 Direction = Direction.Right;
+            }
+
+            if (moving)
+            {
+                State = State.Move;
+            }
+            else
+            {
+                State = State.Idle;
             }
         }
     }

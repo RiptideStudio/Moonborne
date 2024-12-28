@@ -12,9 +12,10 @@ namespace Moonborne.Game.Gameplay
 {
     public class CoreTable : Actor
     {
-        private Vector2 DisplayPosition = new Vector2(120,120);
+        private Vector2 DisplayPosition = new Vector2(320,160);
         private Vector2 ButtonSize = new Vector2(1,1);
         private Button UpgradeButton;
+        private Button ExitButton;
         private int Cost = 3; // How much it costs to upgrade the gun
 
         public override void Create()
@@ -26,6 +27,7 @@ namespace Moonborne.Game.Gameplay
             Collideable = false;
 
             UpgradeButton = new Button(new Vector2(320,160), ButtonSize, "Upgrade Gun", () => UpgradeGun());
+            ExitButton = new Button(new Vector2(320,210), ButtonSize, "Exit", () => Exit());
 
         }
 
@@ -33,9 +35,14 @@ namespace Moonborne.Game.Gameplay
         {
             if (InteractingWith)
             {
-                DrawRectangle(DisplayPosition, 400, 160, Color.Black);
-                DrawText("Core Table", DisplayPosition, new Vector2(2, 2), 0, Color.White);
+                SetDrawAlpha(0.75f);
+                DrawSetAlignment(true);
+                DrawRectangle(DisplayPosition, 400, 240, Color.Black);
+                SetDrawAlpha(1);
+                DrawText("Core Table", DisplayPosition+new Vector2(0,-60), new Vector2(2, 2), 0, Color.White);
+                DrawSetAlignment(false);
                 UpgradeButton.Draw(spriteBatch);
+                ExitButton.Draw(spriteBatch);
             }
         }
 
@@ -46,6 +53,12 @@ namespace Moonborne.Game.Gameplay
                 Player.Instance.Gun.Upgrade();
                 InventoryManager.RemoveItem(typeof(LunarCore), Cost);
             }
+        }
+
+        public void Exit()
+        {
+            ToggleCoreStation();
+            InteractingWith = false;
         }
 
         public void ToggleCoreStation()
