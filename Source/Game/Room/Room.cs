@@ -23,7 +23,7 @@ namespace Moonborne.Game.Room
 
     public class Room
     {
-        public string Name = "Room";
+        public string Name { get; set; } = "Room";
 
         /// <summary>
         /// Save a room to a json file made of multiple tilemaps

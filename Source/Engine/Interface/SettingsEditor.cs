@@ -22,15 +22,6 @@ namespace Moonborne.Engine.UI
         {
             ImGui.Begin(WindowName);
 
-            if (ImGui.Selectable("Save"))
-            {
-                RoomEditor.CurrentRoom.Save(RoomEditor.CurrentRoom.Name);
-            }
-            if (ImGui.Selectable("Load"))
-            {
-                RoomEditor.CurrentRoom.Load(RoomEditor.CurrentRoom.Name);
-            }
-
             ImGui.Checkbox("Debug Mode", ref GameManager.DebugMode);
 
             ImGui.End();

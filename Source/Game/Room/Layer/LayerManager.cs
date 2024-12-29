@@ -85,6 +85,28 @@ namespace Moonborne.Game.Room
         }
 
         /// <summary>
+        /// Remove an object from the game
+        /// </summary>
+        /// <param name="obj"></param>
+        public static void RemoveInstance(GameObject obj)
+        {
+            foreach (var layer in Layers)
+            {
+                foreach (GameObject searchObj in layer.Value.Objects)
+                {
+                    if (searchObj == obj)
+                    {
+                        Objects.Remove(obj);
+                        layer.Value.Objects.Remove(obj);
+                        Console.WriteLine($"Deleted {obj.GetType().ToString()}");
+                        obj = null;
+                        return;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Add a tile to be rendered
         /// </summary>
         /// <param name="tile"></param>

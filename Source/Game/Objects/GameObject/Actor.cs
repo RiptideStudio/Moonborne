@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Collisions.Layers;
 using Moonborne.Game.Gameplay;
 using Moonborne.Game.Inventory;
 using Moonborne.Graphics;
@@ -31,7 +32,6 @@ namespace Moonborne.Game.Objects
         public bool Interactable = false; // Track interactable objects
         public bool Interacted = false;
         public bool InteractingWith = false; // If we are currently interacting with this object
-        public int InteractDistance = 48;
 
         public int Health = 5; // Default health is 10
         public int MaxHealth = 5;
@@ -41,6 +41,7 @@ namespace Moonborne.Game.Objects
         public bool IsHurt = false;
         public int HealthbarWidth = 32;
         public int HealthbarHeight = 4;
+        public Layer OurLayer = null; // This is the layer the object is currently attached to
 
         public Direction Direction = Direction.Down;
         public State State = State.Idle;
@@ -48,6 +49,8 @@ namespace Moonborne.Game.Objects
         public Sprite[,] Sprites = new Sprite[Enum.GetValues<State>().Length, Enum.GetValues<Direction>().Length];
 
         public List<Item> ItemsToDrop = new List<Item>();
+        public int InteractDistance { get; set; } = 32;
+
 
         /// <summary>
         /// Set a sprite for a state and direction

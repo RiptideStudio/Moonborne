@@ -7,6 +7,9 @@ using ImGuiNET;
 using Moonborne.Game.Objects;
 using System.Reflection;
 using System;
+using Moonborne.Input;
+using Microsoft.Xna.Framework.Input;
+using Moonborne.Game.Room;
 
 namespace Moonborne.Engine.UI
 {
@@ -33,6 +36,16 @@ namespace Moonborne.Engine.UI
 
                 Type objectType = obj.GetType();
                 PropertyInfo[] properties = objectType.GetProperties();
+
+                // Attempt to delete the selected object
+                if (InputManager.KeyTriggered(Keys.Delete))
+                {
+                    if (SelectedObject != null)
+                    {
+                        LayerManager.RemoveInstance((GameObject)SelectedObject);
+                        SelectedObject = null;
+                    }
+                }
 
                 foreach (var property in properties)
                 {

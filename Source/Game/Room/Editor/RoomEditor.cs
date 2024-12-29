@@ -105,11 +105,8 @@ namespace Moonborne.Game.Room
                 }
             }
 
-
             CanPlaceTile = true;
         }
-
-
 
         /// <summary>
         /// Draw tileset editor
@@ -134,6 +131,7 @@ namespace Moonborne.Game.Room
             if (InputManager.KeyTriggered(Keys.B))
             {
                 GameManager.DebugMode = !GameManager.DebugMode;
+                Console.WriteLine($"Toggled Debug Mode: {GameManager.DebugMode}");
             }
 
             if (selectedLayer == null || selectedLayer.Type == LayerType.Object)
@@ -163,6 +161,7 @@ namespace Moonborne.Game.Room
                     {
                         selectedLayer = clickedObject.Layer;
                         Inspector.SelectedObject = clickedObject;
+                        Console.WriteLine($"Selected {clickedObject.GetType().Name} on {selectedLayer.Name}");
                     }
                 }
             }
@@ -176,13 +175,31 @@ namespace Moonborne.Game.Room
             ConsoleEditor.Draw();
 
             // Render the ImGui buttons for toggling different
-            ImGui.Begin("Tile Editor");
+            ImGui.Begin("Tile Editor",ImGuiWindowFlags.NoScrollbar);
 
             // Properties of tile editor
             ImGui.SliderInt("Brush Size", ref BrushSize, 1, 10);
             ImGui.Checkbox("Show Preview", ref ShowPreview);
             ImGui.Checkbox("Show Grid", ref DebugDraw);
             ImGui.Checkbox("Can Edit", ref CanEdit);
+
+            if (ImGui.TreeNodeEx("Texture"))
+            {
+                foreach (var tex in SpriteManager.textures)
+                {
+                    if (ImGui.TreeNode(tex.Key))
+                    {
+                        if (SelectedTilemap != null)
+                        {
+                            SelectedTilemap.SetTexture(tex.Key);
+                        }
+                    }
+                }
+
+                ImGui.TreePop();
+            }
+
+            ImGui.Separator();
 
             // Do not allow us to place tiles if we are hovering over or interacting w/editor
             bool isHoveringAnyWindow = ImGui.GetIO().WantCaptureMouse;
@@ -219,6 +236,7 @@ namespace Moonborne.Game.Room
                         Vector2 position = InputManager.MouseWorldCoords();
                         Dragging = false;
                         var newObject = ObjectLibrary.CreateObject(selectedObject, position, selectedLayer.Name);
+                        Console.WriteLine($"Created {selectedObject} at {position}");
                     }
                 }
             }
@@ -287,16 +305,16 @@ namespace Moonborne.Game.Room
 
         public static void UpdateTileSelector(SpriteBatch spriteBatch)
         {
-            // Show the tileset preview for selecting tiles
-            if (ShowPreview)
-            {
-                SelectedTilemap.DrawTilesetPreview(spriteBatch, PreviewX, PreviewY);
-            }
-
             // Actually place tiles
             if (CanEdit)
             {
                 SelectedTilemap.HandleTileSelection(spriteBatch, PreviewX, PreviewY);
+            }
+
+            // Show the tileset preview for selecting tiles
+            if (ShowPreview)
+            {
+                SelectedTilemap.DrawTilesetPreview(spriteBatch, PreviewX, PreviewY);
             }
 
             // Toggle the debug drawing of grid

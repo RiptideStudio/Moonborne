@@ -35,6 +35,7 @@ namespace Moonborne.Engine.UI
                 if (ImGui.MenuItem("Create New Layer"))
                 {
                     LayerManager.AddLayer(new Layer(1, () => Camera.Transform, LayerType.Object), RoomEditor.NewLayerName);
+                    LayerManager.AddTilemap(new Tilemap("None", new int[100, 100], 16, RoomEditor.NewLayerName), RoomEditor.NewLayerName);
                 }
 
                 // Delete layer
@@ -65,6 +66,7 @@ namespace Moonborne.Engine.UI
                 if (layer.Value.Locked)
                     continue;
 
+                // Draw a visibility icon to toggle the layers on and off
                 IntPtr texOn = ImGuiManager.imGuiRenderer.BindTexture(SpriteManager.GetTexture("VisibilityIconOn"));
                 IntPtr texOff = ImGuiManager.imGuiRenderer.BindTexture(SpriteManager.GetTexture("VisibilityIconOff"));
                 ImGui.PushStyleColor(ImGuiCol.Button, new System.Numerics.Vector4(0, 0, 0, 0)); // Transparent background
@@ -89,12 +91,25 @@ namespace Moonborne.Engine.UI
                 ImGui.SetCursorPosY(currentY);
                 ImGui.PopStyleColor(3);
 
-                if (ImGui.TreeNodeEx(layer.Value.Name)) // Start layer tree
-                {         
+                // Draw each layer in the hierarchy and all of its objects that belong to it
+                // In the future there may be other properties like an array of tilemaps
+                ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.OpenOnArrow | ImGuiTreeNodeFlags.OpenOnDoubleClick;
+
+                // Check if this is the currently selected layer and mark it as selected
+                if (RoomEditor.selectedLayer == layer.Value)
+                {
+                    nodeFlags |= ImGuiTreeNodeFlags.Selected; // Highlight the selected node
+                }
+
+                // Render the tree node and handle expansion
+                bool isNodeOpen = ImGui.TreeNodeEx(layer.Value.Name, nodeFlags);
+
+                // Handle selection logic independently of expansion
+                if (ImGui.IsItemClicked())
+                {
                     RoomEditor.selectedLayer = layer.Value;
                     Inspector.SelectedLayer = RoomEditor.selectedLayer;
-
-                    /// Select different tile layers
+                    // Select different tile layers
                     if (layer.Value.Type == LayerType.Tile)
                     {
                         RoomEditor.SelectedTilemap = layer.Value.Tilemaps[0];
@@ -103,8 +118,11 @@ namespace Moonborne.Engine.UI
                     {
                         RoomEditor.SelectedTilemap = null;
                     }
+                }
 
-                    /// Iterate over each object in the layer so we can select it
+                if (isNodeOpen) // Start layer tree
+                {
+                    // Show each object in this layer and click on it to inspect it
                     foreach (GameObject obj in layer.Value.Objects)
                     {
                         ImGui.PushID(obj.GetHashCode()); // Use the hash code as the unique ID

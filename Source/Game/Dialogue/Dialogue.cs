@@ -13,6 +13,15 @@ using System.Drawing;
 
 namespace Moonborne.UI.Dialogue
 {
+    /// <summary>
+    /// Define a dialogue type for better use
+    /// </summary>
+    public enum DialogueType
+    {
+        Test,
+        Test2
+    }
+
     // Define the json structure for dialogue
     public class DialogueData
     {

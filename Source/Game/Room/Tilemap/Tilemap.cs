@@ -114,27 +114,41 @@ namespace Moonborne.Game.Room
         /// <param name="previewY"></param>
         public void HandleTileSelection(SpriteBatch spriteBatch, int previewX, int previewY)
         {
-            int mouseX = (int)(InputManager.MouseUIPosition.X / PreviewZoom);
-            int mouseY = (int)(InputManager.MouseUIPosition.Y / PreviewZoom);
+            // Get the mouse position in screen coordinates
+            var mousePos = ImGui.GetMousePos();
 
-            int gridX = (mouseX - previewX) / tileSize;
-            int gridY = (mouseY - previewY) / tileSize;
+            // Get the ImGui window position and size
+            var windowPos = ImGui.GetWindowPos(); // Top-left corner of the ImGui window
 
-            // Check if the mouse is within the preview area
+            // Convert mouse position to local space relative to the window and correct for zoom
+            float contentOffsetY = ImGui.GetCursorScreenPos().Y - windowPos.Y;
+            float contentOffsetX = ImGui.GetCursorScreenPos().X - windowPos.X;
+
+            // Calculate the local mouse position relative to the tileset
+            float localMouseX = (mousePos.X - windowPos.X - previewX - contentOffsetX) / PreviewZoom;
+            float localMouseY = (mousePos.Y - windowPos.Y - previewY - contentOffsetY) / PreviewZoom;
+
+            // Ensure alignment by snapping to integer values after scaling
+            int snappedMouseX = (int)(localMouseX);
+            int snappedMouseY = (int)(localMouseY);
+
+            // Calculate grid coordinates based on scaled mouse position
+            int gridX = (snappedMouseX / tileSize);
+            int gridY = (snappedMouseY / tileSize);
+
+            // Ensure grid coordinates are within bounds
             int rows = tileset.Height / tileSize;
-
-            if (mouseX >= previewX && mouseX < previewX + tilesetColumns * tileSize &&
-                mouseY >= previewY && mouseY < previewY + rows * tileSize)
+            if (ImGui.IsWindowHovered())
             {
-                // Zoom in and out on the tileset preview
+                // Adjust zoom level with mouse wheel
                 if (InputManager.MouseWheelDown())
                 {
-                    RoomEditor.PreviewZoom -= 0.25f;
+                    RoomEditor.PreviewZoom = Math.Max(0.25f, RoomEditor.PreviewZoom - 0.25f); // Minimum zoom level
                 }
 
                 if (InputManager.MouseWheelUp())
                 {
-                    RoomEditor.PreviewZoom += 0.25f;
+                    RoomEditor.PreviewZoom = Math.Min(4.0f, RoomEditor.PreviewZoom + 0.25f); // Maximum zoom level
                 }
 
                 // Determine the selected tile ID
@@ -149,12 +163,12 @@ namespace Moonborne.Game.Room
                         tileSize
                     );
 
-                    Vector2 worldPosition = new Vector2(gridX * tileSize, gridY * tileSize);
+                    // Adjust world position and size using zoom
                     SelectedDestTileRectangle = new Rectangle(
-                        (int)worldPosition.X,
-                        (int)worldPosition.Y,
-                        tileSize,
-                        tileSize
+                        (int)(gridX * tileSize * PreviewZoom + previewX),
+                        (int)(gridY * tileSize * PreviewZoom + previewY),
+                        (int)(tileSize * PreviewZoom),
+                        (int)(tileSize * PreviewZoom)
                     );
                 }
 
@@ -165,6 +179,8 @@ namespace Moonborne.Game.Room
             {
                 RoomEditor.HoveringOverGameWorld = true;
             }
+
+
 
             // Paint the tile into the world 
             if (InputManager.MouseLeftDown() && RoomEditor.CanPlaceTile)
@@ -217,7 +233,6 @@ namespace Moonborne.Game.Room
         /// <param name="previewY"></param>
         public void DrawTilesetPreview(SpriteBatch spriteBatch, int previewX, int previewY)
         {
-
             int rows = tileset.Height / tileSize; // Assuming same dimensions
             int columns = tilesetColumns;
 
@@ -225,56 +240,71 @@ namespace Moonborne.Game.Room
             IntPtr tilesetTex = ImGuiManager.imGuiRenderer.BindTexture(tileset);
             ImGui.Image(tilesetTex, new System.Numerics.Vector2((int)(tileset.Width * PreviewZoom), (int)(tileset.Height * PreviewZoom)));
 
+            // Get the draw list for custom rendering
+            var drawList = ImGui.GetWindowDrawList();
+
+            // Get the position of the ImGui image
+            var imgPos = ImGui.GetItemRectMin(); // Top-left corner of the image
+            var imgSize = ImGui.GetItemRectSize(); // Size of the image
+
+            // Draw tiles and gridlines directly
             for (int y = 0; y < rows; y++)
             {
                 for (int x = 0; x < columns; x++)
                 {
                     int tileId = y * columns + x;
 
-                    // Calculate position for this tile in the preview area
-                    int drawX = previewX + (int)(x * tileSize * PreviewZoom);
-                    int drawY = previewY + (int)(y * tileSize * PreviewZoom);
+                    // Calculate position for this tile in the image space
+                    float drawX = imgPos.X + x * tileSize * PreviewZoom;
+                    float drawY = imgPos.Y + y * tileSize * PreviewZoom;
 
-                    // Source rectangle for the tile in the tileset
-                    Rectangle sourceRectangle = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
+                    // Calculate the UV coordinates for the tile in the texture
+                    float uvMinX = (float)x / columns;
+                    float uvMinY = (float)y / rows;
+                    float uvMaxX = (float)(x + 1) / columns;
+                    float uvMaxY = (float)(y + 1) / rows;
 
-                    // Draw the tile
-                    spriteBatch.Draw(tileset, new Rectangle(drawX, drawY, (int)(tileSize * PreviewZoom), (int)(tileSize * PreviewZoom)), sourceRectangle, Color.White);
-
-
-                    Color gridLineColor = new Color(255, 0, 0, 75);
-                    Color selectedColor = new Color(0, 255, 0, 75);
-
-                    spriteBatch.Draw(
-                        SpriteManager.PixelTexture,
-                        new Rectangle(drawX, drawY, (int)(tileSize * PreviewZoom), 1), // Top border
-                        gridLineColor
+                    // Draw the tile using ImGui draw list
+                    drawList.AddImage(
+                        tilesetTex, // Texture ID
+                        new System.Numerics.Vector2(drawX, drawY), // Top-left corner
+                        new System.Numerics.Vector2(drawX + tileSize * PreviewZoom, drawY + tileSize * PreviewZoom), // Bottom-right corner
+                        new System.Numerics.Vector2(uvMinX, uvMinY), // UV top-left
+                        new System.Numerics.Vector2(uvMaxX, uvMaxY) // UV bottom-right
                     );
 
-                    spriteBatch.Draw(
-                        SpriteManager.PixelTexture,
-                        new Rectangle(drawX, drawY, 1, (int)(tileSize * PreviewZoom)), // Left border
-                        gridLineColor
+                    // Draw gridlines around the tile
+                    var gridLineColor = new System.Numerics.Vector4(1.0f, 0.0f, 0.0f, 0.3f); // Red with alpha
+                    drawList.AddLine(
+                        new System.Numerics.Vector2(drawX, drawY), // Top-left
+                        new System.Numerics.Vector2(drawX + tileSize * PreviewZoom, drawY), // Top-right
+                        ImGui.ColorConvertFloat4ToU32(gridLineColor)
+                    );
+                    drawList.AddLine(
+                        new System.Numerics.Vector2(drawX, drawY), // Top-left
+                        new System.Numerics.Vector2(drawX, drawY + tileSize * PreviewZoom), // Bottom-left
+                        ImGui.ColorConvertFloat4ToU32(gridLineColor)
+                    );
+                    drawList.AddLine(
+                        new System.Numerics.Vector2(drawX + tileSize * PreviewZoom, drawY), // Top-right
+                        new System.Numerics.Vector2(drawX + tileSize * PreviewZoom, drawY + tileSize * PreviewZoom), // Bottom-right
+                        ImGui.ColorConvertFloat4ToU32(gridLineColor)
+                    );
+                    drawList.AddLine(
+                        new System.Numerics.Vector2(drawX, drawY + tileSize * PreviewZoom), // Bottom-left
+                        new System.Numerics.Vector2(drawX + tileSize * PreviewZoom, drawY + tileSize * PreviewZoom), // Bottom-right
+                        ImGui.ColorConvertFloat4ToU32(gridLineColor)
                     );
 
-                    spriteBatch.Draw(
-                        SpriteManager.PixelTexture,
-                        new Rectangle(drawX, drawY + (int)(tileSize * PreviewZoom) - 1, (int)(tileSize * PreviewZoom), 1), // Bottom border
-                        gridLineColor
-                    );
-
-                    spriteBatch.Draw(
-                        SpriteManager.PixelTexture,
-                        new Rectangle(drawX + (int)(tileSize * PreviewZoom) - 1, drawY, 1, (int)(tileSize * PreviewZoom)), // Right border
-                        gridLineColor
-                    );
-
-                    // Highlight the selected tile with an outline
+                    // Highlight the selected tile with an overlay
                     if (tileId == SelectedTile)
                     {
-                        // Draw outline using pixelTexture
-                        Rectangle OverlayRectangle = new Rectangle(drawX, drawY, (int)(tileSize * PreviewZoom), (int)(tileSize * PreviewZoom));
-                        SpriteManager.DrawRectangle(OverlayRectangle, selectedColor);
+                        var selectedColor = new System.Numerics.Vector4(0.0f, 1.0f, 0.0f, 0.3f); // Green with alpha
+                        drawList.AddRectFilled(
+                            new System.Numerics.Vector2(drawX, drawY),
+                            new System.Numerics.Vector2(drawX + tileSize * PreviewZoom, drawY + tileSize * PreviewZoom),
+                            ImGui.ColorConvertFloat4ToU32(selectedColor)
+                        );
                     }
                 }
             }

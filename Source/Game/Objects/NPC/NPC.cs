@@ -84,6 +84,7 @@ namespace Moonborne.Game.Objects
             base.Create();
             WanderPosition = Position;
             Friendly = false;
+            Interactable = true;
             Speed = 33;
             Dialogue[0] = "Test";
             Dialogue[1] = "Test2";
@@ -100,8 +101,6 @@ namespace Moonborne.Game.Objects
         /// </summary>
         public virtual void Idle(float dt)
         {
-            InteractWithNpc();
-
             ElapsedTime += dt;
 
             // Set a random target position to start wandering around in
@@ -154,25 +153,6 @@ namespace Moonborne.Game.Objects
                 targetDirection.Normalize();
                 Velocity = targetDirection * Speed;
             }
-
-            InteractWithNpc();
-        }
-
-        /// <summary>
-        /// Helper function for talking to NPC
-        /// </summary>
-        public void InteractWithNpc()
-        {
-            // Attempt to interact with the NPC
-            float playerDistance = MoonMath.Distance(Position, Player.Instance.Position);
-
-            if (playerDistance <= InteractDistance)
-            {
-                if (InputManager.KeyTriggered(Keys.E))
-                {
-                    OnInteract();
-                }
-            }
         }
 
         /// <summary>
@@ -195,7 +175,6 @@ namespace Moonborne.Game.Objects
         public virtual void Talking()
         {
             // Talk to NPC
-            InteractWithNpc();
         }
 
         public override void LeaveInteract()
