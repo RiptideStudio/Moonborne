@@ -85,7 +85,7 @@ namespace Moonborne.Engine.Collision
                     nextX = Math.Clamp(nextX, 0, tilemap.grid.GetLength(0)-1);
                     nextY = Math.Clamp(nextY, 0, tilemap.grid.GetLength(1)-1);
                     cellX = Math.Clamp(cellX, 0, tilemap.grid.GetLength(0)-1);
-                    nextY = Math.Clamp(nextY, 0, tilemap.grid.GetLength(1)-1);
+                    cellY = Math.Clamp(cellY, 0, tilemap.grid.GetLength(1)-1);
 
                     bool horizontalCollision = tilemap.grid[nextX, cellY] > 0;
                     bool verticalCollision = tilemap.grid[cellX, nextY] > 0;

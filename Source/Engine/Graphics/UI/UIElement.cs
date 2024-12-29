@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.ImGui;
 using Moonborne.Engine.Collision;
 using Moonborne.Game.Objects;
 using Moonborne.Graphics;

@@ -28,7 +28,7 @@ namespace Moonborne.Game.Gameplay
             Position.Y = 400;
             Collideable = true;
             Speed = 100;
-            MaxSpeed = 100;
+            MaxSpeed = 75;
             Instance = this;
 
             // Set our directional sprites

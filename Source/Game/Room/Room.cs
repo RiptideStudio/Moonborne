@@ -6,6 +6,7 @@ using MonoGame.Extended.Tiled;
 using Moonborne.Game.Objects;
 using Moonborne.Graphics;
 using Moonborne.Graphics.Camera;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
@@ -110,6 +111,7 @@ namespace Moonborne.Game.Room
 
             // Write to file
             File.WriteAllText(filePath, json);
+            Console.WriteLine($"Saved Room '{name}' to {filePath}");
         }
 
 
@@ -179,6 +181,8 @@ namespace Moonborne.Game.Room
                     ObjectLibrary.CreateObject(objectData.Name, position, objectData.LayerName);
                 }
             }
+
+            Console.WriteLine($"Loaded Room '{name}'");
         }
     }
 }

@@ -49,6 +49,7 @@ namespace Moonborne
             WindowManager.Initialize(_graphics,this);
             AudioManager.Initialize();
             DialogueManager.LoadDialogue();
+            ConsoleEditor.Initialize();
             Window.TextInput += OnTextInput;
             base.Initialize();
         }

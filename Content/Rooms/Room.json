@@ -4945,7 +4945,7 @@
       "TileSize": 16,
       "TilesetName": "TilesetTest",
       "LayerName": "Layer",
-      "Depth": 0,
+      "Depth": -4,
       "Collideable": false,
       "Visible": true,
       "Tiles": [
@@ -21247,7 +21247,7 @@
         {
           "x": 28,
           "y": 45,
-          "tileId": 398
+          "tileId": 46
         },
         {
           "x": 29,
@@ -21323,6 +21323,11 @@
           "x": 43,
           "y": 45,
           "tileId": 366
+        },
+        {
+          "x": 45,
+          "y": 45,
+          "tileId": 243
         },
         {
           "x": 50,
@@ -41187,7 +41192,7 @@
       "LayerName": "Collision",
       "Depth": 5,
       "Collideable": true,
-      "Visible": false,
+      "Visible": true,
       "Tiles": [
         {
           "x": 33,

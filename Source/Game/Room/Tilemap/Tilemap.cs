@@ -11,9 +11,13 @@ using Moonborne.Game.Room;
 using System;
 using MonoGame.Extended.Tiled;
 using Moonborne.Game.Gameplay;
+using Moonborne.Engine.UI;
+using ImGuiNET;
 
 namespace Moonborne.Game.Room
 {
+
+
     public class Tilemap
     {
         public int SelectedTile = 0;
@@ -113,7 +117,6 @@ namespace Moonborne.Game.Room
             int mouseX = (int)(InputManager.MouseUIPosition.X / PreviewZoom);
             int mouseY = (int)(InputManager.MouseUIPosition.Y / PreviewZoom);
 
-            // Calculate which tile was clicked
             int gridX = (mouseX - previewX) / tileSize;
             int gridY = (mouseY - previewY) / tileSize;
 
@@ -214,8 +217,13 @@ namespace Moonborne.Game.Room
         /// <param name="previewY"></param>
         public void DrawTilesetPreview(SpriteBatch spriteBatch, int previewX, int previewY)
         {
+
             int rows = tileset.Height / tileSize; // Assuming same dimensions
             int columns = tilesetColumns;
+
+            IntPtr pixelTex = ImGuiManager.imGuiRenderer.BindTexture(SpriteManager.PixelTexture);
+            IntPtr tilesetTex = ImGuiManager.imGuiRenderer.BindTexture(tileset);
+            ImGui.Image(tilesetTex, new System.Numerics.Vector2((int)(tileset.Width * PreviewZoom), (int)(tileset.Height * PreviewZoom)));
 
             for (int y = 0; y < rows; y++)
             {
@@ -232,6 +240,7 @@ namespace Moonborne.Game.Room
 
                     // Draw the tile
                     spriteBatch.Draw(tileset, new Rectangle(drawX, drawY, (int)(tileSize * PreviewZoom), (int)(tileSize * PreviewZoom)), sourceRectangle, Color.White);
+
 
                     Color gridLineColor = new Color(255, 0, 0, 75);
                     Color selectedColor = new Color(0, 255, 0, 75);

@@ -18,6 +18,7 @@ namespace Moonborne.Game.Room
     public static class LayerManager
     {
         public static Dictionary<string, Layer> Layers = new Dictionary<string, Layer>();
+        public static List<GameObject> Objects = new List<GameObject>(); // Global list of all game objects
 
         /// <summary>
         /// Add a new layer to the list
@@ -78,6 +79,9 @@ namespace Moonborne.Game.Room
             {
                 layer.AddObject(gameObject);
             }
+
+            Objects.Add(gameObject);
+            gameObject.Layer = layer;
         }
 
         /// <summary>

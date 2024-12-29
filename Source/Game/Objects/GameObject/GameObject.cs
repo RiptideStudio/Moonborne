@@ -28,34 +28,36 @@ namespace Moonborne.Game.Objects
     {
         public Sprite SpriteIndex; // Sprite object to hold drawing data
 
+        public int AnimationSpeed { get; set; } = 10;
+        public Vector2 Scale { get; set; } = Vector2.One; // Object scale
+        public float MaxSpeed { get; set; } = 1000;
+        public bool Visible { get; set; } = true;
+        public float Speed { get; set; } = 0;
+        public float LinearFriction { get; set; } = 8;
+
+        public Vector2 Velocity;
         public Vector2 OldPosition; // Object position
         public Vector2 Position; // Object position
         public Vector2 DrawOffset = Vector2.Zero; // Offset position
         public Vector2 StartPosition = Vector2.Zero; // Offset position
-        public Vector2 Scale { get; set; } = Vector2.One; // Object scale
         public float Rotation = 0; // Object rotation
 
-        public bool Visible = true;
         public bool IsDestroyed = false; // If we are marked for destroy
 
-        public float Speed = 0;
-        public float LinearFriction = 8;
         public float AngularDampening = 0.25f;
-        public Vector2 Velocity;
         public Vector2 Acceleration;
         public float AngularVelocity;
-        public float MaxSpeed = 1000;
 
         public int Depth = 0;
         public int Frame = 0;
         public float FrameTime = 0;
-        public int AnimationSpeed = 10;
 
         public Rectangle Hitbox = new Rectangle(0, 0, 16, 16);
         public bool Collideable = true;
         public bool IsStatic = false; // Static collisions don't get updated
         public ECollisionState CollisionState = ECollisionState.None;
         public Color Tint = Color.White;
+        public Layer Layer; // The layer this object is on
 
         /// <summary>
         /// Base constructor
@@ -102,19 +104,6 @@ namespace Moonborne.Game.Objects
             Position += Velocity * dt;
             Rotation += AngularVelocity * dt;
 
-            // Update our hitbox if we are moving
-            if (!IsStatic)
-            {
-                Hitbox.X = (int)Position.X-Hitbox.Width/2;
-                Hitbox.Y = (int)Position.Y-Hitbox.Height/2;
-
-                if (SpriteIndex != null)
-                {
-                    Hitbox.Width = SpriteIndex.FrameWidth;
-                    Hitbox.Height = SpriteIndex.FrameHeight;
-                }
-            }
-
             // Update our animation
             if (SpriteIndex != null && AnimationSpeed > 0)
             {
@@ -142,6 +131,19 @@ namespace Moonborne.Game.Objects
             if (!Visible)
             {
                 return;
+            }
+
+            // Update our hitbox if we are moving
+            if (!IsStatic)
+            {
+                Hitbox.X = (int)Position.X - Hitbox.Width / 2;
+                Hitbox.Y = (int)Position.Y - Hitbox.Height / 2;
+
+                if (SpriteIndex != null)
+                {
+                    Hitbox.Width = SpriteIndex.FrameWidth;
+                    Hitbox.Height = SpriteIndex.FrameHeight;
+                }
             }
 
             // Draw the hitbox of our object

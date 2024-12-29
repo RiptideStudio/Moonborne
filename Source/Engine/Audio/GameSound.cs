@@ -1,6 +1,5 @@
 ﻿
 using FMOD;
-using SharpDX.Multimedia;
 using System.Collections.Generic;
 
 namespace Moonborne.Engine.Audio

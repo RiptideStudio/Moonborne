@@ -21,13 +21,12 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Hjson" Version="3.0.0" />
-    <PackageReference Include="ImGui.NET" Version="1.72.0" />
+    <PackageReference Include="ImGui.NET" Version="1.89.6" />
     <PackageReference Include="MonoGame.Extended" Version="4.0.0" />
     <PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="4.0.3" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
     <PackageReference Include="Monogame.ImGui" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Veldrid.ImGui" Version="5.72.0" />
     <PackageReference Include="Vortice.Mathematics" Version="1.6.2" />
     <Content Include="Content\**\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

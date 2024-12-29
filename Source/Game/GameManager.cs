@@ -1,6 +1,7 @@
 ﻿using Moonborne.Game.Gameplay;
 using Moonborne.Game.Room;
 using Moonborne.Graphics.Camera;
+using System;
 
 namespace Moonborne.Engine
 {
@@ -14,6 +15,7 @@ namespace Moonborne.Engine
         /// </summary>
         public static void Start()
         {
+            Console.WriteLine("Starting game...");
             Resume();
             Camera.Zoom = Camera.DefaultZoom;
             Camera.TargetZoom = Camera.DefaultZoom;
@@ -26,6 +28,7 @@ namespace Moonborne.Engine
         /// </summary>
         public static void Stop()
         {
+            Console.WriteLine("Stopping game...");
             Pause();
             Camera.SetTarget(null);
             RoomEditor.InEditor = true;
@@ -36,6 +39,8 @@ namespace Moonborne.Engine
         /// </summary>
         public static void Pause()
         {
+            Console.WriteLine("Paused game");
+
             if (!Paused)
             {
                 Paused = true;
@@ -47,6 +52,8 @@ namespace Moonborne.Engine
         /// </summary>
         public static void Resume()
         {
+            Console.WriteLine("Resumed game");
+
             if (Paused)
             {
                 Paused = false;

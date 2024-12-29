@@ -28,10 +28,11 @@ namespace Moonborne.Game.Room
     public class Layer
     {
         private readonly Func<Matrix> GetTransform;
-        public bool Collideable = false;
-        public bool Visible = true;
-        public int Depth = 0; 
-        public bool Locked { get; set; } = false;
+        public bool Locked = false;
+        public bool Collideable { get; set; } = false;
+        public bool Visible { get; set; } = true;
+        public int Depth { get; set; } = 0;
+        public string Name { get; set; } = string.Empty;
         public SpriteSortMode SortMode { get; set; } = SpriteSortMode.Deferred; // The way sprites are sorted
         public BlendState BlendState { get; set; } = BlendState.NonPremultiplied; // Type of blend state used
         public SamplerState SamplerState { get; set; } = SamplerState.PointClamp; // Sampler state used (usually pixel)
@@ -39,7 +40,6 @@ namespace Moonborne.Game.Room
         public List<GameObject> Objects { get; set; } = new List<GameObject>(); // Objects on this layer
         public List<Tilemap> Tilemaps { get; set; } = new List<Tilemap>(); // Tiles on this layer
         public LayerType Type {  get; set; } = LayerType.Object;
-        public string Name { get; set; } = string.Empty;
         
         /// <summary>
         /// Construct a new layer
@@ -78,12 +78,6 @@ namespace Moonborne.Game.Room
         /// </summary>
         public void DrawSettings()
         {
-            // Global layer flags
-            ImGui.Checkbox("Visible", ref Visible);
-            if (ImGui.InputInt("Depth", ref Depth))
-            {
-                LayerManager.Sort();
-            }
 
             // Type specific flags
             switch (Type)
@@ -94,7 +88,6 @@ namespace Moonborne.Game.Room
 
 
                 case LayerType.Tile:
-                    ImGui.Checkbox("Collidable", ref Collideable);
 
                     // Select tileset texture
                     var textures = SpriteManager.textures.ToList();
