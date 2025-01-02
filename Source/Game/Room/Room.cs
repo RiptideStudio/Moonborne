@@ -58,7 +58,7 @@ namespace Moonborne.Game.Room
                                 { "x", tile.Value.x },
                                 { "y", tile.Value.y },
                                 { "tileId", tile.Value.CellData },
-                                { "tileHeight", tile.Value.Height }
+                                { "tileHeight", layer.Value.Height }
                             });
                         }
 

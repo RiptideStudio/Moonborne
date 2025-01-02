@@ -65,10 +65,11 @@ namespace Moonborne.Game.Objects
         public Layer PreviousLayer; // The layer this object is on
         public int PreviousTileX = 0;
         public int PreviousTileY = 0;
-        public bool Colliding = false;
         public List<Tile> TileList = new List<Tile>();
 
         public bool NeedsLayerSort = false; // Used as a flag when changing layers
+        public bool Colliding = false;
+        public int CurrentLayer { get; set; }
 
         /// <summary>
         /// Base constructor
@@ -131,53 +132,6 @@ namespace Moonborne.Game.Objects
                     Frame = 0;
                 }
             }
-
-            // If the object is colliding with any tiles
-            // Tile size (in world units)
-            int tileSize = 16;
-
-            // Convert object's position to grid coordinates
-            int currentGridX = (int)Position.X / tileSize;
-            int currentGridY = (int)Position.Y / tileSize;
-
-            // If the object is colliding with any tiles
-            if (Colliding)
-            {
-                // Iterate through the list of colliding tiles
-                foreach (var tile in TileList)
-                {
-                    // Only process stair tiles
-                    if (tile.TileType == TileType.StairUp || tile.TileType == TileType.StairDown)
-                    {
-                        // Determine the movement direction based on the tile's grid position
-                        Vector2 movement = new Vector2(tile.x - PreviousTileX, tile.y - PreviousTileY);
-
-                        if (movement.Y < 0) // Moving upward
-                        {
-                            // Increase height when going up stairs
-                            Height += 1;
-                            NeedsLayerSort = true;
-                        }
-                        else if (movement.Y > 0) // Moving downward
-                        {
-                            // Decrease height when going down stairs
-                            Height -= 1;
-                            NeedsLayerSort = true;
-                        }
-
-                        // Update the previous tile position to this tile's grid position
-                        PreviousTileX = tile.x;
-                        PreviousTileY = tile.y;
-
-                        // Optional: If only one stair tile should be processed per frame, break the loop
-                        break;
-                    }
-                }
-                Height = Math.Clamp(Height, 1, 32);
-            }
-
-
-            TileList.Clear();
         }
 
         /// <summary>

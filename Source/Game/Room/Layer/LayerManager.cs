@@ -236,7 +236,7 @@ namespace Moonborne.Game.Room
             AddLayer(new Layer(5, () => Camera.Transform, LayerType.Object, true), "Object");
             AddLayer(new Layer(4, () => Camera.Transform, LayerType.Object, true), "Tiles");
             AddLayer(new Layer(3, () => Camera.Transform, LayerType.Object, true), "Player");
-            AddLayer(new Layer(1000, () => Camera.Transform, LayerType.Tile, true), "TileEditorWorld");
+            AddLayer(new Layer(1000, () => Camera.Transform, LayerType.Object, true), "TileEditorWorld");
             AddLayer(new Layer(9999, () => WindowManager.Transform, LayerType.UI, true), "Dialogue");
             AddLayer(new Layer(1002, () => WindowManager.Transform, LayerType.UI, true), "Inventory");
             AddLayer(new Layer(1003, () => WindowManager.Transform, LayerType.UI, true), "RoomEditor");

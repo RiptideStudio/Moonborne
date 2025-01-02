@@ -22,6 +22,7 @@ namespace Moonborne.Game.Room
     {
         Object,
         Tile,
+        Transition,
         UI
     }
 

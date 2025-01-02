@@ -217,7 +217,7 @@ namespace Moonborne.Game.Room
                             grid[x, y] = SelectedTile;
 
                             // Add the new tile to the dictionary
-                            TileList[tileKey] = new Tile(x, y, SelectedTile);
+                            TileList[tileKey] = new Tile(x, y, SelectedTile, RoomEditor.selectedLayer.Height);
                         }
                     }
                 }

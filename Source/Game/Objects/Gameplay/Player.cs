@@ -47,6 +47,8 @@ namespace Moonborne.Game.Gameplay
             Camera.SetPosition(Position);
             Gun = new Gun(this,250f,10);
             LayerManager.AddInstance(Gun, "Object");
+            Hitbox.Width = 8;
+            Hitbox.Height = 8;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

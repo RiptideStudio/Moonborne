@@ -37,6 +37,7 @@ namespace Moonborne.Engine.Collision
             // Check for collisions
             foreach (var obj in Collisions)
             {
+
                 // Track colliding pairs
                 bool isColliding = false;
 
@@ -66,33 +67,42 @@ namespace Moonborne.Engine.Collision
                     Colliding.Add(obj);
                 }
 
+                // Clear the TileList to avoid duplicates or stale collisions
+                obj.TileList.Clear();
+
                 // Check against collidable tilemaps
+                bool onStairs = false;
+                int lowestLayer = 1;
+                int highestLayer = 1;
+
                 foreach (var layer in LayerManager.Layers)
                 {
                     // Only check against tile layers
-                    if (layer.Value.Tilemaps.Count <= 0)
+                    if (layer.Value.Type != LayerType.Tile)
                         continue;
 
-                    // Get our position cellwise and check if we are in a cell with collision
+                    // Get the first tilemap in the layer
                     Tilemap tilemap = layer.Value.Tilemaps[0];
                     Vector2 newPosition = obj.Position;
 
+                    // Get current and next cell positions
                     int cellX = (int)((newPosition.X) / tilemap.tileSize);
                     int cellY = (int)((newPosition.Y) / tilemap.tileSize);
 
                     int nextX = cellX + (int)(obj.Velocity.X * dt);
                     int nextY = cellY + (int)(obj.Velocity.Y * dt);
 
-                    // Never index outside the grid
-                    nextX = Math.Clamp(nextX, 0, tilemap.grid.GetLength(0)-1);
-                    nextY = Math.Clamp(nextY, 0, tilemap.grid.GetLength(1)-1);
-                    cellX = Math.Clamp(cellX, 0, tilemap.grid.GetLength(0)-1);
-                    cellY = Math.Clamp(cellY, 0, tilemap.grid.GetLength(1)-1);
+                    // Clamp the positions to grid bounds
+                    nextX = Math.Clamp(nextX, 0, tilemap.grid.GetLength(0) - 1);
+                    nextY = Math.Clamp(nextY, 0, tilemap.grid.GetLength(1) - 1);
+                    cellX = Math.Clamp(cellX, 0, tilemap.grid.GetLength(0) - 1);
+                    cellY = Math.Clamp(cellY, 0, tilemap.grid.GetLength(1) - 1);
 
+                    // Check for collisions
                     bool horizontalCollision = tilemap.grid[nextX, cellY] > 0;
                     bool verticalCollision = tilemap.grid[cellX, nextY] > 0;
 
-                    // Add colliding tiles to list
+                    // Process the current cell
                     bool collision = tilemap.grid[cellX, cellY] > 0;
 
                     if (collision)
@@ -100,30 +110,63 @@ namespace Moonborne.Engine.Collision
                         // Compute the unique key for the tile
                         int tileKey = cellX + cellY * tilemap.grid.GetLength(0);
 
-                        // Check if the tile exists in TileList
+                        // Add the colliding tile to the TileList
                         if (tilemap.TileList.TryGetValue(tileKey, out var collidingTile))
                         {
-                            // Ensure the tile is not already in the object's TileList
                             if (!obj.TileList.Contains(collidingTile))
                             {
                                 obj.TileList.Add(collidingTile);
                             }
                         }
                     }
-                    obj.Colliding = collision;
 
-                    // Make sure we collide with collidable layers or layers with different heights
-                    if (layer.Value.Collideable)
+                    // Process colliding tiles
+                    foreach (Tile tile in obj.TileList)
                     {
-                        if (horizontalCollision)
+                        if (tile.TileType == TileType.StairUp || tile.TileType == TileType.StairDown)
                         {
-                            obj.Velocity.X = 0;
+                            if (collision)
+                            {
+                                onStairs = true;
+                            }
                         }
-
-                        // Vertical collision
-                        if (verticalCollision)
+                        if (tile.Height > highestLayer)
                         {
-                            obj.Velocity.Y = 0;
+                            highestLayer = tile.Height;
+                        }
+                        if (tile.Height < lowestLayer)
+                        {
+                            lowestLayer = tile.Height;
+                        }
+                    }
+                }
+
+                // Check for going up
+                if (obj.Height != highestLayer)
+                {
+                    if (onStairs)
+                    {
+                        // Check direction of movement
+                        if (obj.Velocity.Y < 0)
+                        {
+                            obj.Height = highestLayer;
+                        }
+                    }
+                    else
+                    {
+                        obj.Position = obj.OldPosition;
+                    }
+                }
+
+                // Check for going down
+                if (obj.Height != lowestLayer)
+                {
+                    if (onStairs)
+                    {
+                        // Check direction of movement
+                        if (obj.Velocity.Y > 0)
+                        {
+                            obj.Height = lowestLayer;
                         }
                     }
                 }

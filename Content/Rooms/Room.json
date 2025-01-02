@@ -8202,6 +8202,600 @@
           "tileHeight": 1
         }
       ]
+    },
+    {
+      "TileSize": 16,
+      "TilesetName": "CoraglowCityTileset",
+      "Height": 2,
+      "LayerName": "Front",
+      "Depth": 2,
+      "Collideable": false,
+      "Visible": true,
+      "IsTransitionLayer": false,
+      "Tiles": [
+        {
+          "x": 30,
+          "y": 21,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 30,
+          "y": 22,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 31,
+          "y": 22,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 32,
+          "y": 22,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 32,
+          "y": 21,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 33,
+          "y": 21,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 31,
+          "y": 21,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 33,
+          "y": 22,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 34,
+          "y": 22,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 34,
+          "y": 21,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 35,
+          "y": 22,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 35,
+          "y": 21,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 32,
+          "y": 23,
+          "tileId": 1,
+          "tileHeight": 2
+        },
+        {
+          "x": 32,
+          "y": 24,
+          "tileId": 1,
+          "tileHeight": 2
+        },
+        {
+          "x": 33,
+          "y": 24,
+          "tileId": 1,
+          "tileHeight": 2
+        },
+        {
+          "x": 33,
+          "y": 23,
+          "tileId": 1,
+          "tileHeight": 2
+        },
+        {
+          "x": 31,
+          "y": 23,
+          "tileId": 18,
+          "tileHeight": 2
+        },
+        {
+          "x": 30,
+          "y": 23,
+          "tileId": 18,
+          "tileHeight": 2
+        },
+        {
+          "x": 35,
+          "y": 23,
+          "tileId": 18,
+          "tileHeight": 2
+        },
+        {
+          "x": 34,
+          "y": 23,
+          "tileId": 18,
+          "tileHeight": 2
+        },
+        {
+          "x": 29,
+          "y": 31,
+          "tileId": 0,
+          "tileHeight": 2
+        },
+        {
+          "x": 26,
+          "y": 26,
+          "tileId": 0,
+          "tileHeight": 2
+        },
+        {
+          "x": 25,
+          "y": 25,
+          "tileId": 0,
+          "tileHeight": 2
+        },
+        {
+          "x": 25,
+          "y": 24,
+          "tileId": 0,
+          "tileHeight": 2
+        },
+        {
+          "x": 22,
+          "y": 21,
+          "tileId": 0,
+          "tileHeight": 2
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "tileId": 0,
+          "tileHeight": 2
+        },
+        {
+          "x": 28,
+          "y": 31,
+          "tileId": 0,
+          "tileHeight": 2
+        },
+        {
+          "x": 22,
+          "y": 23,
+          "tileId": 0,
+          "tileHeight": 2
+        },
+        {
+          "x": 20,
+          "y": 19,
+          "tileId": 0,
+          "tileHeight": 2
+        },
+        {
+          "x": 36,
+          "y": 21,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 36,
+          "y": 22,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 37,
+          "y": 22,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 38,
+          "y": 22,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 38,
+          "y": 21,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 37,
+          "y": 21,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 30,
+          "y": 20,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 31,
+          "y": 20,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 32,
+          "y": 20,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 33,
+          "y": 20,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 34,
+          "y": 20,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 35,
+          "y": 20,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 36,
+          "y": 20,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 37,
+          "y": 20,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 38,
+          "y": 20,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 39,
+          "y": 20,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 39,
+          "y": 21,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 39,
+          "y": 22,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 36,
+          "y": 23,
+          "tileId": 18,
+          "tileHeight": 2
+        },
+        {
+          "x": 37,
+          "y": 23,
+          "tileId": 18,
+          "tileHeight": 2
+        },
+        {
+          "x": 38,
+          "y": 23,
+          "tileId": 18,
+          "tileHeight": 2
+        },
+        {
+          "x": 39,
+          "y": 23,
+          "tileId": 18,
+          "tileHeight": 2
+        },
+        {
+          "x": 31,
+          "y": 19,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 32,
+          "y": 19,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 33,
+          "y": 19,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 34,
+          "y": 19,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 35,
+          "y": 19,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 35,
+          "y": 18,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 35,
+          "y": 17,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 34,
+          "y": 17,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 33,
+          "y": 17,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 32,
+          "y": 17,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 31,
+          "y": 17,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 31,
+          "y": 18,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 32,
+          "y": 18,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 33,
+          "y": 18,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 34,
+          "y": 18,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 31,
+          "y": 16,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 32,
+          "y": 16,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 33,
+          "y": 16,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 34,
+          "y": 16,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 35,
+          "y": 16,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 35,
+          "y": 15,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 34,
+          "y": 15,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 33,
+          "y": 15,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 32,
+          "y": 15,
+          "tileId": 3,
+          "tileHeight": 2
+        },
+        {
+          "x": 31,
+          "y": 15,
+          "tileId": 3,
+          "tileHeight": 2
+        }
+      ]
+    },
+    {
+      "TileSize": 16,
+      "TilesetName": "CoraglowCityTileset",
+      "Height": 1,
+      "LayerName": "Front2",
+      "Depth": 3,
+      "Collideable": false,
+      "Visible": false,
+      "IsTransitionLayer": false,
+      "Tiles": [
+        {
+          "x": 31,
+          "y": 17,
+          "tileId": 33,
+          "tileHeight": 1
+        },
+        {
+          "x": 31,
+          "y": 18,
+          "tileId": 49,
+          "tileHeight": 1
+        },
+        {
+          "x": 31,
+          "y": 19,
+          "tileId": 49,
+          "tileHeight": 1
+        },
+        {
+          "x": 31,
+          "y": 20,
+          "tileId": 65,
+          "tileHeight": 1
+        },
+        {
+          "x": 35,
+          "y": 17,
+          "tileId": 35,
+          "tileHeight": 1
+        },
+        {
+          "x": 35,
+          "y": 18,
+          "tileId": 51,
+          "tileHeight": 1
+        },
+        {
+          "x": 35,
+          "y": 19,
+          "tileId": 51,
+          "tileHeight": 1
+        },
+        {
+          "x": 35,
+          "y": 20,
+          "tileId": 67,
+          "tileHeight": 1
+        },
+        {
+          "x": 32,
+          "y": 17,
+          "tileId": 34,
+          "tileHeight": 1
+        },
+        {
+          "x": 33,
+          "y": 17,
+          "tileId": 34,
+          "tileHeight": 1
+        },
+        {
+          "x": 34,
+          "y": 17,
+          "tileId": 34,
+          "tileHeight": 1
+        },
+        {
+          "x": 31,
+          "y": 16,
+          "tileId": 17,
+          "tileHeight": 1
+        },
+        {
+          "x": 32,
+          "y": 16,
+          "tileId": 18,
+          "tileHeight": 1
+        },
+        {
+          "x": 33,
+          "y": 16,
+          "tileId": 18,
+          "tileHeight": 1
+        },
+        {
+          "x": 34,
+          "y": 16,
+          "tileId": 18,
+          "tileHeight": 1
+        },
+        {
+          "x": 35,
+          "y": 16,
+          "tileId": 18,
+          "tileHeight": 1
+        },
+        {
+          "x": 32,
+          "y": 20,
+          "tileId": 66,
+          "tileHeight": 1
+        },
+        {
+          "x": 33,
+          "y": 20,
+          "tileId": 66,
+          "tileHeight": 1
+        },
+        {
+          "x": 34,
+          "y": 20,
+          "tileId": 66,
+          "tileHeight": 1
+        }
+      ]
     }
   ],
   "Objects": []
