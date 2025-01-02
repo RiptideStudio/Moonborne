@@ -82,6 +82,7 @@ namespace Moonborne.Game.Room
 
             Objects.Add(gameObject);
             gameObject.Layer = layer;
+            gameObject.Height = layer.Height;
         }
 
         /// <summary>
@@ -129,18 +130,21 @@ namespace Moonborne.Game.Room
         {
             var snapShot = Layers.Values.ToList();
 
+            // Render world objects
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, Camera.Transform);
             foreach (var layer in snapShot) 
             {
                 // Don't draw invisible layers
                 if (!layer.Visible)
                     continue;
 
-                layer.DrawBegin(spriteBatch);
                 layer.Draw(spriteBatch);
-                layer.DrawEnd(spriteBatch);
             }
 
-            // Render only our draw UI events from objects
+            spriteBatch.End();
+
+            // Render our UI
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, WindowManager.Transform);
             foreach (var layer in snapShot)
             {
                 // Don't draw invisible layers
@@ -149,6 +153,7 @@ namespace Moonborne.Game.Room
 
                 layer.DrawUI(spriteBatch);
             }
+            spriteBatch.End();
         }
 
         /// <summary>
@@ -157,11 +162,23 @@ namespace Moonborne.Game.Room
         /// <param name="dt"></param>
         public static void Update(float dt)
         {
+            Sort();
+
             // If we are in editor, we only want to draw our layers
             // This way we have no game logic execute
             if (GameManager.Paused)
                 return;
 
+            UpdateFrame(dt);
+        }
+
+
+        /// <summary>
+        /// Executes just the update logic
+        /// </summary>
+        /// <param name="dt"></param>
+        public static void UpdateFrame(float dt)
+        {
             // Deal with collisions
             CollisionHandler.HandleCollisions(dt);
 
@@ -173,7 +190,6 @@ namespace Moonborne.Game.Room
                 layer.Value.Update(dt);
             }
         }
-
 
         /// <summary>
         /// Removes all layers possible
@@ -197,6 +213,18 @@ namespace Moonborne.Game.Room
                 return;
 
             Layers.Remove(layer.Name);
+        }
+
+        /// <summary>
+        /// Normalize layer depth
+        /// </summary>
+        /// <param name="height"></param>
+        /// <param name="minHeight"></param>
+        /// <param name="maxHeight"></param>
+        /// <returns></returns>
+        public static float NormalizeLayerDepth(int height, int minHeight, int maxHeight)
+        {
+            return 1f - ((float)(height - minHeight) / (maxHeight - minHeight));
         }
 
         /// <summary>

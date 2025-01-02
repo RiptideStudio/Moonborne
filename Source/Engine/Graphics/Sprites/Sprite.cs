@@ -23,7 +23,7 @@ namespace Moonborne.Graphics
         public int FrameHeight = 16;
         public int FrameWidth = 16;
         public int MaxFrames = 1;
-        public int LayerDepth = 0;
+        public float LayerDepth = 0;
         public SpriteEffects CustomSpriteEffect = SpriteEffects.None;
 
         /// <summary>

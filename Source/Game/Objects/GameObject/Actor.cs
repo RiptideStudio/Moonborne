@@ -122,7 +122,7 @@ namespace Moonborne.Game.Objects
         /// <param name="dt"></param>
         public override void Update(float dt)
         {
-            base.Update(dt);    
+            base.Update(dt);
 
             // Interact with this actor if we are close to it
             if (Interactable)

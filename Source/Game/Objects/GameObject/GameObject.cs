@@ -1,9 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Tiled;
+using MonoGame.ImGui;
 using Moonborne.Engine;
 using Moonborne.Game.Room;
 using Moonborne.Graphics;
 using System;
+using System.Collections.Generic;
 
 namespace Moonborne.Game.Objects
 {
@@ -35,6 +38,7 @@ namespace Moonborne.Game.Objects
         public float Speed { get; set; } = 0;
         public float LinearFriction { get; set; } = 8;
 
+        public int Height = 1; // Defines our heightmap
         public Vector2 Velocity;
         public Vector2 OldPosition; // Object position
         public Vector2 Position; // Object position
@@ -48,7 +52,7 @@ namespace Moonborne.Game.Objects
         public Vector2 Acceleration;
         public float AngularVelocity;
 
-        public int Depth = 0;
+        public float Depth = 0;
         public int Frame = 0;
         public float FrameTime = 0;
 
@@ -58,6 +62,13 @@ namespace Moonborne.Game.Objects
         public ECollisionState CollisionState = ECollisionState.None;
         public Color Tint = Color.White;
         public Layer Layer; // The layer this object is on
+        public Layer PreviousLayer; // The layer this object is on
+        public int PreviousTileX = 0;
+        public int PreviousTileY = 0;
+        public bool Colliding = false;
+        public List<Tile> TileList = new List<Tile>();
+
+        public bool NeedsLayerSort = false; // Used as a flag when changing layers
 
         /// <summary>
         /// Base constructor
@@ -120,6 +131,53 @@ namespace Moonborne.Game.Objects
                     Frame = 0;
                 }
             }
+
+            // If the object is colliding with any tiles
+            // Tile size (in world units)
+            int tileSize = 16;
+
+            // Convert object's position to grid coordinates
+            int currentGridX = (int)Position.X / tileSize;
+            int currentGridY = (int)Position.Y / tileSize;
+
+            // If the object is colliding with any tiles
+            if (Colliding)
+            {
+                // Iterate through the list of colliding tiles
+                foreach (var tile in TileList)
+                {
+                    // Only process stair tiles
+                    if (tile.TileType == TileType.StairUp || tile.TileType == TileType.StairDown)
+                    {
+                        // Determine the movement direction based on the tile's grid position
+                        Vector2 movement = new Vector2(tile.x - PreviousTileX, tile.y - PreviousTileY);
+
+                        if (movement.Y < 0) // Moving upward
+                        {
+                            // Increase height when going up stairs
+                            Height += 1;
+                            NeedsLayerSort = true;
+                        }
+                        else if (movement.Y > 0) // Moving downward
+                        {
+                            // Decrease height when going down stairs
+                            Height -= 1;
+                            NeedsLayerSort = true;
+                        }
+
+                        // Update the previous tile position to this tile's grid position
+                        PreviousTileX = tile.x;
+                        PreviousTileY = tile.y;
+
+                        // Optional: If only one stair tile should be processed per frame, break the loop
+                        break;
+                    }
+                }
+                Height = Math.Clamp(Height, 1, 32);
+            }
+
+
+            TileList.Clear();
         }
 
         /// <summary>
@@ -152,11 +210,20 @@ namespace Moonborne.Game.Objects
                 SpriteManager.SetDrawAlpha(0.25f);
                 SpriteManager.DrawRectangle(Hitbox.X, Hitbox.Y, Hitbox.Width, Hitbox.Height, Color.Red);
                 SpriteManager.ResetDraw();
+                SpriteManager.DrawText($"Height: {Height}, Depth: {Depth}", Position-new Vector2(48,16), Scale, Rotation, Color.White);
+            }
+
+            // Re-sort our depth based on height
+            if (NeedsLayerSort)
+            {
+                Depth = LayerManager.NormalizeLayerDepth(Height,1,255)-0.001f; // Small offset for showing over tiles
+                NeedsLayerSort = false;
             }
 
             // If the sprite is valid, draw it
             if (SpriteIndex != null)
             {
+                SpriteIndex.LayerDepth = Depth;
                 SpriteIndex.Color = Tint;
                 SpriteIndex.Draw(spriteBatch, Frame, Position+DrawOffset, Scale, Rotation, SpriteIndex.Color);
             }

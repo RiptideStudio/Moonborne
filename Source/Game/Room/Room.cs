@@ -50,23 +50,16 @@ namespace Moonborne.Game.Room
                     {
                         var tiles = new List<Dictionary<string, int>>();
 
-                        // Serialize the grid data for this tilemap
-                        for (int y = 0; y < tilemap.grid.GetLength(1); y++)
+                        // Save each tile
+                        foreach (var tile in tilemap.TileList)
                         {
-                            for (int x = 0; x < tilemap.grid.GetLength(0); x++)
+                            tiles.Add(new Dictionary<string, int>
                             {
-                                int tileId = tilemap.grid[x, y];
-
-                                if (tileId > 0) // Only save non-empty tiles
-                                {
-                                    tiles.Add(new Dictionary<string, int>
-                                    {
-                                        { "x", x },
-                                        { "y", y },
-                                        { "tileId", tileId }
-                                    });
-                                }
-                            }
+                                { "x", tile.Value.x },
+                                { "y", tile.Value.y },
+                                { "tileId", tile.Value.CellData },
+                                { "tileHeight", tile.Value.Height }
+                            });
                         }
 
                         // Add this tilemap's data to the tilemaps list
@@ -74,10 +67,12 @@ namespace Moonborne.Game.Room
                         {
                             TileSize = tilemap.tileSize,
                             TilesetName = tilemap.TilesetTextureName,
+                            Height = LayerManager.Layers[tilemap.LayerName].Height,
                             LayerName = tilemap.LayerName,
                             Depth = LayerManager.Layers[tilemap.LayerName].Depth,
                             Collideable = LayerManager.Layers[tilemap.LayerName].Collideable,
                             Visible = LayerManager.Layers[tilemap.LayerName].Visible,
+                            IsTransitionLayer = LayerManager.Layers[tilemap.LayerName].IsTransitionLayer,
                             Tiles = tiles
                         });
                     }
@@ -126,7 +121,7 @@ namespace Moonborne.Game.Room
 
             if (!File.Exists(filePath))
             {
-                throw new FileNotFoundException($"Room file not found: {filePath}");
+                return;
             }
 
             // Read the JSON file
@@ -142,30 +137,47 @@ namespace Moonborne.Game.Room
             LayerManager.Clear();
 
             // Reconstruct tilemaps and add them to their layers
-            foreach (var tilemapData in roomData.Tilemaps)
+            if (roomData.Tilemaps != null)
             {
-                // Create a new Tilemap instance
-                Tilemap tilemap = new Tilemap(
-                    tilemapData.TilesetName,
-                    new int[100, 100], 
-                    tilemapData.TileSize,
-                    tilemapData.LayerName
-                );
-
-                // Reconstruct layers
-                Layer layer = new Layer(tilemapData.Depth, () => Camera.Transform, LayerType.Tile);
-                layer.Depth = tilemapData.Depth;
-                layer.Visible = tilemapData.Visible;
-                layer.Collideable = tilemapData.Collideable;
-                LayerManager.AddTilemapLayer(layer, tilemap, tilemapData.LayerName);
-
-                // Set our currently selected tilemap
-                RoomEditor.SelectedTilemap = tilemap;
-
-                // Populate the grid with tile data
-                foreach (var tile in tilemapData.Tiles)
+                foreach (var tilemapData in roomData.Tilemaps)
                 {
-                    tilemap.grid[tile["x"], tile["y"]] = tile["tileId"];
+                    // Create a new Tilemap instance
+                    Tilemap tilemap = new Tilemap(
+                        tilemapData.TilesetName,
+                        new int[100, 100],
+                        tilemapData.TileSize,
+                        tilemapData.LayerName
+                    );
+
+                    // Reconstruct layers
+                    Layer layer = new Layer(tilemapData.Depth, () => Camera.Transform, LayerType.Tile);
+                    layer.Depth = tilemapData.Depth;
+                    layer.Visible = tilemapData.Visible;
+                    layer.Collideable = tilemapData.Collideable;
+                    layer.Height = tilemapData.Height;
+                    layer.IsTransitionLayer = tilemapData.IsTransitionLayer;
+                    LayerManager.AddTilemapLayer(layer, tilemap, tilemapData.LayerName);
+                    
+                    // Set our currently selected tilemap
+                    RoomEditor.SelectedTilemap = tilemap;
+
+                    // Populate the grid with tile data
+                    foreach (var tile in tilemapData.Tiles)
+                    {
+                        int gridX = tile["x"];
+                        int gridY = tile["y"];
+                        int tileId = tile["tileId"];
+                        int tileHeight = tile["tileHeight"];
+
+                        // Compute the unique key for the tile
+                        int tileKey = gridX + gridY * 100;
+
+                        // Add the tile to the TileList dictionary
+                        tilemap.TileList[tileKey] = new Tile(gridX, gridY, tileId, tileHeight);
+
+                        // Update the grid with the tile ID
+                        tilemap.grid[gridX, gridY] = tileId;
+                    }
                 }
             }
 

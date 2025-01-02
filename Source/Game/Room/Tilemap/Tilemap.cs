@@ -13,23 +13,25 @@ using MonoGame.Extended.Tiled;
 using Moonborne.Game.Gameplay;
 using Moonborne.Engine.UI;
 using ImGuiNET;
+using System.Linq;
 
 namespace Moonborne.Game.Room
 {
-
-
     public class Tilemap
     {
         public int SelectedTile = 0;
         public int[,] grid = new int[100, 100];
         public Texture2D tileset;
         public int tileSize = 16;
+        public int Height = 0;
         public int tilesetColumns = 10;
         public float PreviewZoom = 1f;
         public string LayerName;
+        public float Depth = 1f;
         public string TilesetTextureName;
         public Rectangle SelectedDestTileRectangle;
         public Rectangle SelectedSourceTileRectangle;
+        public Dictionary<int, Tile> TileList = new Dictionary<int, Tile>();
 
         /// <summary>
         /// New tilemap
@@ -61,25 +63,27 @@ namespace Moonborne.Game.Room
         /// <param name="spriteBatch"></param>
         public void Draw(SpriteBatch spriteBatch)
         {
-            for (int y = 0; y < grid.GetLength(1); y++)
+            // Normalize depth
+            Depth = LayerManager.NormalizeLayerDepth(LayerManager.Layers[LayerName].Depth, 1, 255);
+
+            foreach (var tile in TileList)
             {
-                for (int x = 0; x < grid.GetLength(0); x++)
-                {
-                    int tileId = grid[x, y];
+                if (tile.Value.CellData <= 0)
+                    continue;
 
-                    if (tileId <= 0)
-                        continue;
+                int tilesetX = (tile.Value.CellData % tilesetColumns) * tileSize;
+                int tilesetY = (tile.Value.CellData / tilesetColumns) * tileSize;
 
-                    int tilesetX = (tileId % tilesetColumns) * tileSize;
-                    int tilesetY = (tileId / tilesetColumns) * tileSize;
-
-                    spriteBatch.Draw(
-                        tileset,
-                        new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize), // Position and size in the grid
-                        new Rectangle(tilesetX, tilesetY, tileSize, tileSize),        // Source rectangle from the tileset
-                        Color.White
-                    );
-                }
+                spriteBatch.Draw(
+                     tileset,
+                     new Rectangle(tile.Value.x * tileSize, tile.Value.y * tileSize, tileSize, tileSize), // Position and size in the grid
+                     new Rectangle(tilesetX, tilesetY, tileSize, tileSize),        // Source rectangle from the tileset
+                     Color.White,
+                     0,
+                     Vector2.Zero,
+                     SpriteEffects.None,
+                     Depth
+                 );
             }
         }
 
@@ -199,7 +203,21 @@ namespace Moonborne.Game.Room
                         // Ensure the brush stays within grid bounds
                         if (x >= 0 && x < grid.GetLength(0) && y >= 0 && y < grid.GetLength(1))
                         {
-                            grid[x, y] = SelectedTile; // Place the selected tile in the grid
+                            // Compute a unique key for the tile based on x and y
+                            int tileKey = x + y * grid.GetLength(0);
+
+                            // Check if the tile exists in the dictionary
+                            if (TileList.TryGetValue(tileKey, out var tileToRemove))
+                            {
+                                TileList.Remove(tileKey); // Remove the tile from the dictionary
+                                grid[x, y] = 0;           // Clear the tile from the grid
+                            }
+
+                            // Place the new tile
+                            grid[x, y] = SelectedTile;
+
+                            // Add the new tile to the dictionary
+                            TileList[tileKey] = new Tile(x, y, SelectedTile);
                         }
                     }
                 }
@@ -215,10 +233,30 @@ namespace Moonborne.Game.Room
                 gridY = ((int)worldMouse.Y) / tileSize;
 
                 // Ensure the click is within the grid bounds
-                if (gridX >= 0 && gridX < grid.GetLength(0) && gridY >= 0 && gridY < grid.GetLength(1))
+                // Iterate over the area defined by the brush size
+                int halfBrush = RoomEditor.BrushSize / 2;
+                int centerX = (int)worldMouse.X / tileSize;
+                int centerY = (int)worldMouse.Y / tileSize;
+                for (int x = centerX - halfBrush; x <= centerX + halfBrush; x++)
                 {
-                    grid[gridX, gridY] = 0; // Place the selected tile in the grid
+                    for (int y = centerY - halfBrush; y <= centerY + halfBrush; y++)
+                    {
+                        // Ensure the brush stays within grid bounds
+                        if (x >= 0 && x < grid.GetLength(0) && y >= 0 && y < grid.GetLength(1))
+                        {
+                            // Compute a unique key for the tile based on x and y
+                            int tileKey = x + y * grid.GetLength(0);
+
+                            // Check if the tile exists in the dictionary
+                            if (TileList.TryGetValue(tileKey, out var tileToRemove))
+                            {
+                                TileList.Remove(tileKey); // Remove the tile from the dictionary
+                                grid[x, y] = 0;           // Clear the tile from the grid
+                            }
+                        }
+                    }
                 }
+
             }
         }
 

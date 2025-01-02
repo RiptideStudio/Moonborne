@@ -51,7 +51,7 @@ namespace Moonborne.Game.Gameplay
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            DrawShadow(Position.X+1,Position.Y+6,6,2);
+            // DrawShadow(Position.X+1,Position.Y+6,6,2);
             base.Draw(spriteBatch);
         }
 

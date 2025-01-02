@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Moonborne.Game.Room;
 using System.Runtime.InteropServices;
 using System;
+using Moonborne.Game.Gameplay;
 
 namespace Moonborne.Engine.Collision
 {
@@ -68,7 +69,8 @@ namespace Moonborne.Engine.Collision
                 // Check against collidable tilemaps
                 foreach (var layer in LayerManager.Layers)
                 {
-                    if (!layer.Value.Collideable)
+                    // Only check against tile layers
+                    if (layer.Value.Tilemaps.Count <= 0)
                         continue;
 
                     // Get our position cellwise and check if we are in a cell with collision
@@ -90,16 +92,39 @@ namespace Moonborne.Engine.Collision
                     bool horizontalCollision = tilemap.grid[nextX, cellY] > 0;
                     bool verticalCollision = tilemap.grid[cellX, nextY] > 0;
 
-                    // Horizontal collision
-                    if (horizontalCollision)
-                    {
-                        obj.Velocity.X = 0;
-                    }
+                    // Add colliding tiles to list
+                    bool collision = tilemap.grid[cellX, cellY] > 0;
 
-                    // Vertical collision
-                    if (verticalCollision)
+                    if (collision)
                     {
-                        obj.Velocity.Y = 0;
+                        // Compute the unique key for the tile
+                        int tileKey = cellX + cellY * tilemap.grid.GetLength(0);
+
+                        // Check if the tile exists in TileList
+                        if (tilemap.TileList.TryGetValue(tileKey, out var collidingTile))
+                        {
+                            // Ensure the tile is not already in the object's TileList
+                            if (!obj.TileList.Contains(collidingTile))
+                            {
+                                obj.TileList.Add(collidingTile);
+                            }
+                        }
+                    }
+                    obj.Colliding = collision;
+
+                    // Make sure we collide with collidable layers or layers with different heights
+                    if (layer.Value.Collideable)
+                    {
+                        if (horizontalCollision)
+                        {
+                            obj.Velocity.X = 0;
+                        }
+
+                        // Vertical collision
+                        if (verticalCollision)
+                        {
+                            obj.Velocity.Y = 0;
+                        }
                     }
                 }
             }

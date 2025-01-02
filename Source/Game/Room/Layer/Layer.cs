@@ -31,6 +31,7 @@ namespace Moonborne.Game.Room
         public bool Locked = false;
         public bool Collideable { get; set; } = false;
         public bool Visible { get; set; } = true;
+        public bool IsTransitionLayer { get; set; } = false;
         public int Depth { get; set; } = 0;
         public string Name { get; set; } = string.Empty;
         public SpriteSortMode SortMode { get; set; } = SpriteSortMode.Deferred; // The way sprites are sorted
@@ -38,8 +39,10 @@ namespace Moonborne.Game.Room
         public SamplerState SamplerState { get; set; } = SamplerState.PointClamp; // Sampler state used (usually pixel)
         public Matrix Transform => GetTransform(); // The matrix used to transform the layer
         public List<GameObject> Objects { get; set; } = new List<GameObject>(); // Objects on this layer
+        public List<GameObject> ObjectsToCreate { get; set; } = new List<GameObject>(); // Objects on this layer
         public List<Tilemap> Tilemaps { get; set; } = new List<Tilemap>(); // Tiles on this layer
         public LayerType Type {  get; set; } = LayerType.Object;
+        public int Height { get; set; } = 1; // Defines the heightmap of this layer
         
         /// <summary>
         /// Construct a new layer
@@ -61,7 +64,7 @@ namespace Moonborne.Game.Room
         /// <param name="obj"></param>
         public void AddObject(GameObject obj)
         {
-            Objects.Add(obj);
+            ObjectsToCreate.Add(obj);
         }        
         
         /// <summary>
@@ -82,10 +85,6 @@ namespace Moonborne.Game.Room
             // Type specific flags
             switch (Type)
             {
-                case LayerType.Object:
-
-                    break;
-
 
                 case LayerType.Tile:
 
@@ -156,16 +155,11 @@ namespace Moonborne.Game.Room
             if (Objects.Count == 0)
                 return;
 
-            // Use our window's transform
-            spriteBatch.Begin(SortMode, BlendState, SamplerState, transformMatrix: WindowManager.Transform);
-
             foreach (var obj in Objects)
             {
                 // Execute object's world draw event
                 obj.DrawUI(spriteBatch);
             }
-
-            spriteBatch.End();
         }
 
         /// <summary>
@@ -195,6 +189,13 @@ namespace Moonborne.Game.Room
         public void Update(float dt)
         {
             var objectsToRemove = new List<GameObject>();
+
+            // Defer creation of new objects
+            foreach (GameObject obj in ObjectsToCreate)
+            {
+                Objects.Add(obj);
+            }
+            ObjectsToCreate.Clear();
 
             // Iterate over each object and update them
             foreach (var obj in Objects)

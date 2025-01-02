@@ -76,10 +76,12 @@ namespace Moonborne
             RoomEditor.Initialize();
             player = new Player();
             LayerManager.AddInstance(player, "Player");
+            LayerManager.UpdateFrame(0);
         }
 
         protected override void Update(GameTime gameTime)
         {
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
