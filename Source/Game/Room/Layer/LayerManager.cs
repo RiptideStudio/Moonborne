@@ -78,11 +78,10 @@ namespace Moonborne.Game.Room
             if (layer != null)
             {
                 layer.AddObject(gameObject);
+                Objects.Add(gameObject);
+                gameObject.Layer = layer;
+                gameObject.Height = layer.Height;
             }
-
-            Objects.Add(gameObject);
-            gameObject.Layer = layer;
-            gameObject.Height = layer.Height;
         }
 
         /// <summary>
@@ -140,6 +139,7 @@ namespace Moonborne.Game.Room
 
                 layer.Draw(spriteBatch);
             }
+            RoomEditor.DrawGrid(spriteBatch);
 
             spriteBatch.End();
 
@@ -153,6 +153,11 @@ namespace Moonborne.Game.Room
 
                 layer.DrawUI(spriteBatch);
             }
+
+            DialogueManager.DrawDialogueBox();
+            InventoryManager.Draw(spriteBatch);
+            RoomEditor.DrawEditor(spriteBatch);
+
             spriteBatch.End();
         }
 
@@ -163,12 +168,6 @@ namespace Moonborne.Game.Room
         public static void Update(float dt)
         {
             Sort();
-
-            // If we are in editor, we only want to draw our layers
-            // This way we have no game logic execute
-            if (GameManager.Paused)
-                return;
-
             UpdateFrame(dt);
         }
 

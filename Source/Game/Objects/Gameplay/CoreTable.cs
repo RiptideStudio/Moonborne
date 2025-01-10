@@ -28,7 +28,6 @@ namespace Moonborne.Game.Gameplay
 
             UpgradeButton = new Button(new Vector2(320,160), ButtonSize, "Upgrade Gun", () => UpgradeGun());
             ExitButton = new Button(new Vector2(320,210), ButtonSize, "Exit", () => Exit());
-
         }
 
         public override void DrawUI(SpriteBatch spriteBatch)

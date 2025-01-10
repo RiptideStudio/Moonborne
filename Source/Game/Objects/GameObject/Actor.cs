@@ -21,7 +21,8 @@ namespace Moonborne.Game.Objects
         Right,
         Left,
         Up,
-        Down
+        Down,
+        None
     }
 
     /// <summary>

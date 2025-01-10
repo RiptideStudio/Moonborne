@@ -2,6 +2,7 @@
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Moonborne.Engine;
 using Moonborne.Engine.Collision;
 using Moonborne.Game.Inventory;
 using Moonborne.Game.Objects;
@@ -141,9 +142,6 @@ namespace Moonborne.Game.Room
                 // Execute object's world draw event
                 obj.Draw(spriteBatch);
             }
-
-            // Render static managers
-            DrawStaticManagers(spriteBatch);
         }
 
         /// <summary>
@@ -161,17 +159,6 @@ namespace Moonborne.Game.Room
                 // Execute object's world draw event
                 obj.DrawUI(spriteBatch);
             }
-        }
-
-        /// <summary>
-        /// Draw static managers
-        /// </summary>
-        public void DrawStaticManagers(SpriteBatch spriteBatch)
-        {
-            if (Name == "Dialogue") DialogueManager.DrawDialogueBox();
-            if (Name == "Inventory") InventoryManager.Draw(spriteBatch);
-            if (Name == "TileEditorWorld") RoomEditor.DrawGrid(spriteBatch);
-            if (Name == "RoomEditor") RoomEditor.DrawEditor(spriteBatch);
         }
 
         /// <summary>
@@ -202,12 +189,16 @@ namespace Moonborne.Game.Room
             foreach (var obj in Objects)
             {
                 // Call the update function
-                obj.Update(dt);
-
-                // Defer collisions
-                if (obj.Collideable)
+                // If we are in editor, we only want to draw our layers
+                if (!GameManager.Paused)
                 {
-                    CollisionHandler.Collisions.Add(obj);
+                    obj.Update(dt);
+
+                    // Defer collisions
+                    if (obj.Collideable)
+                    {
+                        CollisionHandler.Collisions.Add(obj);
+                    }
                 }
 
                 // Defer destruction

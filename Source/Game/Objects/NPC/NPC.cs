@@ -130,7 +130,6 @@ namespace Moonborne.Game.Objects
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
-            DrawShadow(Position.X, Position.Y+5, 6, 2);
         }
 
         /// <summary>
@@ -141,9 +140,18 @@ namespace Moonborne.Game.Objects
         {
             float distanceToTarget = MoonMath.Distance(Position, WanderPosition);
 
+            ElapsedTime += dt;
+
+            if (ElapsedTime > WanderTime * dt)
+            {
+                ElapsedTime = 0;
+                State = State.Idle;
+            }
+
             if (distanceToTarget <= Velocity.Length())
             {
                 // Stop wandering
+                ElapsedTime = 0;
                 State = State.Idle;
             }
             else

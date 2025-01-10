@@ -68,8 +68,8 @@ namespace Moonborne.Game.Room
                             TileSize = tilemap.tileSize,
                             TilesetName = tilemap.TilesetTextureName,
                             Height = LayerManager.Layers[tilemap.LayerName].Height,
-                            LayerName = tilemap.LayerName,
                             Depth = LayerManager.Layers[tilemap.LayerName].Depth,
+                            LayerName = tilemap.LayerName,
                             Collideable = LayerManager.Layers[tilemap.LayerName].Collideable,
                             Visible = LayerManager.Layers[tilemap.LayerName].Visible,
                             IsTransitionLayer = LayerManager.Layers[tilemap.LayerName].IsTransitionLayer,
@@ -87,6 +87,7 @@ namespace Moonborne.Game.Room
                             PositionX = obj.Position.X,
                             PositionY = obj.Position.Y,
                             Name = obj.GetType().Name,
+                            Depth = obj.Layer.Depth,
                             LayerName = layer.Value.Name
                         });
                     }
@@ -157,7 +158,8 @@ namespace Moonborne.Game.Room
                     layer.Height = tilemapData.Height;
                     layer.IsTransitionLayer = tilemapData.IsTransitionLayer;
                     LayerManager.AddTilemapLayer(layer, tilemap, tilemapData.LayerName);
-                    
+                    RoomEditor.selectedLayer = layer;
+
                     // Set our currently selected tilemap
                     RoomEditor.SelectedTilemap = tilemap;
 
@@ -187,6 +189,7 @@ namespace Moonborne.Game.Room
                 foreach (var objectData in roomData.Objects)
                 {
                     Layer layer = new Layer(1, () => Camera.Transform, LayerType.Object);
+                    layer.Depth = objectData.Depth;
                     LayerManager.AddLayer(layer, objectData.LayerName);
 
                     Vector2 position = new Vector2(objectData.PositionX, objectData.PositionY);

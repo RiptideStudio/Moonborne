@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Tiled;
 using MonoGame.ImGui;
 using Moonborne.Engine;
+using Moonborne.Engine.Collision;
 using Moonborne.Game.Room;
 using Moonborne.Graphics;
 using System;
@@ -16,6 +17,7 @@ namespace Moonborne.Game.Objects
         public float PositionY { get; set; }
         public string Name { get; set; }
         public string LayerName { get; set; }
+        public int Depth { get; set; }
     }
 
     /// <summary>
@@ -56,7 +58,7 @@ namespace Moonborne.Game.Objects
         public int Frame = 0;
         public float FrameTime = 0;
 
-        public Rectangle Hitbox = new Rectangle(0, 0, 16, 16);
+        public Rectangle Hitbox = new Rectangle(0, 0, -1, -1);
         public bool Collideable = true;
         public bool IsStatic = false; // Static collisions don't get updated
         public ECollisionState CollisionState = ECollisionState.None;
@@ -69,7 +71,10 @@ namespace Moonborne.Game.Objects
 
         public bool NeedsLayerSort = false; // Used as a flag when changing layers
         public bool Colliding = false;
+        public bool IsDirty = true;
         public int CurrentLayer { get; set; }
+        private int Haxis = 1;
+        private int Vaxis = 1;
 
         /// <summary>
         /// Base constructor
@@ -93,6 +98,8 @@ namespace Moonborne.Game.Objects
         /// <param name="dt"></param>
         public virtual void Update(float dt)
         {
+            bool canMove = false;
+
             // Update our position and velocity
             OldPosition = Position;
 
@@ -112,7 +119,30 @@ namespace Moonborne.Game.Objects
             Velocity.X = MathHelper.Clamp(Velocity.X, -MaxSpeed, MaxSpeed);
             Velocity.Y = MathHelper.Clamp(Velocity.Y, -MaxSpeed, MaxSpeed);
 
-            // Add to position and rotation
+            if (Velocity.X < 0)
+                Haxis = -1;
+            else if (Velocity.X > 0)
+                Haxis = 1;
+
+            if (Velocity.Y < 0)
+                Vaxis = -1;
+            else if (Velocity.Y > 0)
+                Vaxis = 1;
+
+            Rectangle horizontalRect = new Rectangle((int)Position.X-Hitbox.Width/2+Haxis+(int)(Velocity.X*dt), (int)Position.Y-Hitbox.Height/2,Hitbox.Width,Hitbox.Height);
+            Rectangle verticalRect = new Rectangle((int)Position.X-Hitbox.Width/2,(int)Position.Y-Hitbox.Height/2+ Vaxis + (int)(Velocity.Y * dt), Hitbox.Width,Hitbox.Height);
+
+            if (CollisionHandler.CollidingWithTile(Position.X, Position.Y, horizontalRect))
+            {
+                Velocity.X = 0;
+                Position.X = Hitbox.Width/2+ (int)(Position.X / Hitbox.Width)* Hitbox.Width;
+            }
+            if (CollisionHandler.CollidingWithTile(Position.X, Position.Y, verticalRect))
+            {
+                Velocity.Y = 0;
+                Position.Y = Hitbox.Height / 2 + (int)(Position.Y / Hitbox.Height) * Hitbox.Height;
+            }
+
             Position += Velocity * dt;
             Rotation += AngularVelocity * dt;
 
@@ -151,7 +181,7 @@ namespace Moonborne.Game.Objects
                 Hitbox.X = (int)Position.X - Hitbox.Width / 2;
                 Hitbox.Y = (int)Position.Y - Hitbox.Height / 2;
 
-                if (SpriteIndex != null)
+                if (SpriteIndex != null && Hitbox.Width == -1)
                 {
                     Hitbox.Width = SpriteIndex.FrameWidth;
                     Hitbox.Height = SpriteIndex.FrameHeight;
@@ -163,21 +193,18 @@ namespace Moonborne.Game.Objects
             {
                 SpriteManager.SetDrawAlpha(0.25f);
                 SpriteManager.DrawRectangle(Hitbox.X, Hitbox.Y, Hitbox.Width, Hitbox.Height, Color.Red);
-                SpriteManager.ResetDraw();
-                SpriteManager.DrawText($"Height: {Height}, Depth: {Depth}", Position-new Vector2(48,16), Scale, Rotation, Color.White);
+                SpriteManager.SetDrawAlpha(1);
             }
-
-            // Re-sort our depth based on height
+            
             if (NeedsLayerSort)
             {
-                Depth = LayerManager.NormalizeLayerDepth(Height,1,255)-0.001f; // Small offset for showing over tiles
-                NeedsLayerSort = false;
+                Depth = LayerManager.NormalizeLayerDepth(Layer.Depth, 1, 255) - 0.001f;
+                SpriteIndex.LayerDepth = Depth;
             }
 
             // If the sprite is valid, draw it
             if (SpriteIndex != null)
             {
-                SpriteIndex.LayerDepth = Depth;
                 SpriteIndex.Color = Tint;
                 SpriteIndex.Draw(spriteBatch, Frame, Position+DrawOffset, Scale, Rotation, SpriteIndex.Color);
             }

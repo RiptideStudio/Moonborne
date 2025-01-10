@@ -184,8 +184,6 @@ namespace Moonborne.Game.Room
                 RoomEditor.HoveringOverGameWorld = true;
             }
 
-
-
             // Paint the tile into the world 
             if (InputManager.MouseLeftDown() && RoomEditor.CanPlaceTile)
             {

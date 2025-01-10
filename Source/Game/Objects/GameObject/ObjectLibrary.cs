@@ -67,10 +67,8 @@ namespace Moonborne.Game.Objects
             var obj = (GameObject)Activator.CreateInstance(type);
             obj.Position = position;
             obj.StartPosition = position;
+            obj.NeedsLayerSort = true;
             LayerManager.AddInstance(obj, layerName);
-
-            // Set properties dynamically
-            obj.Position = position;
 
             return obj;
         }
