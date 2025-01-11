@@ -130,6 +130,7 @@ namespace Moonborne.Game.Room
         /// <param name="spriteBatch"></param>
         public void Draw(SpriteBatch spriteBatch)
         {
+
             // Render each tilemap
             foreach (var tileMap in Tilemaps)
             {
@@ -139,7 +140,7 @@ namespace Moonborne.Game.Room
             // Render each object
             foreach (var obj in Objects)
             {
-                // Execute object's world draw event
+                // Calculate the depth based on position (y sorting)
                 obj.Draw(spriteBatch);
             }
         }

@@ -38,7 +38,6 @@ namespace Moonborne.Engine.Collision
             // Check for collisions
             foreach (var obj in Collisions)
             {
-
                 // Track colliding pairs
                 bool isColliding = false;
 

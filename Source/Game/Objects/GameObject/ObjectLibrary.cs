@@ -68,6 +68,8 @@ namespace Moonborne.Game.Objects
             obj.Position = position;
             obj.StartPosition = position;
             obj.NeedsLayerSort = true;
+            obj.CreateLater(); // post-intialize create
+
             LayerManager.AddInstance(obj, layerName);
 
             return obj;

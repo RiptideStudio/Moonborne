@@ -72,9 +72,10 @@ namespace Moonborne
 
         protected void InitializeLater()
         {
+            player = new Player();
+
             InventoryManager.Initialize();
             RoomEditor.Initialize();
-            player = new Player();
             LayerManager.AddInstance(player, "Player");
             LayerManager.UpdateFrame(0);
         }

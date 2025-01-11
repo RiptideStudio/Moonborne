@@ -173,6 +173,7 @@ namespace Moonborne.Game.Room
             SceneEditor.Draw();
             SettingsEditor.Draw();
             ConsoleEditor.Draw();
+            LevelSelectEditor.Draw();
 
             // Render the ImGui buttons for toggling different
             ImGui.Begin("Tile Editor",ImGuiWindowFlags.NoScrollbar);

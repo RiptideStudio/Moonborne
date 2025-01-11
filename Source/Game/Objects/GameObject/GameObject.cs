@@ -75,6 +75,9 @@ namespace Moonborne.Game.Objects
         public int CurrentLayer { get; set; }
         private int Haxis = 1;
         private int Vaxis = 1;
+        public int HitboxYOffset { get; set; } = 0;
+        public int HitboxXOffset { get; set; } = 0;
+        public bool VisibleInGame = true;
 
         /// <summary>
         /// Base constructor
@@ -93,13 +96,19 @@ namespace Moonborne.Game.Objects
         }
 
         /// <summary>
+        /// Create event called after initialization
+        /// </summary>
+        public virtual void CreateLater()
+        {
+
+        }
+
+        /// <summary>
         /// Called when an object is updated
         /// </summary>
         /// <param name="dt"></param>
         public virtual void Update(float dt)
         {
-            bool canMove = false;
-
             // Update our position and velocity
             OldPosition = Position;
 
@@ -175,11 +184,17 @@ namespace Moonborne.Game.Objects
                 return;
             }
 
+            // Can't draw if not visible in game
+            if (!VisibleInGame && !GameManager.Paused)
+            {
+                return;
+            }
+
             // Update our hitbox if we are moving
             if (!IsStatic)
             {
-                Hitbox.X = (int)Position.X - Hitbox.Width / 2;
-                Hitbox.Y = (int)Position.Y - Hitbox.Height / 2;
+                Hitbox.X = HitboxXOffset+(int)Position.X - Hitbox.Width / 2;
+                Hitbox.Y = HitboxYOffset+(int)Position.Y - Hitbox.Height / 2;
 
                 if (SpriteIndex != null && Hitbox.Width == -1)
                 {
@@ -194,11 +209,14 @@ namespace Moonborne.Game.Objects
                 SpriteManager.SetDrawAlpha(0.25f);
                 SpriteManager.DrawRectangle(Hitbox.X, Hitbox.Y, Hitbox.Width, Hitbox.Height, Color.Red);
                 SpriteManager.SetDrawAlpha(1);
+                SpriteManager.DrawText($"{Depth}", Position, Scale, Rotation, Tint);
             }
-            
+
+            // Resort an object based on its layer's depth and Y position
             if (NeedsLayerSort)
             {
-                Depth = LayerManager.NormalizeLayerDepth(Layer.Depth, 1, 255) - 0.001f;
+                Depth = LayerManager.NormalizeLayerDepth((int)Position.Y, 1, 99999999) - 0.0001f;
+                Depth = Math.Clamp(Depth, 0, 1);
                 SpriteIndex.LayerDepth = Depth;
             }
 

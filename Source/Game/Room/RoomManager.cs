@@ -17,15 +17,25 @@ namespace Moonborne.Game.Room
         /// Loads all rooms at the start of the game. Stores them into a map for access
         /// </summary>
         public static void LoadRooms(GraphicsDevice graphicsDevice, MGame game)
-        { 
-        }
-
-        /// <summary>
-        /// Render the current room
-        /// </summary>
-        public static void Draw()
         {
+            string contentFolderPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\Content\Rooms"));
 
+            if (!Directory.Exists(contentFolderPath))
+            {
+                return;
+            }
+
+            string[] files = Directory.GetFiles(contentFolderPath);
+
+            foreach (string file in files)
+            {
+                if (file.EndsWith(".json"))
+                {
+                    Room rm = new Room();
+                    rm.Name = Path.GetFileNameWithoutExtension(file);
+                    Rooms.Add(rm.Name, rm);
+                }
+            }
         }
     }
 }

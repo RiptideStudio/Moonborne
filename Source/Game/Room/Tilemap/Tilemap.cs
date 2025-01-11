@@ -64,7 +64,7 @@ namespace Moonborne.Game.Room
         public void Draw(SpriteBatch spriteBatch)
         {
             // Normalize depth
-            Depth = LayerManager.NormalizeLayerDepth(LayerManager.Layers[LayerName].Depth, 1, 255);
+            Depth = LayerManager.NormalizeLayerDepth(LayerManager.Layers[LayerName].Depth, 1, 10000);
 
             foreach (var tile in TileList)
             {

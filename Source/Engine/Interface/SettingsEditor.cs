@@ -13,7 +13,7 @@ namespace Moonborne.Engine.UI
 {
     public static class SettingsEditor
     {
-        public static string WindowName = "Game Settings";
+        public static string WindowName = "Global Settings";
 
         /// <summary>
         /// Draw the inspector
