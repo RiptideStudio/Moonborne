@@ -32,6 +32,7 @@ namespace Moonborne.Game.Room
         public Rectangle SelectedDestTileRectangle;
         public Rectangle SelectedSourceTileRectangle;
         public Dictionary<int, Tile> TileList = new Dictionary<int, Tile>();
+        public Layer Layer;
 
         /// <summary>
         /// New tilemap
@@ -64,7 +65,7 @@ namespace Moonborne.Game.Room
         public void Draw(SpriteBatch spriteBatch)
         {
             // Normalize depth
-            Depth = LayerManager.NormalizeLayerDepth(LayerManager.Layers[LayerName].Depth, 1, 10000);
+            Depth = LayerManager.NormalizeLayerDepth(Layer.Depth, 1, 10000);
 
             foreach (var tile in TileList)
             {

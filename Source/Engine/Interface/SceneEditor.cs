@@ -20,6 +20,7 @@ namespace Moonborne.Engine.UI
     {
         public static string WindowName = "Scene Editor";
         public static bool SelectedLayer = false;
+        public static Layer LayerToRemove;
 
         /// <summary>
         /// Draw the inspector
@@ -34,13 +35,17 @@ namespace Moonborne.Engine.UI
                 // Add Object Layer
                 if (ImGui.MenuItem("Create New Layer"))
                 {
-                    LayerManager.AddLayer(new Layer(1, () => Camera.Transform, LayerType.Object), RoomEditor.NewLayerName);
+                    Layer newLayer = new Layer(1, () => Camera.Transform, LayerType.Object);
+                    LayerManager.AddLayer(newLayer, RoomEditor.NewLayerName);
                     LayerManager.AddTilemap(new Tilemap("None", new int[100, 100], 16, RoomEditor.NewLayerName), RoomEditor.NewLayerName);
+                    RoomEditor.SelectLayer(newLayer);
                 }
 
                 // Delete layer
                 if (ImGui.MenuItem("Delete Layer"))
                 {
+                    LayerManager.RemoveLayer(LayerToRemove);
+                    RoomEditor.SelectLayer(null);
                 }
 
                 // Input for layer name
@@ -56,7 +61,7 @@ namespace Moonborne.Engine.UI
             }
 
             /// Display all currently active layers and select them
-            ImGui.Text("Layers");
+            ImGui.Text($"{RoomEditor.CurrentRoom.Name} Layers");
             ImGui.Separator();
             Inspector.Draw("Layer", Inspector.SelectedLayer);
 
@@ -104,20 +109,15 @@ namespace Moonborne.Engine.UI
                 // Render the tree node and handle expansion
                 bool isNodeOpen = ImGui.TreeNodeEx(layer.Value.Name, nodeFlags);
 
+                if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+                {
+                    LayerToRemove = layer.Value;
+                }
+
                 // Handle selection logic independently of expansion
                 if (ImGui.IsItemClicked())
                 {
-                    RoomEditor.selectedLayer = layer.Value;
-                    Inspector.SelectedLayer = RoomEditor.selectedLayer;
-                    // Select different tile layers
-                    if (layer.Value.Type == LayerType.Tile)
-                    {
-                        RoomEditor.SelectedTilemap = layer.Value.Tilemaps[0];
-                    }
-                    else if (layer.Value.Type == LayerType.Object)
-                    {
-                        RoomEditor.SelectedTilemap = null;
-                    }
+                    RoomEditor.SelectLayer(layer.Value);
                 }
 
                 if (isNodeOpen) // Start layer tree

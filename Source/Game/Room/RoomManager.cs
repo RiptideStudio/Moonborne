@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tiled.Renderers;
+using Moonborne.Engine.UI;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -36,6 +38,20 @@ namespace Moonborne.Game.Room
                     Rooms.Add(rm.Name, rm);
                 }
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rm"></param>
+        public static void SetActiveRoom(Room rm)
+        {
+            RoomEditor.CurrentRoom.Save(RoomEditor.CurrentRoom.Name);
+            LayerManager.Clear();
+            rm.Load(rm.Name);
+            RoomEditor.CurrentRoom = rm;
+            LevelSelectEditor.isSelected = true;
+            Console.WriteLine($"Switched to room {rm.Name}");
         }
     }
 }

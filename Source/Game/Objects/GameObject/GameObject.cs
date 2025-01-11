@@ -18,6 +18,7 @@ namespace Moonborne.Game.Objects
         public string Name { get; set; }
         public string LayerName { get; set; }
         public int Depth { get; set; }
+        public List<object> Properties { get; set; }
     }
 
     /// <summary>
@@ -185,7 +186,7 @@ namespace Moonborne.Game.Objects
             }
 
             // Can't draw if not visible in game
-            if (!VisibleInGame && !GameManager.Paused)
+            if (!VisibleInGame && !GameManager.Paused && !GameManager.DebugMode)
             {
                 return;
             }

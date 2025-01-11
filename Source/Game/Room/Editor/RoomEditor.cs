@@ -114,24 +114,27 @@ namespace Moonborne.Game.Room
         /// <param name="spriteBatch"></param>
         public static void DrawEditor(SpriteBatch spriteBatch)
         {
-            // If we are in editor mode, no logic is executed
-            if (InputManager.KeyTriggered(Keys.Q))
+            if (InputManager.KeyDown(Keys.LeftControl))
             {
-                if (InEditor)
+                // If we are in editor mode, no logic is executed
+                if (InputManager.KeyTriggered(Keys.Q))
                 {
-                    GameManager.Start();
+                    if (InEditor)
+                    {
+                        GameManager.Start();
+                    }
+                    else
+                    {
+                        GameManager.Stop();
+                    }
                 }
-                else
-                {
-                    GameManager.Stop();
-                }
-            }
 
-            // Toggle debug mode
-            if (InputManager.KeyTriggered(Keys.B))
-            {
-                GameManager.DebugMode = !GameManager.DebugMode;
-                Console.WriteLine($"Toggled Debug Mode: {GameManager.DebugMode}");
+                // Toggle debug mode
+                if (InputManager.KeyTriggered(Keys.B))
+                {
+                    GameManager.DebugMode = !GameManager.DebugMode;
+                    Console.WriteLine($"Toggled Debug Mode: {GameManager.DebugMode}");
+                }
             }
 
             if (selectedLayer == null || selectedLayer.Type == LayerType.Object)
@@ -159,7 +162,7 @@ namespace Moonborne.Game.Room
                     // If an object was clicked, set it as the selected object
                     if (clickedObject != null)
                     {
-                        selectedLayer = clickedObject.Layer;
+                        SelectLayer(clickedObject.Layer);
                         Inspector.SelectedObject = clickedObject;
                         Console.WriteLine($"Selected {clickedObject.GetType().Name} on {selectedLayer.Name}");
                     }
@@ -178,28 +181,28 @@ namespace Moonborne.Game.Room
             // Render the ImGui buttons for toggling different
             ImGui.Begin("Tile Editor",ImGuiWindowFlags.NoScrollbar);
 
-            // Properties of tile editor
-            ImGui.SliderInt("Brush Size", ref BrushSize, 1, 10);
-            ImGui.Checkbox("Show Preview", ref ShowPreview);
-            ImGui.Checkbox("Show Grid", ref DebugDraw);
-            ImGui.Checkbox("Can Edit", ref CanEdit);
-
-            if (ImGui.TreeNodeEx("Texture"))
+            if (SelectedTilemap != null)
             {
-                foreach (var tex in SpriteManager.textures)
+                // Properties of tile editor
+                ImGui.SliderInt("Brush Size", ref BrushSize, 1, 10);
+                ImGui.Checkbox("Show Preview", ref ShowPreview);
+                ImGui.Checkbox("Show Grid", ref DebugDraw);
+                ImGui.Checkbox("Can Edit", ref CanEdit);
+
+                if (ImGui.TreeNodeEx("Texture"))
                 {
-                    if (ImGui.TreeNode(tex.Key))
+                    foreach (var tex in SpriteManager.textures)
                     {
-                        if (SelectedTilemap != null)
+                        if (ImGui.Button(tex.Key))
                         {
                             SelectedTilemap.SetTexture(tex.Key);
                         }
                     }
+
+                    ImGui.TreePop();
                 }
-
-                ImGui.TreePop();
             }
-
+            
             ImGui.Separator();
 
             // Do not allow us to place tiles if we are hovering over or interacting w/editor
@@ -319,22 +322,54 @@ namespace Moonborne.Game.Room
             }
 
             // Toggle the debug drawing of grid
-            if (InputManager.KeyTriggered(Keys.G))
+            if (InputManager.KeyDown(Keys.LeftControl))
             {
-                DebugDraw = !DebugDraw;
-            }
+                if (InputManager.KeyTriggered(Keys.G))
+                {
+                    DebugDraw = !DebugDraw;
+                }
 
-            // Disable editor
-            if (InputManager.KeyTriggered(Keys.T))
-            {
-                ShowPreview = !ShowPreview;
-                CanEdit = ShowPreview;
+                // Disable editor
+                if (InputManager.KeyTriggered(Keys.T))
+                {
+                    ShowPreview = !ShowPreview;
+                    CanEdit = ShowPreview;
+                }
             }
 
             // Update SelectedTilemap with values
-
             PreviewZoom = Math.Clamp(PreviewZoom, 0.25f, 4f);
             SelectedTilemap.PreviewZoom = PreviewZoom;
+        }
+
+        /// <summary>
+        /// Select a new layer
+        /// </summary>
+        /// <param name="newLayer"></param>
+        public static void SelectLayer(Layer newLayer)
+        {
+            // Reset layer selection if null
+            if (newLayer == null)
+            {
+                selectedLayer = null;
+                Inspector.SelectedLayer = null;
+                SelectedTilemap = null;
+                return;
+            }
+
+            // Set selected layers
+            selectedLayer = newLayer;
+            Inspector.SelectedLayer = selectedLayer;
+
+            // Select different tile layers
+            if (newLayer.Type == LayerType.Tile)
+            {
+                SelectedTilemap = newLayer.Tilemaps[0];
+            }
+            else if (newLayer.Type == LayerType.Object)
+            {
+                SelectedTilemap = null;
+            }
         }
     }
 }

@@ -56,6 +56,7 @@ namespace Moonborne.Game.Room
                 Layers.Add(name, layer);
                 Layers = Layers.Values.OrderBy(layer => layer.Depth).ToDictionary(layer => layer.Name);
                 layer.AddTilemap(tilemap);
+                tilemap.Layer = layer;
             }
         }
 
@@ -118,6 +119,7 @@ namespace Moonborne.Game.Room
             if (layer != null)
             {
                 layer.AddTilemap(tileMap);
+                tileMap.Layer = layer;
             }
         }
 
@@ -199,6 +201,7 @@ namespace Moonborne.Game.Room
             {
                 RemoveLayer(layer.Value);
             }
+            Objects.Clear();
         }
 
         /// <summary>
@@ -208,7 +211,7 @@ namespace Moonborne.Game.Room
         public static void RemoveLayer(Layer layer)
         {
             // Can't delete locked layers (static layers)
-            if (layer.Locked)
+            if (layer == null || layer.Locked)
                 return;
 
             Layers.Remove(layer.Name);

@@ -9,7 +9,9 @@ using Moonborne.Graphics.Camera;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Text.Json;
 
 namespace Moonborne.Game.Room
@@ -82,13 +84,24 @@ namespace Moonborne.Game.Room
                     // Save objects on the layer
                     foreach (var obj in layer.Value.Objects)
                     {
+                        // Add each serializable property of the object to the property list
+                        PropertyInfo[] properties = obj.GetType().GetProperties();
+                        var objectProperties = new List<object>();
+
+                        foreach (var property in properties)
+                        {
+                            objectProperties.Add(property.GetValue(obj));
+                        }
+
+                        // Add the data to the json object
                         objects.Add(new
                         {
                             PositionX = obj.Position.X,
                             PositionY = obj.Position.Y,
                             Name = obj.GetType().Name,
                             Depth = obj.Layer.Depth,
-                            LayerName = layer.Value.Name
+                            LayerName = layer.Value.Name,
+                            Properties = objectProperties
                         });
                     }
                 }
@@ -193,7 +206,7 @@ namespace Moonborne.Game.Room
                     LayerManager.AddLayer(layer, objectData.LayerName);
 
                     Vector2 position = new Vector2(objectData.PositionX, objectData.PositionY);
-                    ObjectLibrary.CreateObject(objectData.Name, position, objectData.LayerName);
+                    GameObject obj = ObjectLibrary.CreateObject(objectData.Name, position, objectData.LayerName);
                 }
             }
 

@@ -9,6 +9,7 @@ using System.Reflection;
 using System;
 using Moonborne.Game.Room;
 using Moonborne.Graphics.Camera;
+using MonoGame.Extended.Collisions.Layers;
 
 namespace Moonborne.Engine.UI
 {
@@ -16,6 +17,7 @@ namespace Moonborne.Engine.UI
     {
         public static string WindowName = "Room Manager";
         public static string NewRoomName = "NewRoom";
+        public static bool isSelected = false;
 
         /// <summary>
         /// Draw the inspector
@@ -23,17 +25,27 @@ namespace Moonborne.Engine.UI
         public static void Draw()
         {
             ImGui.Begin(WindowName);
+            ImGui.Text("Room Select");
+            ImGui.Separator();
 
             // Load a room by clicking on it
             foreach (var room in RoomManager.Rooms)
             {
                 Room rm = room.Value;
 
-                bool isSelected = ImGui.Selectable(rm.Name);
+                // Check if this is the currently selected layer and mark it as selected
+                isSelected = false;
 
-                if (isSelected)
+                if (RoomEditor.CurrentRoom.Name == rm.Name)
                 {
-                    rm.Load(rm.Name);
+                    isSelected = true;
+                }
+
+                ImGui.Selectable(rm.Name, isSelected);
+
+                if (ImGui.IsItemClicked())
+                {
+                    RoomManager.SetActiveRoom(rm);
                 }
             }
 
@@ -47,8 +59,8 @@ namespace Moonborne.Engine.UI
                     {
                         Room rm = new Room();
                         rm.Name = NewRoomName;
-                        rm.Save(rm.Name);
                         RoomManager.Rooms.Add(rm.Name, rm);
+                        RoomManager.SetActiveRoom(rm);
                     }
                 }
 
