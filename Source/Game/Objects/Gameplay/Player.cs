@@ -46,7 +46,7 @@ namespace Moonborne.Game.Gameplay
 
             Camera.SetPosition(Position);
             Gun = new Gun(this,250f,10);
-            LayerManager.AddInstance(Gun, "Object");
+            LayerManager.AddInstance(Gun, "Projectiles");
             Hitbox.Width = 16;
             Hitbox.Height = 16;
         }

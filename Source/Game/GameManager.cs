@@ -1,4 +1,5 @@
-﻿using Moonborne.Game.Gameplay;
+﻿using Moonborne.Engine.Audio;
+using Moonborne.Game.Gameplay;
 using Moonborne.Game.Room;
 using Moonborne.Graphics.Camera;
 using System;
@@ -21,6 +22,7 @@ namespace Moonborne.Engine
             Camera.TargetZoom = Camera.DefaultZoom;
             Camera.SetTarget(Player.Instance);
             RoomEditor.InEditor = false;
+            AudioManager.PauseAllSound(false);
         }
 
         /// <summary>
@@ -32,6 +34,7 @@ namespace Moonborne.Engine
             Pause();
             Camera.SetTarget(null);
             RoomEditor.InEditor = true;
+            AudioManager.PauseAllSound(true);
         }
 
         /// <summary>

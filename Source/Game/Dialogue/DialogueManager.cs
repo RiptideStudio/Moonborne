@@ -17,6 +17,8 @@ using Microsoft.Xna.Framework;
 using Moonborne.Game.Objects;
 using Moonborne.Utils.Math;
 using Moonborne.Game.Room;
+using Moonborne.Engine.UI;
+using Moonborne.Game.Gameplay;
 
 namespace Moonborne.UI.Dialogue
 {
@@ -44,6 +46,16 @@ namespace Moonborne.UI.Dialogue
         public static Vector2 RootPosition { get; set; } = new Vector2(50, 400);
         public static Vector2 TargetPosition { get; set; } = new Vector2(50, 200);
         public static float AnimationInterpolation { get; set; } = 0.12f;
+        public static GameObject DialogueObject;
+
+        /// <summary>
+        /// Create our dialogue object
+        /// </summary>
+        public static void InitializeLater()
+        {
+            DialogueObject = new EmptyObject();
+            LayerManager.AddInstance(DialogueObject, "Managers");
+        }
 
         /// <summary>
         /// Load all dialogue data on game start
@@ -98,10 +110,8 @@ namespace Moonborne.UI.Dialogue
         {
             LineIndex = 0;
             CharacterIndex = 0;
-            DisplayText = "";
             TimeElapsed = 0;
             WaitingForNextLine = false;
-            RootPosition = OriginalPosition;
         }
 
         /// <summary>
@@ -112,7 +122,7 @@ namespace Moonborne.UI.Dialogue
         {
             if (Open)
             {
-                DialogueManager.WriteDialogue(dt);
+                WriteDialogue(dt);
             }
         }
 
@@ -125,10 +135,12 @@ namespace Moonborne.UI.Dialogue
             // Update the active dialogue and set the first target text
             string filePath = DialogueName + ".hjson";
             ActiveDialogue = Dialogue[filePath];
+            DisplayText = "";
             TargetText = ActiveDialogue.Data.Text[0];
             Speaker = ActiveDialogue.Data.Speaker;
             ActiveNPC = npc;
             Open = true;
+            DialogueObject.AddAction(new FadeAction(0.75f), false, true);
 
             if (ActiveNPC != null)
             {
@@ -144,6 +156,7 @@ namespace Moonborne.UI.Dialogue
         public static void StopDialogue()
         {
             Open = false;
+            DialogueObject.AddAction(new FadeAction(0), false, true);
 
             // If this dialogue is linked to an NPC, set it's state back to idle
             if (ActiveNPC != null)
@@ -179,22 +192,6 @@ namespace Moonborne.UI.Dialogue
                 WaitingForNextLine = true;
             }
 
-            // Advance the dialogue to the next frame
-            if (InputManager.KeyTriggered(Keys.Space) || InputManager.MouseLeftPressed())
-            {
-                if (WaitingForNextLine)
-                {
-                    // Next set of dialogue
-                    AdvanceDialogue();
-                }
-                else
-                {
-                    // Quick-skip dialogue
-                    DisplayText = TargetText;
-                    WaitingForNextLine = true;
-                }
-            }
-
             // Check if we are done updating text
             if (WaitingForNextLine)
             {
@@ -213,6 +210,22 @@ namespace Moonborne.UI.Dialogue
                     DisplayText += TargetText[CharacterIndex];
                     CharacterIndex++;
                     TimeElapsed = 0;
+                }
+            }
+
+            // Advance the dialogue to the next frame
+            if (InputManager.KeyTriggered(Keys.Space) || InputManager.MouseLeftPressed())
+            {
+                if (WaitingForNextLine)
+                {
+                    // Next set of dialogue
+                    AdvanceDialogue();
+                }
+                else
+                {
+                    // Quick-skip dialogue
+                    DisplayText = TargetText;
+                    WaitingForNextLine = true;
                 }
             }
         }
@@ -244,16 +257,14 @@ namespace Moonborne.UI.Dialogue
         /// </summary>
         public static void DrawDialogueBox()
         {
-            if (Open)
-            {
-                RootPosition = MoonMath.Lerp(RootPosition, TargetPosition, AnimationInterpolation);
-                SpriteManager.SetDrawAlpha(0.75f);
-                SpriteManager.DrawRectangle(RootPosition, DialogueBoxWidth, DialogueBoxHeight, Color.Black);
-                SpriteManager.ResetDraw();
+            RootPosition = MoonMath.Lerp(RootPosition, TargetPosition, AnimationInterpolation);
+            SpriteManager.SetDrawAlpha(DialogueObject.Alpha);
+            SpriteManager.DrawRectangle(RootPosition, DialogueBoxWidth, DialogueBoxHeight, Color.Black);
 
-                SpriteManager.DrawText(Speaker, RootPosition+NameOffset, FontScale, 0, Color.Yellow);
-                SpriteManager.DrawText(DisplayText, RootPosition+TextOffset, FontScale, 0, Color.White, DialogueBoxWidth-32);
-            }
+            SpriteManager.SetDrawAlpha(DialogueObject.Alpha*2f);
+            SpriteManager.DrawText(Speaker, RootPosition+NameOffset, FontScale, 0, Color.Yellow);
+            SpriteManager.DrawText(DisplayText, RootPosition+TextOffset, FontScale, 0, Color.White, DialogueBoxWidth-32);
+            SpriteManager.ResetDraw();
         }
     }
 }

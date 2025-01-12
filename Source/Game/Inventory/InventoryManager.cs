@@ -8,6 +8,10 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Moonborne.Engine.UI;
+using Moonborne.Game.Gameplay;
+using Moonborne.Game.Objects;
+using Moonborne.Game.Room;
 using Moonborne.Graphics;
 using Moonborne.Input;
 
@@ -19,7 +23,9 @@ namespace Moonborne.Game.Inventory
         public static int Cores = 10;
         public static int Columns { get; set; } = 3;
         public static bool Open { get; set; } = false;
-        public static Vector2 Position = new Vector2(32, 32);
+        public static Vector2 Position = new Vector2(-132, 16);
+        public static List<GameAction> Actions = new List<GameAction>();
+        public static GameObject InventoryObject;
 
         /// <summary>
         /// Initialize the inventory with game devices
@@ -27,6 +33,7 @@ namespace Moonborne.Game.Inventory
         public static void Initialize()
         {
             AddItem(new LunarCore());
+            InventoryObject = ObjectLibrary.CreateObject("EmptyObject", Position, "Managers");
         }
 
         /// <summary>
@@ -35,6 +42,15 @@ namespace Moonborne.Game.Inventory
         public static void Toggle()
         {
             Open = !Open;
+
+            if (Open)
+            {
+                InventoryObject.AddAction(new MoveAction(new Vector2(32, 16)),false,true);
+            }
+            else
+            {
+                InventoryObject.AddAction(new MoveAction(new Vector2(-132, 16)),false,true);
+            }
         }
 
         /// <summary>
@@ -42,13 +58,8 @@ namespace Moonborne.Game.Inventory
         /// </summary>
         public static void Draw(SpriteBatch spriteBatch)
         {
-            if (!Open)
-            {
-                return;
-            }
-
             SpriteManager.SetDrawAlpha(0.75f);
-            SpriteManager.DrawRectangle(new Vector2(16,16), 128,240, Color.Black);
+            SpriteManager.DrawRectangle(Position, 128,240, Color.Black);
             SpriteManager.SetDrawAlpha(1);
 
             // Iterate over each item and draw it
@@ -65,8 +76,10 @@ namespace Moonborne.Game.Inventory
         /// <summary>
         /// Update the inventory per frame (deprecated)
         /// </summary>
-        public static void Update()
+        public static void Update(float dt)
         {
+            Position = InventoryObject.Position;
+
             if (InputManager.KeyTriggered(Keys.Tab))
             {
                 Toggle();

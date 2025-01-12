@@ -114,6 +114,16 @@ namespace Moonborne.Game.Room
         /// <param name="spriteBatch"></param>
         public static void DrawEditor(SpriteBatch spriteBatch)
         {
+            HoveringOverGameWorld = true;
+
+            // Do not allow us to place tiles if we are hovering over or interacting w/editor
+            bool isHoveringAnyWindow = ImGui.GetIO().WantCaptureMouse;
+            if (isHoveringAnyWindow)
+            {
+                CanPlaceTile = false;
+                HoveringOverGameWorld = false;
+            }
+
             if (InputManager.KeyDown(Keys.LeftControl))
             {
                 // If we are in editor mode, no logic is executed
@@ -140,9 +150,7 @@ namespace Moonborne.Game.Room
             if (selectedLayer == null || selectedLayer.Type == LayerType.Object)
             {
                 // Click on objects
-                HoveringOverGameWorld = true;
-
-                if (InputManager.MouseLeftPressed())
+                if (InputManager.MouseLeftPressed() && HoveringOverGameWorld)
                 {
                     GameObject clickedObject = null;
 
@@ -163,9 +171,10 @@ namespace Moonborne.Game.Room
                     if (clickedObject != null)
                     {
                         SelectLayer(clickedObject.Layer);
-                        Inspector.SelectedObject = clickedObject;
                         Console.WriteLine($"Selected {clickedObject.GetType().Name} on {selectedLayer.Name}");
                     }
+                    Inspector.SelectedObject = clickedObject;
+
                 }
             }
 
@@ -204,14 +213,6 @@ namespace Moonborne.Game.Room
             }
             
             ImGui.Separator();
-
-            // Do not allow us to place tiles if we are hovering over or interacting w/editor
-            bool isHoveringAnyWindow = ImGui.GetIO().WantCaptureMouse;
-            if (isHoveringAnyWindow)
-            {
-                CanPlaceTile = false;
-                HoveringOverGameWorld = false;
-            }
 
             if (selectedLayer != null && selectedLayer.Type == LayerType.Object)
             {

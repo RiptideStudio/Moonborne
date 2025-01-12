@@ -4,6 +4,7 @@ using MonoGame.Extended.Tiled;
 using MonoGame.ImGui;
 using Moonborne.Engine;
 using Moonborne.Engine.Collision;
+using Moonborne.Engine.UI;
 using Moonborne.Game.Room;
 using Moonborne.Graphics;
 using System;
@@ -33,6 +34,9 @@ namespace Moonborne.Game.Objects
     public abstract class GameObject
     {
         public Sprite SpriteIndex; // Sprite object to hold drawing data
+        public List<GameAction> Actions = new List<GameAction>();
+        public List<GameAction> DeferredActions = new List<GameAction>();
+        public List<GameAction> ActionsToDestroy = new List<GameAction>();
 
         public int AnimationSpeed { get; set; } = 10;
         public Vector2 Scale { get; set; } = Vector2.One; // Object scale
@@ -40,6 +44,7 @@ namespace Moonborne.Game.Objects
         public bool Visible { get; set; } = true;
         public float Speed { get; set; } = 0;
         public float LinearFriction { get; set; } = 8;
+        public float Alpha = 0f;
 
         public int Height = 1; // Defines our heightmap
         public Vector2 Velocity;
@@ -76,8 +81,10 @@ namespace Moonborne.Game.Objects
         public int CurrentLayer { get; set; }
         private int Haxis = 1;
         private int Vaxis = 1;
-        public int HitboxYOffset { get; set; } = 0;
         public int HitboxXOffset { get; set; } = 0;
+        public int HitboxYOffset { get; set; } = 0;
+        public int HitboxWidthOffset { get; set; } = 0;
+        public int HitboxHeightOffset { get; set; } = 0;
         public bool VisibleInGame = true;
 
         /// <summary>
@@ -172,6 +179,35 @@ namespace Moonborne.Game.Objects
                     Frame = 0;
                 }
             }
+
+            // Update game actions here
+            foreach (GameAction action in Actions)
+            {
+                action.Update(dt);
+            }
+
+            // Some actions can't overlap, so we defer them
+            foreach (GameAction action in DeferredActions)
+            {
+                if (Actions.Count == 0)
+                {
+                    Actions.Add(action);
+                    ActionsToDestroy.Add(action);
+                }
+            }
+
+            // Destroy actions
+            foreach(GameAction action in ActionsToDestroy)
+            {
+                if (Actions.Contains(action))
+                {
+                    Actions.Remove(action);
+                }
+                if (DeferredActions.Contains(action))
+                {
+                    DeferredActions.Remove(action);
+                }
+            }
         }
 
         /// <summary>
@@ -197,10 +233,10 @@ namespace Moonborne.Game.Objects
                 Hitbox.X = HitboxXOffset+(int)Position.X - Hitbox.Width / 2;
                 Hitbox.Y = HitboxYOffset+(int)Position.Y - Hitbox.Height / 2;
 
-                if (SpriteIndex != null && Hitbox.Width == -1)
+                if (SpriteIndex != null)
                 {
-                    Hitbox.Width = SpriteIndex.FrameWidth;
-                    Hitbox.Height = SpriteIndex.FrameHeight;
+                    Hitbox.Width = SpriteIndex.FrameWidth-HitboxWidthOffset;
+                    Hitbox.Height = SpriteIndex.FrameHeight-HitboxHeightOffset;
                 }
             }
 
@@ -210,11 +246,11 @@ namespace Moonborne.Game.Objects
                 SpriteManager.SetDrawAlpha(0.25f);
                 SpriteManager.DrawRectangle(Hitbox.X, Hitbox.Y, Hitbox.Width, Hitbox.Height, Color.Red);
                 SpriteManager.SetDrawAlpha(1);
-                SpriteManager.DrawText($"{Depth}", Position, Scale, Rotation, Tint);
+                SpriteManager.DrawText($"{GetType().Name}", Position, Scale, Rotation, Tint);
             }
 
             // Resort an object based on its layer's depth and Y position
-            if (NeedsLayerSort)
+            if (NeedsLayerSort && SpriteIndex != null)
             {
                 Depth = LayerManager.NormalizeLayerDepth((int)Position.Y, 1, 99999999) - 0.0001f;
                 Depth = Math.Clamp(Depth, 0, 1);
@@ -341,6 +377,30 @@ namespace Moonborne.Game.Objects
 
             if (Math.Abs(Velocity.X) < 0.01f) Velocity.X = 0f;
             if (Math.Abs(Velocity.Y) < 0.01f) Velocity.Y = 0f;
+        }
+
+        /// <summary>
+        /// Add a new action to this object
+        /// </summary>
+        /// <param name="moveAction"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public void AddAction(GameAction action, bool deferred = false, bool overwriteExisting = false)
+        {
+            action.Parent = this;
+
+            if (overwriteExisting)
+            {
+                Actions.Clear();
+            }
+
+            if (deferred)
+            {
+                DeferredActions.Add(action);
+            }
+            else
+            {
+                Actions.Add(action);
+            }
         }
     }
 }

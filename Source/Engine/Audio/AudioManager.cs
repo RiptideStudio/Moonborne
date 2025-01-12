@@ -76,6 +76,9 @@ namespace Moonborne.Engine.Audio
                     Sounds.Add(fileName, gameSound);
                 }
             }
+
+            PlaySound(SoundID.Earthward);
+            PauseAllSound(true);
         }
 
         /// <summary>
@@ -113,6 +116,14 @@ namespace Moonborne.Engine.Audio
             {
                 soundObject.Play();
             }
+        }
+
+        /// <summary>
+        /// Stops all audio playing
+        /// </summary>
+        public static void PauseAllSound(bool val)
+        {
+            MainChannel.setPaused(val);
         }
     }
 }

@@ -289,6 +289,7 @@ namespace Moonborne.Graphics
         /// <param name="alpha"></param>
         public static void SetDrawAlpha(float alpha)
         {
+            alpha = Math.Clamp(alpha, 0.0f, 1.0f);
             DrawAlpha = (byte)(alpha*255);
         }
 

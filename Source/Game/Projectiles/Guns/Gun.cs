@@ -12,7 +12,7 @@ using Moonborne.Input;
 
 namespace Moonborne.Game.Projectiles
 {
-    public class Gun : GameObject
+    public class Gun : Actor
     {
         public GameObject Parent { get; set; } // Parent this gun belongs to
         public Vector2 Target { get; set; } = Vector2.One; // Our target look position (usually our mouse)
@@ -21,7 +21,6 @@ namespace Moonborne.Game.Projectiles
         private float TimeElapsed { get; set; } = 0f; // Used for cooldowns
         private bool CanShoot { get; set; } = true; // Check whether or not we can shoot
         public int Level = 1; // How much this gun has been upgraded
-        public int Damage = 1;
 
         /// <summary>
         /// Constructor for making a new gun
@@ -67,7 +66,7 @@ namespace Moonborne.Game.Projectiles
                 return;
             }
 
-            Bullet bullet = ObjectLibrary.CreateObject<Bullet>(Position);
+            Bullet bullet = ObjectLibrary.CreateObject<Bullet>(Position, "Projectiles");
             bullet.Damage = Damage;
             bullet.Launch(InputManager.MouseDirection(Position), ShootSpeed);
             CanShoot = false;

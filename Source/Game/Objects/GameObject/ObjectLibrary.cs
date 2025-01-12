@@ -10,27 +10,12 @@ using System.Reflection;
 using System;
 using System.Linq;
 using MonoGame.Extended.Collisions.Layers;
+using Moonborne.Game.Gameplay;
 
 namespace Moonborne.Game.Objects
 {
     public static class ObjectLibrary
     {
-        /// <summary>
-        /// Creates a new object given a type
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static T CreateObject<T>(Vector2 position, string layer = "Object") where T : GameObject, new()
-        {
-            T gameObject = new T();
-            gameObject.Position = position;
-            gameObject.StartPosition = position;
-            LayerManager.AddInstance(gameObject, layer);
-
-            return gameObject;
-        }
-
-
         private static readonly Dictionary<string, Type> gameObjectTypes;
 
         static ObjectLibrary()
@@ -56,11 +41,39 @@ namespace Moonborne.Game.Objects
             return gameObjectTypes.Keys.ToList();
         }
 
+        /// <summary>
+        /// Creates a new object given a type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static T CreateObject<T>(Vector2 position, string layer = "Object") where T : GameObject, new()
+        {
+            T gameObject = new T();
+            gameObject.Position = position;
+            gameObject.StartPosition = position;
+            gameObject.NeedsLayerSort = true;
+            gameObject.CreateLater();
+
+            LayerManager.AddInstance(gameObject, layer);
+
+            return gameObject;
+        }
+
+
+        /// <summary>
+        /// Create a game object of any type
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="position"></param>
+        /// <param name="layerName"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static GameObject CreateObject(string name, Vector2 position, string layerName = "Object")
         {
             if (!gameObjectTypes.TryGetValue(name, out var type))
             {
-                throw new Exception($"GameObject type '{name}' not found.");
+                Console.Write($"GameObject type '{name}' not found.");
+                return new EmptyObject();
             }
 
             // Create the object
@@ -68,7 +81,7 @@ namespace Moonborne.Game.Objects
             obj.Position = position;
             obj.StartPosition = position;
             obj.NeedsLayerSort = true;
-            obj.CreateLater(); // post-intialize create
+            obj.CreateLater();
 
             LayerManager.AddInstance(obj, layerName);
 

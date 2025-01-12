@@ -8,6 +8,7 @@ namespace Moonborne.Game.Gameplay
     public class RoomTransition : Actor
     {
         public string TargetRoom { get; set; } = "Room";
+        private bool Used = false;
 
         public override void CreateLater()
         {
@@ -26,8 +27,9 @@ namespace Moonborne.Game.Gameplay
             if (other is Player)
             {
                 // Check if the room exists, and if it does go to it
-                if (RoomManager.Rooms.ContainsKey(TargetRoom))
+                if (RoomManager.Rooms.ContainsKey(TargetRoom) && !Used)
                 {
+                    Used = true;
                     RoomManager.SetActiveRoom(RoomManager.Rooms[TargetRoom]);
                 }
             }

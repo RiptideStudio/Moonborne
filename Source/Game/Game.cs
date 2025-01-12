@@ -75,6 +75,7 @@ namespace Moonborne
             player = new Player();
 
             InventoryManager.Initialize();
+            DialogueManager.InitializeLater();
             RoomEditor.Initialize();
             LayerManager.AddInstance(player, "Player");
             LayerManager.UpdateFrame(0);
@@ -94,7 +95,7 @@ namespace Moonborne
             WindowManager.Update(dt);
             Camera.Update();
             DialogueManager.Update(dt);
-            InventoryManager.Update();
+            InventoryManager.Update(dt);
             AudioManager.Update(dt);
 
             // Update everything
@@ -107,7 +108,7 @@ namespace Moonborne
         protected override void Draw(GameTime gameTime)
         {
             // Start drawing
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
             ImGuiManager.BeginFrame(gameTime);
 
             // Render everything in all layers

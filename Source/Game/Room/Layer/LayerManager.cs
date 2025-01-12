@@ -18,6 +18,7 @@ namespace Moonborne.Game.Room
     public static class LayerManager
     {
         public static Dictionary<string, Layer> Layers = new Dictionary<string, Layer>();
+        public static Dictionary<string, Layer> LayersToAdd = new Dictionary<string, Layer>();
         public static List<GameObject> Objects = new List<GameObject>(); // Global list of all game objects
 
         /// <summary>
@@ -70,7 +71,8 @@ namespace Moonborne.Game.Room
             // If there is no layer with this name, create one
             if (!Layers.ContainsKey(layerName))
             {
-                AddLayer(new Layer(Layers.Count, () => Camera.Transform, LayerType.Object), layerName);
+                Layer newLayer = new Layer(Layers.Count, () => Camera.Transform, LayerType.Object);
+                AddLayer(newLayer,layerName);
             }
 
             // Add the instance to the layer
@@ -183,6 +185,17 @@ namespace Moonborne.Game.Room
             // Deal with collisions
             CollisionHandler.HandleCollisions(dt);
 
+            // Deferral of adding and removing layers
+            foreach (var layer in LayersToAdd)
+            {
+                if (Layers.ContainsKey(layer.Key))
+                    continue;
+
+                Layers.Add(layer.Key, layer.Value);
+            }
+            LayersToAdd.Clear();
+
+            // Update all layers
             foreach (var layer in Layers)
             {
                 if (!layer.Value.Visible)
@@ -199,9 +212,11 @@ namespace Moonborne.Game.Room
         {
             foreach (var layer in Layers)
             {
+                if (layer.Value.Locked)
+                    continue;
+
                 RemoveLayer(layer.Value);
             }
-            Objects.Clear();
         }
 
         /// <summary>
@@ -235,9 +250,9 @@ namespace Moonborne.Game.Room
         public static void Initialize()
         {
             // Static layers 
-            AddLayer(new Layer(5, () => Camera.Transform, LayerType.Object, true), "Object");
-            AddLayer(new Layer(4, () => Camera.Transform, LayerType.Object, true), "Tiles");
+            AddLayer(new Layer(5, () => Camera.Transform, LayerType.Object, true), "Managers");
             AddLayer(new Layer(3, () => Camera.Transform, LayerType.Object, true), "Player");
+            AddLayer(new Layer(3, () => Camera.Transform, LayerType.Object, true), "Projectiles");
             AddLayer(new Layer(1000, () => Camera.Transform, LayerType.Object, true), "TileEditorWorld");
             AddLayer(new Layer(9999, () => WindowManager.Transform, LayerType.UI, true), "Dialogue");
             AddLayer(new Layer(1002, () => WindowManager.Transform, LayerType.UI, true), "Inventory");
