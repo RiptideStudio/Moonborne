@@ -41,6 +41,7 @@ namespace Moonborne
             {
                 throw new Exception("GraphicsDevice is null. Cannot initialize ImGuiManager.");
             }
+            IsMouseVisible = false;
 
             SpriteManager.Initialize(Content,GraphicsDevice);
             GraphicsManager.Initialize(Content, GraphicsDevice, _graphics, this);
@@ -116,6 +117,16 @@ namespace Moonborne
 
             // End drawing
             ImGuiManager.EndFrame(gameTime);
+
+            // Draw the mouse
+            Rectangle mouseRect = InputManager.MouseHitbox;
+            mouseRect.Width = 8;
+            mouseRect.Height = 8;
+
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, WindowManager.Transform);
+            spriteBatch.Draw(SpriteManager.GetTexture("Cursor"), mouseRect, Color.White);
+            spriteBatch.End();
+
             base.Draw(gameTime);
         }
     }

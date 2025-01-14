@@ -90,7 +90,7 @@ namespace Moonborne.Game.Room
 
                         foreach (var property in properties)
                         {
-                            objectProperties.Add(property.GetValue(obj));
+                            // objectProperties.Add(property.GetValue(obj));
                         }
 
                         // Add the data to the json object

@@ -32,6 +32,16 @@ namespace Moonborne.Game.Objects
             {
                 SpriteIndex = Sprites[(int)State, (int)Direction];
             }
+
+            // Change direction based on velocity
+            if (Velocity.Y > 0)
+                Direction = Direction.Down;
+            if (Velocity.Y < 0)
+                Direction = Direction.Up;
+            if (Velocity.X > 0)
+                Direction = Direction.Right;
+            if (Velocity.X < 0)
+                Direction = Direction.Left;
         }
     }
 }

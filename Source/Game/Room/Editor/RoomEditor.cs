@@ -168,7 +168,7 @@ namespace Moonborne.Game.Room
                     }
 
                     // If an object was clicked, set it as the selected object
-                    if (clickedObject != null)
+                    if (clickedObject != null && !clickedObject.Layer.Locked)
                     {
                         SelectLayer(clickedObject.Layer);
                         Console.WriteLine($"Selected {clickedObject.GetType().Name} on {selectedLayer.Name}");

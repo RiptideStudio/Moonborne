@@ -42,6 +42,7 @@ namespace Moonborne.Graphics.Window
             {
                 ToggleFullsceen();
             }
+
         }
 
         /// <summary>

@@ -93,6 +93,11 @@ namespace Moonborne.Game.Objects
             SetSprite("NpcIdleRight", 16, 16, State.Idle, Direction.Right);
             SetSprite("NpcIdleDown", 16, 16, State.Idle, Direction.Down);
             SetSprite("NpcIdleUp", 16, 16, State.Idle, Direction.Up);
+
+            SetSprite("PlayerWalkLeft", 16, 16, State.Wander, Direction.Left);
+            SetSprite("PlayerWalkRight", 16, 16, State.Wander, Direction.Right);
+            SetSprite("PlayerWalkDown", 16, 16, State.Wander, Direction.Down);
+            SetSprite("PlayerWalkUp", 16, 16, State.Wander, Direction.Up);
             SpriteIndex = GetSprites(State.Idle, Direction.Down);
         }
 
@@ -139,7 +144,6 @@ namespace Moonborne.Game.Objects
         public virtual void Wander(float dt)
         {
             float distanceToTarget = MoonMath.Distance(Position, WanderPosition);
-
             ElapsedTime += dt;
 
             if (ElapsedTime > WanderTime * dt)

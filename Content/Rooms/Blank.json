@@ -8775,19 +8775,7 @@
       "Name": "PlayerStart",
       "Depth": 1,
       "LayerName": "Objects",
-      "Properties": [
-        10,
-        {},
-        1000,
-        true,
-        0,
-        8,
-        0,
-        0,
-        0,
-        0,
-        0
-      ]
+      "Properties": []
     },
     {
       "PositionX": 519.8769,
@@ -8795,21 +8783,7 @@
       "Name": "RoomTransition",
       "Depth": 1,
       "LayerName": "Objects",
-      "Properties": [
-        "Room",
-        32,
-        10,
-        {},
-        1000,
-        true,
-        0,
-        8,
-        0,
-        0,
-        0,
-        0,
-        0
-      ]
+      "Properties": []
     },
     {
       "PositionX": 514.06604,
@@ -8817,20 +8791,7 @@
       "Name": "CoreTable",
       "Depth": 1,
       "LayerName": "Objects",
-      "Properties": [
-        32,
-        10,
-        {},
-        1000,
-        true,
-        0,
-        8,
-        0,
-        0,
-        0,
-        0,
-        0
-      ]
+      "Properties": []
     },
     {
       "PositionX": 507.07047,
@@ -8838,36 +8799,7 @@
       "Name": "NPC",
       "Depth": 1,
       "LayerName": "Objects",
-      "Properties": [
-        null,
-        0,
-        0,
-        {
-          "0": "Test",
-          "1": "Test2"
-        },
-        true,
-        false,
-        100,
-        80,
-        0.049999803,
-        120,
-        180,
-        147,
-        null,
-        32,
-        10,
-        {},
-        1000,
-        true,
-        33,
-        8,
-        0,
-        0,
-        0,
-        0,
-        0
-      ]
+      "Properties": []
     }
   ]
 }

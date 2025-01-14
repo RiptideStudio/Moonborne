@@ -1,0 +1,17 @@
+{
+  "RoomName": "Village",
+  "Tilemaps": [
+    {
+      "TileSize": 16,
+      "TilesetName": "CoraglowCityTileset",
+      "Height": 1,
+      "Depth": 1,
+      "LayerName": "VillageTiles",
+      "Collideable": false,
+      "Visible": true,
+      "IsTransitionLayer": false,
+      "Tiles": []
+    }
+  ],
+  "Objects": []
+}

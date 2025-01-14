@@ -12,6 +12,5 @@ namespace Moonborne.Game.Gameplay
             base.Create();
             SpriteIndex = SpriteManager.GetSprite("Tree");
         }
-
     }
 }

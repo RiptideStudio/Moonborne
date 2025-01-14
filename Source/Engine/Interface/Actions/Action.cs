@@ -9,6 +9,9 @@ using Moonborne.Game.Objects;
 
 namespace Moonborne.Engine.UI
 {
+    /// <summary>
+    /// Base action class
+    /// </summary>
     public abstract class GameAction
     {
         public float Duration = 1f;
@@ -64,6 +67,9 @@ namespace Moonborne.Engine.UI
         }
     }
 
+    /// <summary>
+    /// Translate action
+    /// </summary>
     public class MoveAction : GameAction
     {
         public Vector2 TargetPosition;
@@ -80,6 +86,9 @@ namespace Moonborne.Engine.UI
         }
     }
 
+    /// <summary>
+    /// Fade alpha of object
+    /// </summary>
     public class FadeAction : GameAction
     {
         public float TargetValue;
