@@ -19,7 +19,7 @@ namespace Moonborne.Game.Objects
         public string Name { get; set; }
         public string LayerName { get; set; }
         public int Depth { get; set; }
-        public List<object> Properties { get; set; }
+        public List<VariableData> Properties { get; set; }
     }
 
     /// <summary>
@@ -78,13 +78,13 @@ namespace Moonborne.Game.Objects
         public bool NeedsLayerSort = false; // Used as a flag when changing layers
         public bool Colliding = false;
         public bool IsDirty = true;
-        public int CurrentLayer { get; set; }
+        private int CurrentLayer;
         private int Haxis = 1;
         private int Vaxis = 1;
-        public int HitboxXOffset { get; set; } = 0;
-        public int HitboxYOffset { get; set; } = 0;
-        public int HitboxWidthOffset { get; set; } = 0;
-        public int HitboxHeightOffset { get; set; } = 0;
+        private int HitboxXOffset;
+        private int HitboxYOffset;
+        private int HitboxWidthOffset;
+        private int HitboxHeightOffset;
         public bool VisibleInGame = true;
 
         /// <summary>

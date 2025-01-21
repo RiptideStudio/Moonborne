@@ -218,12 +218,15 @@ namespace Moonborne.Game.Room
             LevelSelectEditor.Draw();
 
             // Render the ImGui buttons for toggling different
-            ImGui.Begin("Tile Editor",ImGuiWindowFlags.NoScrollbar);
+            ImGui.Begin("World Editor");
 
             // Grid settings
+            if (ImGui.Button("Reload Assets"))
+            {
+                SpriteManager.ReloadTextures();
+            }
             ImGui.SliderInt("Cell Step Size", ref CellSize, 1, 16);
             ImGui.SliderInt("World Size", ref WorldSize, 10, 100);
-            ImGui.Checkbox("Show Grid", ref DebugDraw);
 
             if (SelectedTilemap != null)
             {
@@ -231,6 +234,7 @@ namespace Moonborne.Game.Room
                 ImGui.SliderInt("Brush Size", ref BrushSize, 1, 10);
                 ImGui.Checkbox("Show Preview", ref ShowPreview);
                 ImGui.Checkbox("Can Edit", ref CanEdit);
+                ImGui.Checkbox("Show Grid", ref DebugDraw);
 
                 if (ImGui.TreeNodeEx("Texture"))
                 {
@@ -245,7 +249,11 @@ namespace Moonborne.Game.Room
                     ImGui.TreePop();
                 }
             }
-            
+            else
+            {
+                ImGui.Checkbox("Show Grid", ref DebugDraw);
+            }
+
             ImGui.Separator();
 
             if (selectedLayer != null && selectedLayer.Type == LayerType.Object)
@@ -297,6 +305,7 @@ namespace Moonborne.Game.Room
                     }
                 }
             }
+            ImGui.End(); // End world editor
 
             if (HoveringOverGameWorld)
             {
@@ -367,9 +376,10 @@ namespace Moonborne.Game.Room
             // Update our tile selector
             if (SelectedTilemap != null)
             {
+                ImGui.Begin("Tile Editor", ImGuiWindowFlags.NoScrollbar);
                 UpdateTileSelector(spriteBatch);
+                ImGui.End();
             }
-            ImGui.End();
         }
 
         public static void UpdateTileSelector(SpriteBatch spriteBatch)

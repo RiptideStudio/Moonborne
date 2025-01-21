@@ -9,6 +9,8 @@ using System.IO;
 using ImGuiNET;
 using System.Reflection.Metadata;
 using System.Collections;
+using Moonborne.Game.Room;
+using Moonborne.Engine;
 
 namespace Moonborne.Graphics
 {
@@ -54,6 +56,18 @@ namespace Moonborne.Graphics
             texture.SetData(new[] { color });
 
             return texture;
+        }
+
+        /// <summary>
+        /// Reload all textures
+        /// </summary>
+        public static void ReloadTextures()
+        {
+            sprites.Clear();
+            textures.Clear();
+            LoadAllTextures();
+            GameManager.Save();
+            RoomManager.SetActiveRoom(RoomManager.CurrentRoom);
         }
 
         /// <summary>

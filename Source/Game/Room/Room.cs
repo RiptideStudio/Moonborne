@@ -1,4 +1,5 @@
 ﻿
+using FMOD;
 using ImGuiNET;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Collisions.Layers;
@@ -13,6 +14,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace Moonborne.Game.Room
 {
@@ -22,6 +24,13 @@ namespace Moonborne.Game.Room
         public List<TilemapData> Tilemaps { get; set; }
         public List<GameObjectData> Objects { get; set; }
     }
+
+    public class VariableData
+    {
+        public string Name { get; set; }
+        public object Value { get; set; }
+    }
+
 
     public class Room
     {
@@ -89,7 +98,6 @@ namespace Moonborne.Game.Room
                     layer.Visible = tilemapData.Visible;
                     layer.Collideable = tilemapData.Collideable;
                     layer.Height = tilemapData.Height;
-                    layer.IsTransitionLayer = tilemapData.IsTransitionLayer;
                     LayerManager.AddTilemapLayer(layer, tilemap, tilemapData.LayerName);
 
                     // Populate the grid with tile data
@@ -123,6 +131,37 @@ namespace Moonborne.Game.Room
 
                     Vector2 position = new Vector2(objectData.PositionX, objectData.PositionY);
                     GameObject obj = ObjectLibrary.CreateObject(objectData.Name, position, objectData.LayerName);
+
+                    // Load properties
+                    foreach (var property in objectData.Properties)
+                    {
+                        var key = property.Name;
+
+                        Type type = obj.GetType();
+
+                        PropertyInfo prop = type.GetProperty(property.Name);
+
+                        // Don't set wrong property
+                        if (prop == null || prop.Name != key)
+                            continue;
+
+                        // Hard checks for each type
+                        if (prop.PropertyType == typeof(float))
+                        {
+                            var value = float.Parse(property.Value.ToString());
+                            prop.SetValue(obj, value, null);
+                        }
+                        else if (prop.PropertyType == typeof(int))
+                        {
+                            int value = int.Parse(property.Value.ToString());
+                            prop.SetValue(obj, value, null);
+                        }                        
+                        else if (prop.PropertyType == typeof(bool))
+                        {
+                            bool value = bool.Parse(property.Value.ToString());
+                            prop.SetValue(obj, value, null);
+                        }
+                    }
                 }
             }
 

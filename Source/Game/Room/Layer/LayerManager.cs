@@ -260,5 +260,13 @@ namespace Moonborne.Game.Room
             AddLayer(new Layer(1002, () => WindowManager.Transform, LayerType.UI, true), "Inventory");
             AddLayer(new Layer(1003, () => WindowManager.Transform, LayerType.UI, true), "RoomEditor");
         }
+
+        /// <summary>
+        /// Reloads all objects and tilesets to update their textures
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        public static void ReloadAllEntities()
+        {
+        }
     }
 }

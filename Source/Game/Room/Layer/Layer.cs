@@ -33,12 +33,11 @@ namespace Moonborne.Game.Room
         public bool Locked = false;
         public bool Collideable { get; set; } = false;
         public bool Visible { get; set; } = true;
-        public bool IsTransitionLayer { get; set; } = false;
         public int Depth { get; set; } = 0;
         public string Name { get; set; } = string.Empty;
-        public SpriteSortMode SortMode { get; set; } = SpriteSortMode.Deferred; // The way sprites are sorted
-        public BlendState BlendState { get; set; } = BlendState.NonPremultiplied; // Type of blend state used
-        public SamplerState SamplerState { get; set; } = SamplerState.PointClamp; // Sampler state used (usually pixel)
+        public SpriteSortMode SortMode = SpriteSortMode.Deferred; // The way sprites are sorted
+        public BlendState BlendState = BlendState.NonPremultiplied; // Type of blend state used
+        public SamplerState SamplerState = SamplerState.PointClamp; // Sampler state used (usually pixel)
         public Matrix Transform => GetTransform(); // The matrix used to transform the layer
         public List<GameObject> Objects { get; set; } = new List<GameObject>(); // Objects on this layer
         public List<GameObject> ObjectsToCreate { get; set; } = new List<GameObject>(); // Objects on this layer

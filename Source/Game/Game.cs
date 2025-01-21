@@ -19,6 +19,7 @@ using MonoGame.Extended.Tiled;
 using ImGuiNET;
 using Moonborne.Engine.Audio;
 using Moonborne.Engine;
+using System.IO;
 
 namespace Moonborne
 {
@@ -42,7 +43,7 @@ namespace Moonborne
             {
                 throw new Exception("GraphicsDevice is null. Cannot initialize ImGuiManager.");
             }
-            IsMouseVisible = false;
+            // IsMouseVisible = false;
 
             GameManager.Initialize(this);
             SpriteManager.Initialize(Content,GraphicsDevice);
@@ -82,10 +83,13 @@ namespace Moonborne
             RoomEditor.Initialize();
             LayerManager.AddInstance(player, "Player");
             LayerManager.UpdateFrame(0);
+            Window.Title = "Moonborne Engine";
         }
 
         protected override void Update(GameTime gameTime)
         {
+            if (!IsActive)
+                return;
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
@@ -115,6 +119,9 @@ namespace Moonborne
 
         protected override void Draw(GameTime gameTime)
         {
+            if (!IsActive)
+                return;
+
             // Start drawing
             GraphicsDevice.Clear(Color.Black);
             ImGuiManager.BeginFrame(gameTime);
@@ -131,10 +138,25 @@ namespace Moonborne
             mouseRect.Height = 8;
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, WindowManager.Transform);
-            spriteBatch.Draw(SpriteManager.GetTexture("Cursor"), mouseRect, Color.White);
+            // spriteBatch.Draw(SpriteManager.GetTexture("Cursor"), mouseRect, Color.White);
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        /// <summary>
+        /// Called when game is quit
+        /// </summary>
+        protected override void EndRun()
+        {
+            base.EndRun();
+
+            // Delete all temporary files on close
+            string directory = Directory.GetCurrentDirectory() + "/Content/Temp";
+            if (Directory.Exists(directory))
+            {
+                Directory.Delete(directory,true);
+            }
         }
     }
 }

@@ -45,6 +45,7 @@ namespace Moonborne.Engine.UI
 
                 if (ImGui.IsItemClicked())
                 {
+                    RoomEditor.CurrentRoom.Save(RoomEditor.CurrentRoom.Name);
                     RoomManager.SetActiveRoom(rm);
                 }
             }
@@ -57,13 +58,11 @@ namespace Moonborne.Engine.UI
                 {
                     if (!RoomManager.Rooms.ContainsKey(NewRoomName))
                     {
-                        Room rm = new Room();
-                        rm.Name = NewRoomName;
-                        RoomManager.Rooms.Add(rm.Name, rm);
+                        Room rm = RoomManager.CreateRoom(NewRoomName);
                         RoomManager.SetActiveRoom(rm);
                     }
                 }
-
+    
                 // Input for room name
                 ImGui.InputText("Room Name", ref NewRoomName, 20);
 

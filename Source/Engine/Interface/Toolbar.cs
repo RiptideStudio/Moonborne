@@ -65,6 +65,7 @@ namespace Moonborne.Engine.UI
                 if (ImGui.MenuItem("Delete"))
                 {
                     Inspector.DeleteSelectedObject();
+                    RoomManager.DeleteRoom(RoomEditor.CurrentRoom);
                 }
                 // Undo
                 if (ImGui.MenuItem("Undo (Ctrl+Z)"))
@@ -88,11 +89,17 @@ namespace Moonborne.Engine.UI
             // Help
             if (ImGui.BeginMenu("Help"))
             {
-                // Debug mode
-                ImGui.Text("You're on your own");
+                // Open browser tab to go to discord for help
+                if (ImGui.Button("Discord"))
+                {
+                    System.Diagnostics.Process.Start("explorer", "https://discord.gg/crwjFm7ka6");
+                }
+
                 ImGui.EndMenu();
             }
             ImGui.EndMainMenuBar();
+            ImGui.Begin("");
+            ImGui.End();
         }
 
         /// <summary>

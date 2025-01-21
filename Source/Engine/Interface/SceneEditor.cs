@@ -29,7 +29,6 @@ namespace Moonborne.Engine.UI
         {
             ImGui.Begin(WindowName);
 
-
             /// Create new layers to the layer manager
             if (ImGui.BeginPopupContextItem("LayerContextMenu"))
             {
@@ -143,8 +142,8 @@ namespace Moonborne.Engine.UI
                 if (InputManager.MouseLeftDown())
                 {
                     Vector2 mousePosition = InputManager.MouseWorldCoords();
-                    mousePosition.X = ((int)mousePosition.X / RoomEditor.CellSize) * RoomEditor.CellSize;
-                    mousePosition.Y = ((int)mousePosition.Y / RoomEditor.CellSize) * RoomEditor.CellSize;
+                    mousePosition.X = ((int)(mousePosition.X+(RoomEditor.CellSize/2)) / RoomEditor.CellSize) * RoomEditor.CellSize;
+                    mousePosition.Y = ((int)(mousePosition.Y+(RoomEditor.CellSize / 2)) / RoomEditor.CellSize) * RoomEditor.CellSize;
 
                     GameObject gameObject = (GameObject)Inspector.SelectedObject;
                     gameObject.Position = mousePosition;

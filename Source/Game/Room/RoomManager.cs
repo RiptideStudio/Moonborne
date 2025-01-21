@@ -122,7 +122,6 @@ namespace Moonborne.Game.Room
                             LayerName = tilemap.LayerName,
                             Collideable = LayerManager.Layers[tilemap.LayerName].Collideable,
                             Visible = LayerManager.Layers[tilemap.LayerName].Visible,
-                            IsTransitionLayer = LayerManager.Layers[tilemap.LayerName].IsTransitionLayer,
                             Tiles = tiles
                         });
                     }
@@ -134,11 +133,14 @@ namespace Moonborne.Game.Room
                     {
                         // Add each serializable property of the object to the property list
                         PropertyInfo[] properties = obj.GetType().GetProperties();
-                        var objectProperties = new List<object>();
+                        var objectProperties = new List<VariableData>();
 
                         foreach (var property in properties)
                         {
-                            // objectProperties.Add(property.GetValue(obj));
+                            VariableData variableData = new VariableData();
+                            variableData.Name = property.Name;
+                            variableData.Value = property.GetValue(obj);
+                            objectProperties.Add(variableData);
                         }
 
                         // Add the data to the json object
@@ -201,13 +203,69 @@ namespace Moonborne.Game.Room
         /// <param name="rm"></param>
         public static void SetActiveRoom(Room rm)
         {
-            RoomEditor.CurrentRoom.Save(RoomEditor.CurrentRoom.Name);
             LayerManager.Clear();
             rm.Load(rm.Name);
             RoomEditor.CurrentRoom = rm;
             CurrentRoom = rm;
             LevelSelectEditor.isSelected = true;
             Console.WriteLine($"Switched to room {rm.Name}");
+        }
+
+        /// <summary>
+        /// Returns a default room if it exists
+        /// </summary>
+        /// <returns></returns>
+        public static Room GetDefaultRoom()
+        {
+            // If we have no room, make a new one
+            if (Rooms.Count == 0)
+                return CreateRoom("Empty");
+
+            // Return the first room in the list by default
+            return Rooms.First().Value;
+        }
+
+        /// <summary>
+        /// Deletes a room given the object
+        /// </summary>
+        /// <param name="currentRoom"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public static void DeleteRoom(Room currentRoom)
+        {
+            if (currentRoom == null)
+                return;
+
+            // Find the room and delete it
+            string filePath = @$"Content/Rooms/{currentRoom.Name}.json";
+
+            if (File.Exists(filePath))
+            {
+                // Delete the file
+                File.Delete(filePath);
+
+                // Remove it from the room list
+                Rooms.Remove(currentRoom.Name);
+
+                // Transition to a valid room
+                SetActiveRoom(GetDefaultRoom());
+
+                // Log success
+                Console.WriteLine($"Deleted room at {filePath}");
+            }
+        }
+
+        /// <summary>
+        /// Creates a new room given a name
+        /// </summary>
+        /// <param name="newRoomName"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public static Room CreateRoom(string newRoomName)
+        {
+            Room rm = new Room();
+            rm.Name = newRoomName;
+            Rooms.Add(rm.Name, rm);
+            return rm;
         }
     }
 }
