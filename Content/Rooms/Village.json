@@ -10,7 +10,14 @@
       "Collideable": false,
       "Visible": true,
       "IsTransitionLayer": false,
-      "Tiles": []
+      "Tiles": [
+        {
+          "x": 30,
+          "y": 18,
+          "tileId": 0,
+          "tileHeight": 1
+        }
+      ]
     }
   ],
   "Objects": []

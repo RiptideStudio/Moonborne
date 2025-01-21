@@ -228,16 +228,13 @@ namespace Moonborne.Game.Objects
             }
 
             // Update our hitbox if we are moving
-            if (!IsStatic)
-            {
-                Hitbox.X = HitboxXOffset+(int)Position.X - Hitbox.Width / 2;
-                Hitbox.Y = HitboxYOffset+(int)Position.Y - Hitbox.Height / 2;
+            Hitbox.X = HitboxXOffset+(int)Position.X - Hitbox.Width / 2;
+            Hitbox.Y = HitboxYOffset+(int)Position.Y - Hitbox.Height / 2;
 
-                if (SpriteIndex != null)
-                {
-                    Hitbox.Width = SpriteIndex.FrameWidth-HitboxWidthOffset;
-                    Hitbox.Height = SpriteIndex.FrameHeight-HitboxHeightOffset;
-                }
+            if (SpriteIndex != null)
+            {
+                Hitbox.Width = SpriteIndex.FrameWidth-HitboxWidthOffset;
+                Hitbox.Height = SpriteIndex.FrameHeight-HitboxHeightOffset;
             }
 
             // Draw the hitbox of our object

@@ -92,7 +92,7 @@ namespace Moonborne.Graphics
                 Rectangle sourceRect = new Rectangle(column * FrameWidth, row * FrameHeight, FrameWidth, FrameHeight);
                 Vector2 origin = new Vector2(FrameWidth / 2f, FrameHeight / 2f);
 
-                spriteBatch.Draw(Texture, position, sourceRect, Color, rotation, origin, scale, CustomSpriteEffect, LayerDepth);
+                spriteBatch.Draw(Texture, position, sourceRect, color, rotation, origin, scale, CustomSpriteEffect, LayerDepth);
             }
         }
     }

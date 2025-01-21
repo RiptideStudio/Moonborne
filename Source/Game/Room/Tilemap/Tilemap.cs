@@ -89,27 +89,6 @@ namespace Moonborne.Game.Room
         }
 
         /// <summary>
-        /// Draw the grid overlay for tilemaps
-        /// </summary>
-        public void DrawGrid()
-        {
-            if (!RoomEditor.DebugDraw)
-                return;
-
-            SpriteManager.SetDrawAlpha(0.33f);
-
-            for (int y = 0; y < grid.GetLength(1); y++)
-            {
-                Vector2 gridPosX = new Vector2(0, y * tileSize);
-                Vector2 gridPosY = new Vector2(y * tileSize, 0);
-                SpriteManager.DrawRectangle(gridPosX, tileSize * grid.GetLength(0), 1, Color.White);
-                SpriteManager.DrawRectangle(gridPosY, 1, tileSize * grid.GetLength(1), Color.White);
-            }
-
-            SpriteManager.ResetDraw();
-        }
-
-        /// <summary>
         /// Select tiles to place
         /// </summary>
         /// <param name="tileset"></param>

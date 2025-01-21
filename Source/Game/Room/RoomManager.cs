@@ -20,7 +20,7 @@ namespace Moonborne.Game.Room
         /// </summary>
         public static void LoadRooms(GraphicsDevice graphicsDevice, MGame game)
         {
-            string contentFolderPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\Content\Rooms"));
+            string contentFolderPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"Content\Rooms"));
 
             if (!Directory.Exists(contentFolderPath))
             {

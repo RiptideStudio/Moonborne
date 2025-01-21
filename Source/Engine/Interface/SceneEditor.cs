@@ -136,6 +136,20 @@ namespace Moonborne.Engine.UI
                 }
             }
 
+            // Drag our selecting object in the world
+            if (Inspector.SelectedObject != null && RoomEditor.CanDrag)
+            {
+                if (InputManager.MouseLeftDown())
+                {
+                    Vector2 mousePosition = InputManager.MouseWorldCoords();
+                    mousePosition.X = ((int)mousePosition.X / RoomEditor.CellSize) * RoomEditor.CellSize;
+                    mousePosition.Y = ((int)mousePosition.Y / RoomEditor.CellSize) * RoomEditor.CellSize;
+
+                    GameObject gameObject = (GameObject)Inspector.SelectedObject;
+                    gameObject.Position = mousePosition;
+                }
+            }
+
             ImGui.End();
         }
     }

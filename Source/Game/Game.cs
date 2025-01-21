@@ -18,6 +18,7 @@ using Moonborne.Game.Inventory;
 using MonoGame.Extended.Tiled;
 using ImGuiNET;
 using Moonborne.Engine.Audio;
+using Moonborne.Engine;
 
 namespace Moonborne
 {
@@ -43,6 +44,7 @@ namespace Moonborne
             }
             IsMouseVisible = false;
 
+            GameManager.Initialize(this);
             SpriteManager.Initialize(Content,GraphicsDevice);
             GraphicsManager.Initialize(Content, GraphicsDevice, _graphics, this);
             Camera.Initialize();
@@ -118,7 +120,7 @@ namespace Moonborne
             // End drawing
             ImGuiManager.EndFrame(gameTime);
 
-            // Draw the mouse
+            // Draw the mouse over ImGui
             Rectangle mouseRect = InputManager.MouseHitbox;
             mouseRect.Width = 8;
             mouseRect.Height = 8;

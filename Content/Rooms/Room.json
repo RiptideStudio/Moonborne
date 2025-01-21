@@ -60783,70 +60783,200 @@
           "y": 23,
           "tileId": 0,
           "tileHeight": 1
+        },
+        {
+          "x": 57,
+          "y": 33,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 56,
+          "y": 33,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 55,
+          "y": 32,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 54,
+          "y": 32,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 55,
+          "y": 33,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 53,
+          "y": 32,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 52,
+          "y": 32,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 51,
+          "y": 32,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 42,
+          "y": 33,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 49,
+          "y": 22,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 48,
+          "y": 23,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 47,
+          "y": 24,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 46,
+          "y": 24,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 45,
+          "y": 25,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 40,
+          "y": 29,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 43,
+          "y": 34,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 35,
+          "y": 28,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 48,
+          "y": 22,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 47,
+          "y": 22,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 44,
+          "y": 34,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 41,
+          "y": 34,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 34,
+          "y": 28,
+          "tileId": 0,
+          "tileHeight": 1
+        },
+        {
+          "x": 37,
+          "y": 31,
+          "tileId": 0,
+          "tileHeight": 1
         }
       ]
     }
   ],
   "Objects": [
     {
-      "PositionX": 632.2101,
-      "PositionY": 457.4029,
+      "PositionX": 632,
+      "PositionY": 456,
       "Name": "PlayerStart",
       "Depth": 1,
       "LayerName": "Objects",
       "Properties": []
     },
     {
-      "PositionX": 484.87686,
-      "PositionY": 474.06952,
+      "PositionX": 496,
+      "PositionY": 472,
       "Name": "Tree",
       "Depth": 1,
       "LayerName": "Objects",
       "Properties": []
     },
     {
-      "PositionX": 694.2102,
-      "PositionY": 329.0695,
+      "PositionX": 696,
+      "PositionY": 320,
       "Name": "Tree",
       "Depth": 1,
       "LayerName": "Objects",
       "Properties": []
     },
     {
-      "PositionX": 481.01727,
-      "PositionY": 422.656,
+      "PositionX": 491.1306,
+      "PositionY": 403.21875,
       "Name": "NPC",
       "Depth": 1,
       "LayerName": "Objects",
       "Properties": []
     },
     {
-      "PositionX": 509.62726,
-      "PositionY": 462.64917,
+      "PositionX": 778.6919,
+      "PositionY": 406.80692,
       "Name": "NPC",
       "Depth": 1,
       "LayerName": "Objects",
       "Properties": []
     },
     {
-      "PositionX": 600.7493,
-      "PositionY": 403.73917,
+      "PositionX": 514.92303,
+      "PositionY": 525.3141,
       "Name": "NPC",
       "Depth": 1,
       "LayerName": "Objects",
       "Properties": []
     },
     {
-      "PositionX": 511.87933,
-      "PositionY": 532.72314,
-      "Name": "NPC",
-      "Depth": 1,
-      "LayerName": "Objects",
-      "Properties": []
-    },
-    {
-      "PositionX": 675.7772,
-      "PositionY": 524.51465,
+      "PositionX": 672,
+      "PositionY": 528,
       "Name": "CoreTable",
       "Depth": 1,
       "LayerName": "Objects",

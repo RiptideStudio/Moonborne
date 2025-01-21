@@ -145,8 +145,8 @@ namespace Moonborne.Game.Room
 
                 layer.Draw(spriteBatch);
             }
-            RoomEditor.DrawGrid(spriteBatch);
 
+            RoomEditor.DrawGrid(spriteBatch);
             spriteBatch.End();
 
             // Render our UI

@@ -33,7 +33,7 @@ namespace Moonborne.Game.Room
         /// <param name="name"></param>
         public void Save(string name)
         {
-            string contentFolderPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\Content\Rooms"));
+            string contentFolderPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"Content\Rooms"));
             Directory.CreateDirectory(contentFolderPath); // Ensure the directory exists
             string filePath = Path.Combine(contentFolderPath, name + ".json");
 
@@ -130,7 +130,7 @@ namespace Moonborne.Game.Room
         /// <param name="name"></param>
         public void Load(string name)
         {
-            string contentFolderPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\Content\Rooms"));
+            string contentFolderPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"Content\Rooms"));
             string filePath = Path.Combine(contentFolderPath, name + ".json");
 
             if (!File.Exists(filePath))

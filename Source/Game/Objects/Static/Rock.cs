@@ -5,12 +5,12 @@ using Moonborne.Game.Objects;
 
 namespace Moonborne.Game.Gameplay
 {
-    public class Tree : GameObject
+    public class Rock : GameObject
     {
         public override void Create()
         {
             base.Create();
-            SpriteIndex = SpriteManager.GetSprite("Tree");
+            SpriteIndex = SpriteManager.GetSprite("Rock");
             IsStatic = true;
         }
     }

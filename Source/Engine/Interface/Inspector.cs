@@ -22,6 +22,18 @@ namespace Moonborne.Engine.UI
         public static string SelectedItemTitle = "Inspector";
 
         /// <summary>
+        /// Deletes the currently selected object
+        /// </summary>
+        public static void DeleteSelectedObject()
+        {
+            if (SelectedObject != null)
+            {
+                LayerManager.RemoveInstance((GameObject)SelectedObject);
+                SelectedObject = null;
+            }
+        }
+
+        /// <summary>
         /// Draw the inspector
         /// </summary>
         public static void Draw(string name="Inspector", object obj = null)
@@ -40,11 +52,7 @@ namespace Moonborne.Engine.UI
                 // Attempt to delete the selected object
                 if (InputManager.KeyTriggered(Keys.Delete))
                 {
-                    if (SelectedObject != null)
-                    {
-                        LayerManager.RemoveInstance((GameObject)SelectedObject);
-                        SelectedObject = null;
-                    }
+                    DeleteSelectedObject();
                 }
 
                 foreach (var property in properties)

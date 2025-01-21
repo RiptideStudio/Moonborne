@@ -8,8 +8,33 @@ namespace Moonborne.Engine
 {
     public static class GameManager
     {
+        public static MGame Game;
         public static bool Paused = true;
         public static bool DebugMode = false;
+
+        /// <summary>
+        /// Initialize the game manager
+        /// </summary>
+        /// <param name="game"></param>
+        public static void Initialize(MGame game)
+        {
+            Game = game;
+        }
+
+        /// <summary>
+        /// Toggles play mode on and off
+        /// </summary>
+        public static void ToggleGamemode()
+        {
+            if (RoomEditor.InEditor)
+            {
+                Start();
+            }
+            else
+            {
+                Stop();
+            }
+        }
 
         /// <summary>
         /// Called when the game is started (or toggled from editor mode)
@@ -35,6 +60,22 @@ namespace Moonborne.Engine
             Camera.SetTarget(null);
             RoomEditor.InEditor = true;
             AudioManager.PauseAllSound(true);
+        }
+
+        /// <summary>
+        /// Stops the game in its entirety
+        /// </summary>
+        public static void Exit()
+        {
+            Game.Exit();
+        }
+
+        /// <summary>
+        /// Saves the game state
+        /// </summary>
+        public static void Save()
+        {
+            RoomEditor.CurrentRoom.Save(RoomEditor.CurrentRoom.Name);
         }
 
         /// <summary>

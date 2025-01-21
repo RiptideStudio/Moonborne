@@ -52,7 +52,7 @@ namespace Moonborne.Engine.Audio
             }
 
             // Load all files that are OGG or MP3
-            string contentFolderPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\Content\Audio"));
+            string contentFolderPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"Content\Audio"));
             string[] files = Directory.GetFiles(contentFolderPath, "*.*", SearchOption.AllDirectories);
 
             foreach (var file in files)
