@@ -29,6 +29,7 @@ namespace Moonborne.Engine.UI
         {
             ImGui.Begin(WindowName);
 
+
             /// Create new layers to the layer manager
             if (ImGui.BeginPopupContextItem("LayerContextMenu"))
             {
@@ -88,7 +89,7 @@ namespace Moonborne.Engine.UI
                     tex = texOff;
                 }
 
-                if (ImGui.ImageButton(layer.Value.Name, tex, new System.Numerics.Vector2(14, 8)))
+                if (ImGui.ImageButton(layer.Value.Name, tex, new System.Numerics.Vector2(16, 16)))
                 {
                     layer.Value.Visible = !layer.Value.Visible;
                 }

@@ -57,7 +57,7 @@ namespace Moonborne.Game.Room
             if (RoomManager.Rooms.Count > 0)
             {
                 CurrentRoom = RoomManager.Rooms.First().Value;
-                CurrentRoom.Load(RoomManager.Rooms.First().Key);
+                RoomManager.SetActiveRoom(CurrentRoom);
             }
         }
 
@@ -71,9 +71,20 @@ namespace Moonborne.Game.Room
                 return;
 
             // Draw the world grid
-            if (InputManager.KeyDown(Keys.LeftControl) && InputManager.KeyTriggered(Keys.G))
+            if (InputManager.KeyDown(Keys.LeftControl))
             {
-                DebugDraw = !DebugDraw;
+                if (InputManager.KeyTriggered(Keys.G))
+                {
+                    DebugDraw = !DebugDraw;
+                }
+                if (InputManager.KeyTriggered(Keys.Z))
+                {
+                    RoomManager.Undo();
+                }
+                if (InputManager.KeyTriggered(Keys.Y))
+                {
+                    RoomManager.Redo();
+                }
             }
 
             if (DebugDraw)
@@ -163,6 +174,8 @@ namespace Moonborne.Game.Room
                 }
             }
 
+            Toolbar.Draw();
+
             if (!InEditor)
                 return;
 
@@ -203,7 +216,6 @@ namespace Moonborne.Game.Room
             SceneEditor.Draw();
             ConsoleEditor.Draw();
             LevelSelectEditor.Draw();
-            Toolbar.Draw();
 
             // Render the ImGui buttons for toggling different
             ImGui.Begin("Tile Editor",ImGuiWindowFlags.NoScrollbar);
@@ -341,12 +353,12 @@ namespace Moonborne.Game.Room
             if (InputManager.KeyTriggered(Keys.OemCloseBrackets))
             {
                 CellSize += 4;
-                CellSize = Math.Clamp(CellSize, 1, 16);
+                CellSize = Math.Clamp(CellSize, 4, 16);
             }
             if (InputManager.KeyTriggered(Keys.OemOpenBrackets))
             {
                 CellSize -= 4;
-                CellSize = Math.Clamp(CellSize, 1, 16);
+                CellSize = Math.Clamp(CellSize, 4, 16);
             }
 
             // Update our camera. We want to pan with WASD 

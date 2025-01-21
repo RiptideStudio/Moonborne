@@ -106,6 +106,11 @@ namespace Moonborne
 
             base.Update(gameTime);
 
+            // Save a snapshoft after releasing mouse (this actually works quite well)
+            if (InputManager.MouseLeftReleased())
+            {
+                RoomManager.SaveSnapshot();
+            }
         }
 
         protected override void Draw(GameTime gameTime)

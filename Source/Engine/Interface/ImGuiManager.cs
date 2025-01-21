@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Input;
 using Moonborne.Input;
 using MonoGame.Extended.Timers;
 using Moonborne.Graphics.Camera;
+using System.Drawing;
 
 namespace Moonborne.Engine.UI
 {
@@ -36,7 +37,6 @@ namespace Moonborne.Engine.UI
             graphicsDevice = device;
             ImGuiIOPtr io = ImGui.GetIO();
             io.ConfigFlags |= ImGuiConfigFlags.DockingEnable; // Enable docking
-
             tilePreviewRenderTarget = new RenderTarget2D(
             graphicsDevice,
             1920, // Width of the preview area
@@ -45,7 +45,47 @@ namespace Moonborne.Engine.UI
             SurfaceFormat.Color,
             DepthFormat.None
             );
+
+            io.Fonts.Clear();
+            io.Fonts.AddFontFromFileTTF(@"Content/Fonts/Roboto-VariableFont_wdth,wght.ttf", 18);
+            io.Fonts.AddFontFromFileTTF(@"Content/Fonts/bahnschrift.ttf", 18);
+            io.Fonts.AddFontFromFileTTF(@"Content/Fonts/Quicksand-VariableFont_wght.ttf", 18);
+            io.Fonts.AddFontFromFileTTF(@"Content/Fonts/Raleway-VariableFont_wght.ttf", 18);
+            ImGuiStylePtr style = ImGui.GetStyle();
+            style.FrameRounding = 2f;
+            style.GrabRounding = 4f;
+            style.PopupRounding = 4f;
+            style.ScrollbarRounding = 4f;
+            style.TabRounding = 4f;
+            style.AntiAliasedLinesUseTex = true;
+            style.AntiAliasedLines = true;
+            style.ChildRounding = 4f;
+            style.Colors[(int)ImGuiCol.WindowBg] = new System.Numerics.Vector4(0.1f, 0.1f, 0.1f, 1.00f);
+            style.Colors[(int)ImGuiCol.TitleBg] = new System.Numerics.Vector4(0.2f, 0.2f, 0.2f, 1.00f);
+            style.Colors[(int)ImGuiCol.Header] = new System.Numerics.Vector4(0.25f, 0.25f, 0.35f, 1.00f);
+            style.Colors[(int)ImGuiCol.HeaderHovered] = new System.Numerics.Vector4(0.4f, 0.4f, 0.5f, 1.00f);
+            style.Colors[(int)ImGuiCol.SliderGrab] = new System.Numerics.Vector4(0.5f, 0.5f, 0.5f, 1.00f);
+            style.Colors[(int)ImGuiCol.SliderGrabActive] = new System.Numerics.Vector4(0.65f, 0.65f, 0.65f, 1.00f);
+            style.Colors[(int)ImGuiCol.TabHovered] = new System.Numerics.Vector4(0.5f, 0.5f, 0.5f, 1.00f);
+            style.Colors[(int)ImGuiCol.Tab] = new System.Numerics.Vector4(0.1f, 0.1f, 0.1f, 1.00f);
+            style.Colors[(int)ImGuiCol.TabUnfocused] = new System.Numerics.Vector4(0.1f, 0.1f, 0.1f, 1.00f);
+            style.Colors[(int)ImGuiCol.TabActive] = new System.Numerics.Vector4(0.5f, 0.5f, 0.5f, 1.00f);
+            style.Colors[(int)ImGuiCol.TabUnfocusedActive] = new System.Numerics.Vector4(0.3f, 0.3f, 0.3f, 1.00f);
+            style.Colors[(int)ImGuiCol.TitleBgActive] = new System.Numerics.Vector4(0.35f, 0.35f, 0.35f, 1.00f);
+
+            style.Colors[(int)ImGuiCol.CheckMark] = new System.Numerics.Vector4(0.4f, 0.8f, 0.4f, 1.00f);
+            style.Colors[(int)ImGuiCol.ChildBg] = new System.Numerics.Vector4(0.1f, 0.1f, 0.1f, 1.00f);
+            style.Colors[(int)ImGuiCol.ScrollbarBg] = new System.Numerics.Vector4(0.1f, 0.1f, 0.1f, 1.00f);
+            style.Colors[(int)ImGuiCol.PopupBg] = new System.Numerics.Vector4(0.1f, 0.1f, 0.1f, 1.00f);
+
+            style.Colors[(int)ImGuiCol.FrameBgActive] = new System.Numerics.Vector4(0.4f, 0.4f, 0.4f, 1.00f);
+            style.Colors[(int)ImGuiCol.FrameBg] = new System.Numerics.Vector4(0.25f, 0.25f, 0.25f, 1.00f);
+            style.Colors[(int)ImGuiCol.FrameBgHovered] = new System.Numerics.Vector4(0.4f, 0.4f, 0.4f, 1.00f);
+
+            imGuiRenderer.RebuildFontAtlas();
+
         }
+
 
         /// <summary>
         /// Start a new ImGui frame
@@ -100,6 +140,7 @@ namespace Moonborne.Engine.UI
         /// </summary>
         public static void EndFrame(GameTime gameTime)
         {
+
             imGuiRenderer.EndLayout();
         }
 

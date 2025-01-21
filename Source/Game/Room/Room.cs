@@ -31,106 +31,26 @@ namespace Moonborne.Game.Room
         /// Save a room to a json file made of multiple tilemaps
         /// </summary>
         /// <param name="name"></param>
-        public void Save(string name)
+        /// <param name="overridePath"></param>
+        public void Save(string name, string overridePath = null)
         {
-            string contentFolderPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"Content\Rooms"));
-            Directory.CreateDirectory(contentFolderPath); // Ensure the directory exists
-            string filePath = Path.Combine(contentFolderPath, name + ".json");
-
-            var tilemaps = new List<object>(); // List to store serialized tilemaps
-            var objects = new List<object>();
-
-            // Iterate over all layers in the LayerManager
-            foreach (var layer in LayerManager.Layers)
-            {
-                if (layer.Value.Locked)
-                    continue;
-
-                if (layer.Value.Type == LayerType.Tile) // Only process Tile layers
-                {
-                    foreach (var tilemap in layer.Value.Tilemaps) // Handle multiple tilemaps in the layer
-                    {
-                        var tiles = new List<Dictionary<string, int>>();
-
-                        // Save each tile
-                        foreach (var tile in tilemap.TileList)
-                        {
-                            tiles.Add(new Dictionary<string, int>
-                            {
-                                { "x", tile.Value.x },
-                                { "y", tile.Value.y },
-                                { "tileId", tile.Value.CellData },
-                                { "tileHeight", layer.Value.Height }
-                            });
-                        }
-
-                        // Add this tilemap's data to the tilemaps list
-                        tilemaps.Add(new
-                        {
-                            TileSize = tilemap.tileSize,
-                            TilesetName = tilemap.TilesetTextureName,
-                            Height = LayerManager.Layers[tilemap.LayerName].Height,
-                            Depth = LayerManager.Layers[tilemap.LayerName].Depth,
-                            LayerName = tilemap.LayerName,
-                            Collideable = LayerManager.Layers[tilemap.LayerName].Collideable,
-                            Visible = LayerManager.Layers[tilemap.LayerName].Visible,
-                            IsTransitionLayer = LayerManager.Layers[tilemap.LayerName].IsTransitionLayer,
-                            Tiles = tiles
-                        });
-                    }
-                }
-                else if (layer.Value.Type == LayerType.Object)
-                {
-                    // Save objects on the layer
-                    foreach (var obj in layer.Value.Objects)
-                    {
-                        // Add each serializable property of the object to the property list
-                        PropertyInfo[] properties = obj.GetType().GetProperties();
-                        var objectProperties = new List<object>();
-
-                        foreach (var property in properties)
-                        {
-                            // objectProperties.Add(property.GetValue(obj));
-                        }
-
-                        // Add the data to the json object
-                        objects.Add(new
-                        {
-                            PositionX = obj.Position.X,
-                            PositionY = obj.Position.Y,
-                            Name = obj.GetType().Name,
-                            Depth = obj.Layer.Depth,
-                            LayerName = layer.Value.Name,
-                            Properties = objectProperties
-                        });
-                    }
-                }
-            }
-
-            // Create a JSON object for the room
-            var roomData = new
-            {
-                RoomName = name,
-                Tilemaps = tilemaps,
-                Objects = objects
-            };
-
-            // Serialize the room data to JSON
-            string json = JsonSerializer.Serialize(roomData, new JsonSerializerOptions { WriteIndented = true });
-
-            // Write to file
-            File.WriteAllText(filePath, json);
-            Console.WriteLine($"Saved Room '{name}' to {filePath}");
+            RoomManager.SaveRoom(name, overridePath);
+            Console.WriteLine($"Saved Room '{name}'");
         }
-
 
         /// <summary>
         /// Load a room from multiple tilemaps
         /// </summary>
         /// <param name="name"></param>
-        public void Load(string name)
+        public void Load(string name, string overridePath=null)
         {
             string contentFolderPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"Content\Rooms"));
+
+            if (overridePath != null)
+            {
+                contentFolderPath = overridePath;
+            }
+
             string filePath = Path.Combine(contentFolderPath, name + ".json");
 
             if (!File.Exists(filePath))
@@ -171,10 +91,6 @@ namespace Moonborne.Game.Room
                     layer.Height = tilemapData.Height;
                     layer.IsTransitionLayer = tilemapData.IsTransitionLayer;
                     LayerManager.AddTilemapLayer(layer, tilemap, tilemapData.LayerName);
-                    RoomEditor.selectedLayer = layer;
-
-                    // Set our currently selected tilemap
-                    RoomEditor.SelectedTilemap = tilemap;
 
                     // Populate the grid with tile data
                     foreach (var tile in tilemapData.Tiles)

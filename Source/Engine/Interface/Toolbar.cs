@@ -25,6 +25,19 @@ namespace Moonborne.Engine.UI
         {
             ImGui.BeginMainMenuBar();
 
+            // Play/ Stop button
+            string playButtonName = "Play";
+
+            if (!GameManager.Paused)
+            {
+                playButtonName = "Stop";
+            }
+
+            if (ImGui.Button(playButtonName))
+            {
+                GameManager.ToggleGamemode();
+            }
+
             // File menu options
             if (ImGui.BeginMenu("File"))
             {
@@ -53,11 +66,6 @@ namespace Moonborne.Engine.UI
                 {
                     Inspector.DeleteSelectedObject();
                 }
-                // Toggle game mode
-                if (ImGui.MenuItem("Toggle Play Mode (Ctrl+Q)"))
-                {
-                    GameManager.ToggleGamemode();
-                }
                 // Undo
                 if (ImGui.MenuItem("Undo (Ctrl+Z)"))
                 {
@@ -73,6 +81,8 @@ namespace Moonborne.Engine.UI
             {
                 // Debug mode
                 ImGui.Checkbox("Debug Mode", ref RoomEditor.DebugDraw);
+                ImGui.ShowFontSelector("Fonts");
+
                 ImGui.EndMenu();
             }
             // Help
@@ -82,7 +92,7 @@ namespace Moonborne.Engine.UI
                 ImGui.Text("You're on your own");
                 ImGui.EndMenu();
             }
-            ImGui.End();
+            ImGui.EndMainMenuBar();
         }
 
         /// <summary>
