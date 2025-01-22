@@ -41,7 +41,7 @@ namespace Moonborne.Game.Room
         public Tilemap(string tileset_, int[,] grid_,int tileSize_,string layerName)
         {
             TilesetTextureName = tileset_;
-            tileset = SpriteManager.GetTexture(tileset_);
+            tileset = SpriteManager.GetRawTexture(tileset_);
             grid = grid_;
             tileSize = tileSize_;
             LayerName = layerName;
@@ -53,7 +53,7 @@ namespace Moonborne.Game.Room
         /// </summary>
         public void SetTexture(string tex)
         {
-            tileset = SpriteManager.GetTexture(tex);
+            tileset = SpriteManager.GetRawTexture(tex);
             TilesetTextureName = tex;
             tilesetColumns = tileset.Width / 16;
         }

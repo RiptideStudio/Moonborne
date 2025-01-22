@@ -82,10 +82,10 @@ namespace Moonborne.Game.Objects
         public override void Create()
         {
             base.Create();
-            WanderPosition = Position;
+            WanderPosition = Transform.Position;
             Friendly = false;
             Interactable = true;
-            Speed = 33;
+            Physics.Speed = 33;
             Dialogue[0] = "Test";
             Dialogue[1] = "Test2";
 
@@ -116,7 +116,7 @@ namespace Moonborne.Game.Objects
 
                 float angle = MoonMath.RandomRange(0f, 2*MathF.PI);
                 Vector2 randomDir = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-                WanderPosition = Position + randomDir * 48;
+                WanderPosition = Transform.Position + randomDir * 48;
 
                 // Return back to our original spawn
                 if (MoonMath.Distance(StartPosition,WanderPosition) >= WanderDistance)
@@ -143,7 +143,7 @@ namespace Moonborne.Game.Objects
         /// <param name="dt"></param>
         public virtual void Wander(float dt)
         {
-            float distanceToTarget = MoonMath.Distance(Position, WanderPosition);
+            float distanceToTarget = MoonMath.Distance(Transform.Position, WanderPosition);
             ElapsedTime += dt;
 
             if (ElapsedTime > WanderTime * dt)
@@ -152,7 +152,7 @@ namespace Moonborne.Game.Objects
                 State = State.Idle;
             }
 
-            if (distanceToTarget <= Velocity.Length())
+            if (distanceToTarget <= Physics.Velocity.Length())
             {
                 // Stop wandering
                 ElapsedTime = 0;
@@ -161,9 +161,9 @@ namespace Moonborne.Game.Objects
             else
             {
                 // Walk to target position
-                Vector2 targetDirection = MoonMath.Direction(Position, WanderPosition);
+                Vector2 targetDirection = MoonMath.Direction(Transform.Position, WanderPosition);
                 targetDirection.Normalize();
-                Velocity = targetDirection * Speed;
+                Physics.Velocity = targetDirection * Physics.Speed;
             }
         }
 
@@ -175,9 +175,9 @@ namespace Moonborne.Game.Objects
             if (Target != null && !Friendly)
             {
                 Target = Player.Instance;
-                Vector2 targetDirection = Target.Position-Position;
+                Vector2 targetDirection = Target.Transform.Position - Transform.Position;
                 targetDirection.Normalize();
-                Velocity = targetDirection * Speed;
+                Physics.Velocity = targetDirection * Physics.Speed;
             }
         }
 
@@ -194,7 +194,7 @@ namespace Moonborne.Game.Objects
             base.LeaveInteract();
 
             // Stop dialogue if we walk away
-            float playerDistance = MoonMath.Distance(Position, Player.Instance.Position);
+            float playerDistance = MoonMath.Distance(Transform.Position, Player.Instance.Transform.Position);
 
             if (playerDistance >= InteractDistance)
             {

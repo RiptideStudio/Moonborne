@@ -182,6 +182,7 @@ namespace Moonborne.Game.Room
             foreach (GameObject obj in ObjectsToCreate)
             {
                 Objects.Add(obj);
+                LayerManager.Objects.Add(obj);
             }
             ObjectsToCreate.Clear();
 

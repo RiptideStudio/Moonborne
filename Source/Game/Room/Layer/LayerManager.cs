@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Collisions.Layers;
 using Moonborne.Engine;
 using Moonborne.Engine.Collision;
+using Moonborne.Game.Gameplay;
 using Moonborne.Game.Inventory;
 using Moonborne.Game.Objects;
 using Moonborne.Graphics;
@@ -83,7 +84,6 @@ namespace Moonborne.Game.Room
             if (layer != null)
             {
                 layer.AddObject(gameObject);
-                Objects.Add(gameObject);
                 gameObject.Layer = layer;
                 gameObject.Height = layer.Height;
             }
@@ -212,6 +212,7 @@ namespace Moonborne.Game.Room
         /// </summary>
         public static void Clear()
         {
+            // Remove all existing layers
             foreach (var layer in Layers)
             {
                 if (layer.Value.Locked)
@@ -219,6 +220,19 @@ namespace Moonborne.Game.Room
 
                 RemoveLayer(layer.Value);
             }
+
+            // Clear all existing global objects
+            List<GameObject> clearList = new List<GameObject>();
+
+            foreach (GameObject obj in Objects)
+            {
+                if (obj.Layer.Locked)
+                    continue;
+
+                clearList.Add(obj);
+            }
+
+            Objects.RemoveAll(obj => clearList.Contains(obj));
         }
 
         /// <summary>
@@ -252,21 +266,11 @@ namespace Moonborne.Game.Room
         public static void Initialize()
         {
             // Static layers 
-            AddLayer(new Layer(5, () => Camera.Transform, LayerType.Object, true), "Managers");
             AddLayer(new Layer(3, () => Camera.Transform, LayerType.Object, true), "Player");
-            AddLayer(new Layer(3, () => Camera.Transform, LayerType.Object, true), "Projectiles");
             AddLayer(new Layer(1000, () => Camera.Transform, LayerType.Object, true), "TileEditorWorld");
             AddLayer(new Layer(9999, () => WindowManager.Transform, LayerType.UI, true), "Dialogue");
             AddLayer(new Layer(1002, () => WindowManager.Transform, LayerType.UI, true), "Inventory");
             AddLayer(new Layer(1003, () => WindowManager.Transform, LayerType.UI, true), "RoomEditor");
-        }
-
-        /// <summary>
-        /// Reloads all objects and tilesets to update their textures
-        /// </summary>
-        /// <exception cref="NotImplementedException"></exception>
-        public static void ReloadAllEntities()
-        {
         }
     }
 }

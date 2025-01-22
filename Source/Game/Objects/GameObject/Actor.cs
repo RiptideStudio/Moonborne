@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Collisions.Layers;
+using Moonborne.Engine.Components;
 using Moonborne.Game.Gameplay;
 using Moonborne.Game.Inventory;
 using Moonborne.Graphics;
@@ -28,7 +29,7 @@ namespace Moonborne.Game.Objects
     /// <summary>
     /// Extension of game object class. Has better interaction capabilities and more properties
     /// </summary>
-    public class Actor : GameObject
+    public abstract class Actor : GameObject
     {
         public bool Interactable = false; // Track interactable objects
         public bool Interacted = false;
@@ -52,6 +53,12 @@ namespace Moonborne.Game.Objects
         public List<Item> ItemsToDrop = new List<Item>();
         public int InteractDistance { get; set; } = 32;
 
+        /// <summary>
+        /// Base actor constructor: we always want a physics component on these
+        /// </summary>
+        public Actor() : base()
+        {
+        }
 
         /// <summary>
         /// Set a sprite for a state and direction
@@ -63,7 +70,7 @@ namespace Moonborne.Game.Objects
         /// <param name="direction"></param>
         public void SetSprite(string name, int frameWidth, int frameHeight, State state, Direction direction)
         {
-            Sprites[(int)state, (int)direction] = SpriteManager.AssignSprite(name, frameWidth, frameHeight);
+            // Sprites[(int)state, (int)direction] = SpriteManager.AssignSprite(name, frameWidth, frameHeight);
         }
 
         /// <summary>
@@ -78,11 +85,20 @@ namespace Moonborne.Game.Objects
         }
 
         /// <summary>
+        /// Called when the game begins
+        /// </summary>
+        public virtual void OnBeginPlay()
+        {
+
+        }
+
+        /// <summary>
         /// Extend the create method
         /// </summary>
         public override void Create()
         {
             base.Create();
+            AddComponent(Physics = new Physics(this));
         }
 
         /// <summary>
@@ -111,7 +127,7 @@ namespace Moonborne.Game.Objects
             
             if (IsHurt)
             {
-                Vector2 healthbarPosition = Position + new Vector2(-16, -16);
+                Vector2 healthbarPosition = Transform.Position + new Vector2(-16, -16);
                 SpriteManager.DrawRectangle(healthbarPosition, HealthbarWidth, HealthbarHeight, Color.Black);
                 SpriteManager.DrawRectangle(healthbarPosition, ((float)Health/MaxHealth)* HealthbarWidth, HealthbarHeight, Color.Green);
             }
@@ -128,7 +144,7 @@ namespace Moonborne.Game.Objects
             // Interact with this actor if we are close to it
             if (Interactable)
             {
-                float distance = MoonMath.Distance(Position, Player.Instance.Position);
+                float distance = MoonMath.Distance(Transform.Position, Player.Instance.Transform.Position);
                 if (distance < InteractDistance) 
                 {
                     if (InputManager.KeyTriggered(Keys.E))

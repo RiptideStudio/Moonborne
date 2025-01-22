@@ -53,12 +53,7 @@ namespace Moonborne.Game.Room
         /// </summary>
         public static void Initialize()
         {
-            // Load the first room if possible
-            if (RoomManager.Rooms.Count > 0)
-            {
-                CurrentRoom = RoomManager.Rooms.First().Value;
-                RoomManager.SetActiveRoom(CurrentRoom);
-            }
+
         }
 
         /// <summary>
@@ -215,6 +210,7 @@ namespace Moonborne.Game.Room
 
             SceneEditor.Draw();
             ConsoleEditor.Draw();
+            ObjectEditor.Draw();
             LevelSelectEditor.Draw();
 
             // Render the ImGui buttons for toggling different
@@ -253,58 +249,7 @@ namespace Moonborne.Game.Room
             {
                 ImGui.Checkbox("Show Grid", ref DebugDraw);
             }
-
-            ImGui.Separator();
-
-            if (selectedLayer != null && selectedLayer.Type == LayerType.Object)
-            {
-                if (ImGui.CollapsingHeader("Create Objects"))
-                {
-                    // Display a list of all objects, and allow us to drag them into the game
-                    var list = ObjectLibrary.GetAllGameObjectNames();
-
-                    foreach (var name in list)
-                    {
-                        // Select the object we want to drag into the game
-                        ImGui.Selectable(name);
-
-                        if (ImGui.BeginDragDropSource())
-                        {
-                            Vector2 position = InputManager.MouseWorldCoords();
-
-                            if (!Dragging)
-                            {
-                                var newObject = ObjectLibrary.CreateObject(name, position, selectedLayer.Name);
-                                selectedObject = newObject;
-                            }
-
-                            position.X = ((int)position.X / CellSize) * CellSize;
-                            position.Y = ((int)position.Y / CellSize) * CellSize;
-                            selectedObject.Position = position;
-
-                            ImGui.Text($"Place: {name}"); // Visual feedback during dragging
-                            Dragging = true;
-                            ImGui.EndDragDropSource();
-                        }
-                    }
-
-                    // Drag object into world
-                    if (InputManager.MouseLeftReleased() && Dragging)
-                    {
-                        if (HoveringOverGameWorld)
-                        {
-                            Vector2 position = InputManager.MouseWorldCoords();
-                            Console.WriteLine($"Created {selectedObject} at {position}");
-                            Inspector.SelectedObject = selectedObject;
-                        }
-                        else
-                        {
-                            LayerManager.RemoveInstance(selectedObject);
-                        }
-                        Dragging = false;
-                    }
-                }
-            }
+            
             ImGui.End(); // End world editor
 
             if (HoveringOverGameWorld)

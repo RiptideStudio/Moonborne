@@ -72,8 +72,8 @@ namespace Moonborne.Engine.UI
                     continue;
 
                 // Draw a visibility icon to toggle the layers on and off
-                IntPtr texOn = ImGuiManager.imGuiRenderer.BindTexture(SpriteManager.GetTexture("VisibilityIconOn"));
-                IntPtr texOff = ImGuiManager.imGuiRenderer.BindTexture(SpriteManager.GetTexture("VisibilityIconOff"));
+                IntPtr texOn = SpriteManager.GetImGuiTexture("VisibilityIconOn");
+                IntPtr texOff = SpriteManager.GetImGuiTexture("VisibilityIconOff");
                 ImGui.PushStyleColor(ImGuiCol.Button, new System.Numerics.Vector4(0, 0, 0, 0)); // Transparent background
                 ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new System.Numerics.Vector4(1, 1, 1, 0.2f)); // Slight hover effect
                 ImGui.PushStyleColor(ImGuiCol.ButtonActive, new System.Numerics.Vector4(1, 1, 1, 0.2f));
@@ -146,7 +146,7 @@ namespace Moonborne.Engine.UI
                     mousePosition.Y = ((int)(mousePosition.Y+(RoomEditor.CellSize / 2)) / RoomEditor.CellSize) * RoomEditor.CellSize;
 
                     GameObject gameObject = (GameObject)Inspector.SelectedObject;
-                    gameObject.Position = mousePosition;
+                    gameObject.Transform.Position = mousePosition;
                 }
             }
 

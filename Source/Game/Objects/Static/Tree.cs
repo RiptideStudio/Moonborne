@@ -10,7 +10,7 @@ namespace Moonborne.Game.Gameplay
         public override void Create()
         {
             base.Create();
-            SpriteIndex = SpriteManager.GetSprite("Tree");
+            SpriteIndex.SetSpritesheet("Tree");
             IsStatic = true;
         }
     }

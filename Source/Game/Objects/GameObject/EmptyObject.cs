@@ -8,8 +8,8 @@ namespace Moonborne.Game.Gameplay
         public override void Create()
         {
             base.Create();
-            SpriteIndex = SpriteManager.GetSprite("QuestionMark");
-            VisibleInGame = false;
+            SpriteIndex.Texture = SpriteManager.GetTexture("QuestionMark");
+            SpriteIndex.VisibleInGame = false;
         }
     }
 }

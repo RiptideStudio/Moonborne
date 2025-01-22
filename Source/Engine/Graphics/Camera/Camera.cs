@@ -17,7 +17,7 @@ namespace Moonborne.Graphics.Camera
         public static float Rotation { get; private set; } = 0f; // Default rotation
         public static float InterpolationSpeed { get; private set; } = 0.2f; // How much the camera lags behind
         public static Matrix Transform; // Transformation matrix
-        public static GameObject Target { get; private set; } // Target object to follow
+        public static GameObject Target { get; set; } // Target object to follow
 
         /// <summary>
         /// Initialize the camera's transform
@@ -43,7 +43,7 @@ namespace Moonborne.Graphics.Camera
         {
             if (Target != null)
             {
-                TargetPosition = Target.Position;
+                TargetPosition = Target.Transform.Position;
             }
         }
 
@@ -58,6 +58,9 @@ namespace Moonborne.Graphics.Camera
             Zoom = MathHelper.Lerp(Zoom, TargetZoom, 0.25f);
             Position.X = MathHelper.Lerp(Position.X, TargetPosition.X, InterpolationSpeed);
             Position.Y = MathHelper.Lerp(Position.Y, TargetPosition.Y + 8, InterpolationSpeed);
+
+            Position.Y = (float)Math.Round(Position.Y,1);
+            Position.X = (float)Math.Round(Position.X,1);
         }
 
         /// <summary>

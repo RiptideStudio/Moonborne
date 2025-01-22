@@ -15,7 +15,7 @@ namespace Moonborne.Game.Objects
     /// <summary>
     /// Extension of game object class. Has better interaction capabilities and more properties
     /// </summary>
-    public class Lifeform : Actor
+    public abstract class Lifeform : Actor
     {
 
         /// <summary>
@@ -34,13 +34,13 @@ namespace Moonborne.Game.Objects
             }
 
             // Change direction based on velocity
-            if (Velocity.Y > 0)
+            if (Physics.Velocity.Y > 0)
                 Direction = Direction.Down;
-            if (Velocity.Y < 0)
+            if (Physics.Velocity.Y < 0)
                 Direction = Direction.Up;
-            if (Velocity.X > 0)
+            if (Physics.Velocity.X > 0)
                 Direction = Direction.Right;
-            if (Velocity.X < 0)
+            if (Physics.Velocity.X < 0)
                 Direction = Direction.Left;
         }
     }

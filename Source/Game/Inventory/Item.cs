@@ -16,7 +16,6 @@ namespace Moonborne.Game.Inventory
     public abstract class Item : GameObject
     {
         public float PickupRange { get; set; } = 32f;
-        public string Name;
 
         /// <summary>
         /// Extend the create method
@@ -24,7 +23,7 @@ namespace Moonborne.Game.Inventory
         public override void Create()
         {
             base.Create();
-            SpriteIndex = SpriteManager.GetSprite("Item");
+            SpriteIndex.SetSpritesheet("MoonCore");
         }
 
         /// <summary>
@@ -46,7 +45,7 @@ namespace Moonborne.Game.Inventory
             // Pickup our item if we're close
             if (InputManager.KeyTriggered(Keys.E))
             {
-                if (MoonMath.Distance(Position, Player.Instance.Position) < PickupRange)
+                if (MoonMath.Distance(Transform.Position, Player.Instance.Transform.Position) < PickupRange)
                 {
                     OnPickup();
                 }

@@ -1,7 +1,9 @@
 ﻿
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tiled.Renderers;
+using Moonborne.Engine.Components;
 using Moonborne.Engine.UI;
 using System;
 using System.Collections.Generic;
@@ -28,6 +30,7 @@ namespace Moonborne.Game.Room
                 TempIteration++;
                 SaveRoom(CurrentRoom.Name + $"tmp_{TempIteration}",@"Content/Temp",CurrentRoom.Name);
             }
+            SettingsManager.Save();
         }
 
         /// <summary>
@@ -135,19 +138,51 @@ namespace Moonborne.Game.Room
                         PropertyInfo[] properties = obj.GetType().GetProperties();
                         var objectProperties = new List<VariableData>();
 
+                        // Save object properties
                         foreach (var property in properties)
                         {
                             VariableData variableData = new VariableData();
                             variableData.Name = property.Name;
                             variableData.Value = property.GetValue(obj);
+                            variableData.Type = property.GetType().ToString();
                             objectProperties.Add(variableData);
+                        }
+
+                        // Save component properties
+                        foreach (ObjectComponent comp in obj.Components)
+                        {
+                            foreach (var property in comp.GetType().GetProperties())
+                            {
+                                VariableData variableData = new VariableData();
+                                variableData.Name = property.Name;
+                                variableData.Type = property.GetType().ToString();
+                                var propertyValue = property.GetValue(comp);
+                                
+                                // Vectors
+                                if (propertyValue.GetType() == typeof(Vector2))
+                                {
+                                    Vector2 vectorValue = (Vector2)propertyValue;
+
+                                    variableData.X = vectorValue.X;
+                                    variableData.Y = vectorValue.Y;
+
+                                    variableData.Type = "Vector";
+                                    objectProperties.Add(variableData);
+                                }
+                                else
+                                // Built-in variables 
+                                {
+                                    variableData.Value = propertyValue;
+                                    objectProperties.Add(variableData);
+                                }
+                            }
                         }
 
                         // Add the data to the json object
                         objects.Add(new
                         {
-                            PositionX = obj.Position.X,
-                            PositionY = obj.Position.Y,
+                            PositionX = obj.Transform.Position.X,
+                            PositionY = obj.Transform.Position.Y,
                             Name = obj.GetType().Name,
                             Depth = obj.Layer.Depth,
                             LayerName = layer.Value.Name,
@@ -203,12 +238,26 @@ namespace Moonborne.Game.Room
         /// <param name="rm"></param>
         public static void SetActiveRoom(Room rm)
         {
+            Console.WriteLine($"Transitioned to room {rm.Name}");
             LayerManager.Clear();
             rm.Load(rm.Name);
             RoomEditor.CurrentRoom = rm;
             CurrentRoom = rm;
             LevelSelectEditor.isSelected = true;
-            Console.WriteLine($"Switched to room {rm.Name}");
+        }
+
+        /// <summary>
+        /// Target room by string
+        /// </summary>
+        /// <param name="rm"></param>
+        public static void SetActiveRoom(string rm)
+        {
+            if (!Rooms.ContainsKey(rm))
+                return;
+
+            Room targetRoom = Rooms[rm];
+
+            SetActiveRoom(targetRoom);
         }
 
         /// <summary>

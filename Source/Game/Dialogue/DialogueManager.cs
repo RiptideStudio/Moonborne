@@ -54,6 +54,7 @@ namespace Moonborne.UI.Dialogue
         public static void InitializeLater()
         {
             DialogueObject = new EmptyObject();
+            DialogueObject.SpriteIndex.Alpha = 0f;
             LayerManager.AddInstance(DialogueObject, "Managers");
         }
 
@@ -258,10 +259,10 @@ namespace Moonborne.UI.Dialogue
         public static void DrawDialogueBox()
         {
             RootPosition = MoonMath.Lerp(RootPosition, TargetPosition, AnimationInterpolation);
-            SpriteManager.SetDrawAlpha(DialogueObject.Alpha);
+            SpriteManager.SetDrawAlpha(DialogueObject.SpriteIndex.Alpha);
             SpriteManager.DrawRectangle(RootPosition, DialogueBoxWidth, DialogueBoxHeight, Color.Black);
 
-            SpriteManager.SetDrawAlpha(DialogueObject.Alpha*2f);
+            SpriteManager.SetDrawAlpha(DialogueObject.SpriteIndex.Alpha *2f);
             SpriteManager.DrawText(Speaker, RootPosition+NameOffset, FontScale, 0, Color.Yellow);
             SpriteManager.DrawText(DisplayText, RootPosition+TextOffset, FontScale, 0, Color.White, DialogueBoxWidth-32);
             SpriteManager.ResetDraw();

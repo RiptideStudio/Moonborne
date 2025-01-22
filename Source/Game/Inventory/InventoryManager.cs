@@ -78,7 +78,7 @@ namespace Moonborne.Game.Inventory
         /// </summary>
         public static void Update(float dt)
         {
-            Position = InventoryObject.Position;
+            Position = InventoryObject.Transform.Position;
 
             if (InputManager.KeyTriggered(Keys.Tab))
             {

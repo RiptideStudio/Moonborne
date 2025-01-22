@@ -1,9 +1,11 @@
 ﻿
 using FMOD;
 using ImGuiNET;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Collisions.Layers;
 using MonoGame.Extended.Tiled;
+using Moonborne.Engine.Components;
 using Moonborne.Game.Objects;
 using Moonborne.Graphics;
 using Moonborne.Graphics.Camera;
@@ -11,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Numerics;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -29,6 +30,10 @@ namespace Moonborne.Game.Room
     {
         public string Name { get; set; }
         public object Value { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Z { get; set; }
+        public string Type { get; set; }
     }
 
 
@@ -130,42 +135,86 @@ namespace Moonborne.Game.Room
                     LayerManager.AddLayer(layer, objectData.LayerName);
 
                     Vector2 position = new Vector2(objectData.PositionX, objectData.PositionY);
-                    GameObject obj = ObjectLibrary.CreateObject(objectData.Name, position, objectData.LayerName);
 
-                    // Load properties
+                    // Load properties for objects
+                    GameObject obj = ObjectLibrary.CreateObject(objectData.Name, position, objectData.LayerName);
                     foreach (var property in objectData.Properties)
                     {
-                        var key = property.Name;
-
-                        Type type = obj.GetType();
-
-                        PropertyInfo prop = type.GetProperty(property.Name);
-
-                        // Don't set wrong property
-                        if (prop == null || prop.Name != key)
-                            continue;
-
-                        // Hard checks for each type
-                        if (prop.PropertyType == typeof(float))
-                        {
-                            var value = float.Parse(property.Value.ToString());
-                            prop.SetValue(obj, value, null);
-                        }
-                        else if (prop.PropertyType == typeof(int))
-                        {
-                            int value = int.Parse(property.Value.ToString());
-                            prop.SetValue(obj, value, null);
-                        }                        
-                        else if (prop.PropertyType == typeof(bool))
-                        {
-                            bool value = bool.Parse(property.Value.ToString());
-                            prop.SetValue(obj, value, null);
-                        }
+                        LoadProperty(obj, property);
                     }
                 }
             }
 
             Console.WriteLine($"Loaded Room '{name}'");
+        }
+
+        /// <summary>
+        /// Load an individual property into an object
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="property"></param>
+        public static void LoadProperty(object obj, VariableData property)
+        {
+            var key = property.Name;
+            bool propertyExists = false;
+
+            Type type = obj.GetType();
+            PropertyInfo prop = type.GetProperty(property.Name);
+
+            // Get the game object
+            GameObject gameObject = (GameObject)obj;
+
+            // Check for a valid property
+            if (prop != null)
+            {
+                propertyExists = true;
+            }
+            else
+            {
+                // If not found in parent check all components
+                foreach (ObjectComponent component in gameObject.Components)
+                {
+                    type = component.GetType();
+                    prop = type.GetProperty(property.Name);
+
+                    if (prop != null)
+                    {
+                        propertyExists = true;
+                        obj = component;
+                        break;
+                    }
+                }
+            }
+
+            // If no property exists do not set
+            if (!propertyExists)
+                return;
+
+            // Hard checks for each type
+            if (prop.PropertyType == typeof(float))
+            {
+                var value = float.Parse(property.Value.ToString());
+                prop.SetValue(obj, value, null);
+            }
+            else if (prop.PropertyType == typeof(int))
+            {
+                int value = int.Parse(property.Value.ToString());
+                prop.SetValue(obj, value, null);
+            }
+            else if (prop.PropertyType == typeof(bool))
+            {
+                bool value = bool.Parse(property.Value.ToString());
+                prop.SetValue(obj, value, null);
+            }
+            else if (prop.PropertyType == typeof(string))
+            {
+                prop.SetValue(obj, property.Name, null);
+            }
+            else if (property.Type == "Vector")
+            {
+                Vector2 vector = new Vector2(property.X, property.Y);
+                prop.SetValue(obj, vector, null);
+            }
         }
     }
 }

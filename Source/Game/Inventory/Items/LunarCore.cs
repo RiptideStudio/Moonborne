@@ -12,7 +12,7 @@ namespace Moonborne.Game.Inventory
         public override void Create()
         {
             base.Create();
-            SpriteIndex = SpriteManager.GetSprite("MoonCore");
+            SpriteIndex.Texture = SpriteManager.GetTexture("MoonCore");
             Name = "Star Core";
         }
     }

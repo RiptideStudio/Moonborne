@@ -12,9 +12,10 @@ namespace Moonborne.Game.Projectiles
     {
         public override void Create()
         {
-            Speed = 150;
-            SpriteIndex = SpriteManager.GetSprite("Bullet");
-            LinearFriction = 0;
+            base.Create();
+            Physics.Speed = 150;
+            SpriteIndex.SetSpritesheet("Bullet");
+            Physics.LinearFriction = 0;
         }
     }
 }

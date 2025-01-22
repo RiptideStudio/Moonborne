@@ -1,16 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Moonborne.Engine;
+using Moonborne.Engine.Components;
 using Moonborne.Game.Objects;
+using Moonborne.Game.Room;
 using Moonborne.Graphics.Window;
+using System;
 using System.ComponentModel;
 
 namespace Moonborne.Graphics
 {
-    public class Sprite
+    public class Sprite : ObjectComponent
     {
-        public Texture2D Texture { get; set; }
-        public GameObject Parent { get; set; }
+        public SpriteTexture Texture;
 
         public enum Axis
         {
@@ -18,20 +21,38 @@ namespace Moonborne.Graphics
             Vertical,
             None
         }
-
+        public bool Visible { get; set; } = true;
+        public bool VisibleInGame { get; set; } = true;
+        public int MaxFrames { get; set; } = 1;
         public Color Color { get; set; } = Color.White;
+        public int AnimationSpeed { get; set; } = 10;
+        public float Alpha { get; set; } = 1f;
+        public int Frame = 0;
         public int FrameHeight = 16;
         public int FrameWidth = 16;
-        public int MaxFrames = 1;
         public float LayerDepth = 0;
+        public float FrameTime = 0;
+        public Vector2 DrawOffset = Vector2.Zero;
+
         public SpriteEffects CustomSpriteEffect = SpriteEffects.None;
+
+        public override void Create()
+        {
+            Name = "Sprite";
+            Description = "Stores object's sprite and texture data";
+        }
+
+        public Sprite(GameObject parent) : base(parent)
+        {
+
+        }
 
         /// <summary>
         /// Constructor to create a new sprite
         /// </summary>
         /// <param name="texture"></param>
         /// <param name="position"></param>
-        public Sprite(Texture2D texture = null, GameObject parent = null)
+        public Sprite(SpriteTexture texture = null, GameObject parent = null) : base(parent)
         {
             Texture = texture;
             Parent = parent;
@@ -70,13 +91,75 @@ namespace Moonborne.Graphics
             Texture = SpriteManager.GetTexture(tex);
             FrameHeight = frameWidth;
             FrameWidth = frameHeight;
-            MaxFrames = Texture.Width/Texture.Height;
+            MaxFrames = Texture.Data.Width/Texture.Data.Height; // Horizontal spritesheets
+        }
+
+        /// <summary>
+        /// Simple texture set
+        /// </summary>
+        /// <param name="tex"></param>
+        public void SetSpritesheet(string tex)
+        {
+            Texture = SpriteManager.GetTexture(tex);
+            FrameHeight = Texture.FrameHeight;
+            FrameWidth = Texture.FrameWidth;
+            MaxFrames = 1;
+        }
+
+        /// <summary>
+        /// Update any attached animations
+        /// </summary>
+        /// <param name="dt"></param>
+        public override void Update(float dt)
+        {
+            FrameTime += AnimationSpeed * dt;
+
+            if (FrameTime > 1)
+            {
+                FrameTime = 0;
+                Frame++;
+            }
+
+            if (Frame >= MaxFrames)
+            {
+                Frame = 0;
+            }
+        }
+
+        /// <summary>
+        /// Draw the sprite
+        /// </summary>
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            // Not visible flags
+            if (!Visible)
+                return;
+
+            if (!GameManager.Paused && !VisibleInGame)
+                return;
+
+            // Update our hitbox if we are moving
+            Parent.Hitbox.X = Parent.HitboxXOffset + (int)Parent.Transform.Position.X - Parent.Hitbox.Width / 2;
+            Parent.Hitbox.Y = Parent.HitboxYOffset + (int)Parent.Transform.Position.Y - Parent.Hitbox.Height / 2;
+
+            Parent.Hitbox.Width = FrameWidth - Parent.HitboxWidthOffset;
+            Parent.Hitbox.Height = FrameHeight - Parent.HitboxHeightOffset;
+
+            // Resort an object based on its layer's depth and Y Transform.Position
+            if (Parent.NeedsLayerSort)
+            {
+                Parent.Depth = LayerManager.NormalizeLayerDepth((int)Parent.Transform.Position.Y, 1, 99999999) - 0.0001f;
+                Parent.Depth = Math.Clamp(Parent.Depth, 0, 1);
+                LayerDepth = Parent.Depth;
+            }
+
+            DrawSprite(spriteBatch, Frame, Parent.Transform.Position + DrawOffset, Parent.Transform.Scale, Parent.Transform.Rotation, Color);
         }
 
         /// <summary>
         /// Main draw event, draws a sprite given parameters
         /// </summary>
-        public void Draw(SpriteBatch spriteBatch, int frame, Vector2 position, Vector2 scale, float rotation, Color color)
+        public void DrawSprite(SpriteBatch spriteBatch, int frame, Vector2 position, Vector2 scale, float rotation, Color color)
         {
             // Only draw if texture is valid
             if (Texture != null)
@@ -87,12 +170,12 @@ namespace Moonborne.Graphics
                     frame = frame % MaxFrames;
                 }
 
-                int row = frame / (Texture.Width / FrameWidth);
-                int column = frame % (Texture.Width / FrameWidth);
+                int row = frame / (Texture.Data.Width / FrameWidth);
+                int column = frame % (Texture.Data.Width / FrameWidth);
                 Rectangle sourceRect = new Rectangle(column * FrameWidth, row * FrameHeight, FrameWidth, FrameHeight);
                 Vector2 origin = new Vector2(FrameWidth / 2f, FrameHeight / 2f);
 
-                spriteBatch.Draw(Texture, position, sourceRect, color, rotation, origin, scale, CustomSpriteEffect, LayerDepth);
+                spriteBatch.Draw(Texture.Data, position, sourceRect, color, rotation, origin, scale, CustomSpriteEffect, LayerDepth);
             }
         }
     }

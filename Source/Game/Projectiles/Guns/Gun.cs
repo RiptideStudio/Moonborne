@@ -30,10 +30,11 @@ namespace Moonborne.Game.Projectiles
         /// <param name="shootDelay"></param>
         public Gun (GameObject parent, float shootSpeed = 10f, int shootDelay = 5) : base()
         {
-            SpriteIndex = SpriteManager.GetSprite("Gun");
+            SpriteIndex.SetSpritesheet("Gun");
             Parent = parent;
             ShootSpeed = shootSpeed;
             ShootDelay = shootDelay;
+            SpriteIndex.VisibleInGame = false;
         }
 
         /// <summary>
@@ -42,7 +43,7 @@ namespace Moonborne.Game.Projectiles
         public override void Create()
         {
             base.Create();
-            Speed = 1000;
+            Physics.Speed = 1000;
         }
 
         /// <summary>
@@ -64,9 +65,9 @@ namespace Moonborne.Game.Projectiles
                 return;
             }
 
-            Bullet bullet = ObjectLibrary.CreateObject<Bullet>(Position, "Projectiles");
+            Bullet bullet = ObjectLibrary.CreateObject<Bullet>(Transform.Position, "Projectiles");
             bullet.Damage = Damage;
-            bullet.Launch(InputManager.MouseDirection(Position), ShootSpeed);
+            bullet.Launch(InputManager.MouseDirection(Transform.Position), ShootSpeed);
             CanShoot = false;
         }
 
@@ -98,13 +99,13 @@ namespace Moonborne.Game.Projectiles
         public void FaceTarget()
         {
             Target = InputManager.MouseWorldCoords();
-            Vector2 direction = Target - Position;
+            Vector2 direction = Target - Transform.Position;
             Vector2 newOffset = direction;
             newOffset.Normalize();
             newOffset *= 10;
-            DrawOffset = newOffset;
-            Rotation = MathF.Atan2(direction.Y, direction.X);
-            Position = Parent.Position;
+            SpriteIndex.DrawOffset = newOffset;
+            Transform.Rotation = MathF.Atan2(direction.Y, direction.X);
+            Transform.Position = Parent.Transform.Position;
         }
 
         /// <summary>

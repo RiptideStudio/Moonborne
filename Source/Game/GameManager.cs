@@ -1,5 +1,7 @@
 ﻿using Moonborne.Engine.Audio;
+using Moonborne.Engine.UI;
 using Moonborne.Game.Gameplay;
+using Moonborne.Game.Objects;
 using Moonborne.Game.Room;
 using Moonborne.Graphics.Camera;
 using System;
@@ -48,6 +50,17 @@ namespace Moonborne.Engine
             Camera.SetTarget(Player.Instance);
             RoomEditor.InEditor = false;
             AudioManager.PauseAllSound(false);
+
+            // Iterate over each object and call their begin play function
+            foreach (GameObject obj in LayerManager.Objects)
+            {
+                Actor actor = obj as Actor;
+
+                if (actor != null)
+                {
+                    actor.OnBeginPlay();
+                }
+            }
         }
 
         /// <summary>
@@ -67,6 +80,7 @@ namespace Moonborne.Engine
         /// </summary>
         public static void Exit()
         {
+            SettingsManager.Save();
             Game.Exit();
         }
 

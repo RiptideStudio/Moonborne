@@ -23,6 +23,8 @@ namespace Moonborne.Engine.UI
         /// </summary>
         public static void Draw()
         {
+            ImGui.Begin("");
+            ImGui.End();
             ImGui.BeginMainMenuBar();
 
             // Play/ Stop button
@@ -65,7 +67,7 @@ namespace Moonborne.Engine.UI
                 if (ImGui.MenuItem("Delete"))
                 {
                     Inspector.DeleteSelectedObject();
-                    RoomManager.DeleteRoom(RoomEditor.CurrentRoom);
+                    // RoomManager.DeleteRoom(RoomEditor.CurrentRoom);
                 }
                 // Undo
                 if (ImGui.MenuItem("Undo (Ctrl+Z)"))
@@ -98,8 +100,6 @@ namespace Moonborne.Engine.UI
                 ImGui.EndMenu();
             }
             ImGui.EndMainMenuBar();
-            ImGui.Begin("");
-            ImGui.End();
         }
 
         /// <summary>

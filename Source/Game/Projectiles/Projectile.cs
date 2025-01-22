@@ -88,8 +88,8 @@ namespace Moonborne.Game.Projectiles
             Vector2 launchDirection = new Vector2(xSpeed, ySpeed);
 
             // Apply velocity impulse and change rotation
-            Velocity = launchDirection * speed;
-            Rotation = direction;
+            Physics.Velocity = launchDirection * speed;
+            Transform.Rotation = direction;
         }
 
         /// <summary>

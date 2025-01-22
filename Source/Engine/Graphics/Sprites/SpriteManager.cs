@@ -11,13 +11,15 @@ using System.Reflection.Metadata;
 using System.Collections;
 using Moonborne.Game.Room;
 using Moonborne.Engine;
+using Moonborne.Engine.UI;
 
 namespace Moonborne.Graphics
 {
     public static class SpriteManager
     {
         public static Dictionary<string, Texture2D> textures = new();
-        public static Dictionary<string, Sprite> sprites = new();
+        public static Dictionary<string, IntPtr> ImGuiTextures = new();
+        public static Dictionary<string, SpriteTexture> sprites = new();
         public static ContentManager content;
         public static GraphicsDevice graphicsDevice;
         public static SpriteBatch UISpriteBatch;
@@ -102,14 +104,16 @@ namespace Moonborne.Graphics
                     if (!textures.ContainsKey(textureName))
                     {
                         textures[textureName] = texture;
+                        ImGuiTextures[textureName] = ImGuiManager.imGuiRenderer.BindTexture(texture);
 
                         // Spritesheets should be uniform width and height
-                        Sprite sprite = new Sprite(texture);
+                        SpriteTexture sprite = new SpriteTexture(texture);
 
                         // Assuming same dimensions for width and height by default
-                        sprite.MaxFrames = 1;
                         sprite.FrameWidth = texture.Width;
                         sprite.FrameHeight = texture.Height;
+                        sprite.Data = texture;
+                
 
                         sprites[textureName] = sprite;
                     }
@@ -123,13 +127,13 @@ namespace Moonborne.Graphics
         /// <param name="sprite"></param>
         public static void DrawSprite(string spriteName, int frame, Vector2 position, Vector2 scale, float rotation, Color color)
         {
-            Sprite sprite = GetSprite(spriteName);
+/*            Sprite sprite = GetSprite(spriteName);
 
             // Draw a sprite given parameters, and use UI positioning if defined as such
             if (sprite != null)
             {
-                sprite.Draw(spriteBatch, frame, position, scale, rotation, color);
-            }
+                // sprite.Draw(spriteBatch, frame, position, scale, rotation, color);
+            }*/
         }
 
         /// Draw text with optional scale, rotation, and UI overlay handling.
@@ -268,7 +272,7 @@ namespace Moonborne.Graphics
             color.A = DrawAlpha;
             Vector2 origin = new Vector2(xRadius, yRadius);
 
-            Texture2D EllipseTexture = GetTexture("Ellipse");
+            Texture2D EllipseTexture = GetRawTexture("Ellipse");
             spriteBatch.Draw(EllipseTexture, position, null, color, 0f, origin, size / new Vector2(EllipseTexture.Width, EllipseTexture.Height), SpriteEffects.None, 0f);
         }
 
@@ -330,7 +334,7 @@ namespace Moonborne.Graphics
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static Texture2D GetTexture(string name)
+        public static Texture2D GetRawTexture(string name)
         {
             // Return an empty texture if not found
             if (name == null || !textures.ContainsKey(name))
@@ -346,9 +350,19 @@ namespace Moonborne.Graphics
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static Sprite GetSprite(string name)
+        public static SpriteTexture GetTexture(string name)
         {
             return sprites.TryGetValue(name, out var sprite) ? sprite : null;
+        }
+
+        /// <summary>
+        /// Get an IntPtr texture used for ImGui
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static IntPtr GetImGuiTexture(string name)
+        {
+            return ImGuiTextures.TryGetValue(name, out var sprite) ? sprite : IntPtr.Zero;
         }
 
         /// <summary>
@@ -358,16 +372,9 @@ namespace Moonborne.Graphics
         /// <param name="frameWidth"></param>
         /// <param name="frameHeight"></param>
         /// <returns></returns>
-        public static Sprite AssignSprite(string name, int frameWidth, int frameHeight)
+        public static SpriteTexture AssignSprite(string name, int frameWidth, int frameHeight)
         {
-            Sprite sprite = GetSprite(name);
-
-            if (sprite != null)
-            {
-                sprite.FrameHeight = frameHeight;
-                sprite.FrameWidth = frameWidth;
-                sprite.MaxFrames = sprite.Texture.Width / frameHeight;
-            }
+            SpriteTexture sprite = GetTexture(name);
 
             return sprite;
         }

@@ -81,8 +81,11 @@ namespace Moonborne.Engine.UI
 
         public override void Advance(float dt)
         {
-            Parent.Position.X = MathHelper.Lerp(Parent.Position.X, TargetPosition.X, InterpolationAmount);
-            Parent.Position.Y = MathHelper.Lerp(Parent.Position.Y, TargetPosition.Y, InterpolationAmount);
+            Vector2 finalPos = Parent.Transform.Position;
+            finalPos.X = MathHelper.Lerp(Parent.Transform.Position.X, TargetPosition.X, InterpolationAmount);
+            finalPos.Y = MathHelper.Lerp(Parent.Transform.Position.Y, TargetPosition.Y, InterpolationAmount);
+
+            Parent.Transform.Position = finalPos;
         }
     }
 
@@ -100,7 +103,7 @@ namespace Moonborne.Engine.UI
 
         public override void Advance(float dt)
         {
-            Parent.Alpha = MathHelper.Lerp(Parent.Alpha, TargetValue, InterpolationAmount);
+            Parent.SpriteIndex.Alpha = MathHelper.Lerp(Parent.SpriteIndex.Alpha, TargetValue, InterpolationAmount);
         }
     }
 }

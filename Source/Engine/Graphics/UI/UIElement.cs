@@ -41,7 +41,7 @@ namespace Moonborne.Engine.UI
         {
             base.Draw(spriteBatch);
             SpriteManager.DrawSetAlignment(true);
-            SpriteManager.DrawText(Text, Position, Scale, Rotation, Tint);
+            SpriteManager.DrawText(Text, Transform.Position, Transform.Scale, Transform.Rotation, Tint);
             SpriteManager.DrawSetAlignment(false);
             Update(MGame.DeltaTime);
         }
@@ -52,7 +52,7 @@ namespace Moonborne.Engine.UI
         /// <param name="dt"></param>
         public override void Update(float dt)
         {
-            if (!Visible)
+            if (!SpriteIndex.Visible)
                 return;
 
             // Update our sprite, hitbox, and animation

@@ -21,7 +21,7 @@ namespace Moonborne.Game.Gameplay
         public override void Create()
         {
             base.Create();
-            SpriteIndex = GetSprite("CoreTable");
+            SpriteIndex.SetSpritesheet("CoreTable");
             Interactable = true;
             InteractDistance = 32;
             Collideable = false;

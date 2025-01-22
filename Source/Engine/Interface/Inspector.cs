@@ -10,6 +10,10 @@ using System;
 using Moonborne.Input;
 using Microsoft.Xna.Framework.Input;
 using Moonborne.Game.Room;
+using Microsoft.Xna.Framework;
+using Moonborne.Engine.Components;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Moonborne.Engine.UI
 {
@@ -47,7 +51,28 @@ namespace Moonborne.Engine.UI
                 ImGui.Separator();
 
                 Type objectType = obj.GetType();
-                PropertyInfo[] properties = objectType.GetProperties();
+                List<PropertyInfo> properties = objectType.GetProperties().ToList();
+
+                // Get all component properties 
+                if (obj as GameObject != null)
+                {
+                    GameObject gameObject = (GameObject)obj;
+
+                    foreach (ObjectComponent component in gameObject.Components)
+                    {
+                        if (ImGui.TreeNodeEx(component.Name))
+                        {
+                            Type componentType = component.GetType();
+                            PropertyInfo[] componentProperties = componentType.GetProperties();
+
+                            foreach (var property in componentProperties)
+                            {
+                                DrawPropertyInEditor(property, component);
+                            }
+                            ImGui.TreePop();
+                        }
+                    }
+                }
 
                 // Attempt to delete the selected object
                 if (InputManager.KeyTriggered(Keys.Delete))
@@ -55,64 +80,89 @@ namespace Moonborne.Engine.UI
                     DeleteSelectedObject();
                 }
 
-                foreach (var property in properties)
+                // Draw object base properties
+                if (ImGui.TreeNodeEx($"{obj.GetType().Name} (Self)"))
                 {
-                    // Only display editable properties (must be readable and writable)
-                    if (property.CanRead && property.CanWrite)
+                    foreach (var property in properties)
                     {
-                        object value = property.GetValue(obj);
-
-                        // Render appropriate ImGui input widget based on the property's type
-                        if (value is int intValue)
-                        {
-                            int newValue = intValue;
-                            if (ImGui.InputInt(property.Name, ref newValue))
-                            {
-                                property.SetValue(obj, newValue);
-                            }
-                        }
-                        else if (value is float floatValue)
-                        {
-                            float newValue = floatValue;
-                            if (ImGui.InputFloat(property.Name, ref newValue))
-                            {
-                                property.SetValue(obj, newValue);
-                            }
-                        }
-                        else if (value is bool boolValue)
-                        {
-                            bool newValue = boolValue;
-                            if (ImGui.Checkbox(property.Name, ref newValue))
-                            {
-                                property.SetValue(obj, newValue);
-                            }
-                        }
-                        else if (value is string stringValue)
-                        {
-                            string newValue = stringValue;
-                            byte[] buffer = new byte[256];
-                            Array.Copy(System.Text.Encoding.UTF8.GetBytes(stringValue), buffer, stringValue.Length);
-
-                            if (ImGui.InputText(property.Name, buffer, (uint)buffer.Length))
-                            {
-                                newValue = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
-                                property.SetValue(obj, newValue);
-                            }
-                        }
-                        else if (value is Enum enumValue)
-                        {
-                            string[] enumNames = Enum.GetNames(property.PropertyType);
-                            int selectedIndex = Array.IndexOf(enumNames, value.ToString());
-                            if (ImGui.Combo(property.Name, ref selectedIndex, enumNames, enumNames.Length))
-                            {
-                                property.SetValue(obj, Enum.Parse(property.PropertyType, enumNames[selectedIndex]));
-                            }
-                        }
+                        DrawPropertyInEditor(property, obj);
                     }
+                    ImGui.TreePop();
                 }
             }
 
             ImGui.End();
+        }
+
+        public static void DrawPropertyInEditor(PropertyInfo property, object obj)
+        {
+            // Only display editable properties (must be readable and writable)
+            if (property.CanRead && property.CanWrite)
+            {
+                object value = property.GetValue(obj);
+
+                // Render appropriate ImGui input widget based on the property's type
+                if (value is int intValue)
+                {
+                    int newValue = intValue;
+                    if (ImGui.InputInt(property.Name, ref newValue))
+                    {
+                        property.SetValue(obj, newValue);
+                    }
+                }
+                else if (value is float floatValue)
+                {
+                    float newValue = floatValue;
+                    if (ImGui.InputFloat(property.Name, ref newValue))
+                    {
+                        property.SetValue(obj, newValue);
+                    }
+                }
+                else if (value is bool boolValue)
+                {
+                    bool newValue = boolValue;
+                    if (ImGui.Checkbox(property.Name, ref newValue))
+                    {
+                        property.SetValue(obj, newValue);
+                    }
+                }
+                else if (value is string stringValue)
+                {
+                    string newValue = stringValue;
+                    byte[] buffer = new byte[256];
+                    Array.Copy(System.Text.Encoding.UTF8.GetBytes(stringValue), buffer, stringValue.Length);
+
+                    if (ImGui.InputText(property.Name, buffer, (uint)buffer.Length))
+                    {
+                        newValue = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
+                        property.SetValue(obj, newValue);
+                    }
+                }
+                else if (value is Enum enumValue)
+                {
+                    string[] enumNames = Enum.GetNames(property.PropertyType);
+                    int selectedIndex = Array.IndexOf(enumNames, value.ToString());
+                    if (ImGui.Combo(property.Name, ref selectedIndex, enumNames, enumNames.Length))
+                    {
+                        property.SetValue(obj, Enum.Parse(property.PropertyType, enumNames[selectedIndex]));
+                    }
+                }
+                else if (value is Vector2 vector)
+                {
+                    float xValue = vector.X;
+                    float yValue = vector.Y;
+                    Vector2 targetVal = new Vector2(xValue, yValue);
+                    if (ImGui.InputFloat(property.Name +" X", ref xValue))
+                    {
+                        targetVal.X = xValue;
+                    }
+                    if (ImGui.InputFloat(property.Name+" Y", ref yValue))
+                    {
+                        targetVal.Y = yValue;
+                    }
+                    property.SetValue(obj, targetVal);
+                }
+            }
         }
     }
 }

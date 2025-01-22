@@ -13,9 +13,9 @@ namespace Moonborne.Engine.UI
         /// <param name="scale"></param>
         public Button(Vector2 position, Vector2 scale, string text = "", Action action = null) : base()
         {
-            Scale = scale;
-            Position = position;
-            SpriteIndex = SpriteManager.GetSprite("Button");
+            Transform.Scale = scale;
+            Transform.Position = position;
+            SpriteIndex.SetSpritesheet("Button");
             ClickAction = action;
             Text = text;
         }

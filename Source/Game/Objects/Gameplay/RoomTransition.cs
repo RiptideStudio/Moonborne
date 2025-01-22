@@ -13,8 +13,8 @@ namespace Moonborne.Game.Gameplay
         public override void CreateLater()
         {
             base.CreateLater();
-            SpriteIndex = SpriteManager.GetSprite("RoomTransition");
-            VisibleInGame = false;
+            SpriteIndex.SetSpritesheet("RoomTransition");
+            SpriteIndex.VisibleInGame = false;
         }
 
         /// <summary>

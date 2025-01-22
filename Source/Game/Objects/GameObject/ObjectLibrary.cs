@@ -11,6 +11,7 @@ using System;
 using System.Linq;
 using MonoGame.Extended.Collisions.Layers;
 using Moonborne.Game.Gameplay;
+using Moonborne.Engine.Components;
 
 namespace Moonborne.Game.Objects
 {
@@ -49,7 +50,7 @@ namespace Moonborne.Game.Objects
         public static T CreateObject<T>(Vector2 position, string layer = "Object") where T : GameObject, new()
         {
             T gameObject = new T();
-            gameObject.Position = position;
+            gameObject.Transform.Position = position;
             gameObject.StartPosition = position;
             gameObject.NeedsLayerSort = true;
             gameObject.CreateLater();
@@ -78,7 +79,7 @@ namespace Moonborne.Game.Objects
 
             // Create the object
             var obj = (GameObject)Activator.CreateInstance(type);
-            obj.Position = position;
+            obj.Transform.Position = position;
             obj.StartPosition = position;
             obj.NeedsLayerSort = true;
             obj.CreateLater();

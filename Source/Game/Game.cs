@@ -44,7 +44,6 @@ namespace Moonborne
                 throw new Exception("GraphicsDevice is null. Cannot initialize ImGuiManager.");
             }
             // IsMouseVisible = false;
-
             GameManager.Initialize(this);
             SpriteManager.Initialize(Content,GraphicsDevice);
             GraphicsManager.Initialize(Content, GraphicsDevice, _graphics, this);
@@ -67,7 +66,6 @@ namespace Moonborne
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            LayerManager.Initialize();
             SpriteManager.LoadAllTextures();
             SpriteManager.spriteBatch = spriteBatch;
             RoomManager.LoadRooms(GraphicsDevice, this);
@@ -76,13 +74,14 @@ namespace Moonborne
 
         protected void InitializeLater()
         {
-            player = new Player();
-
             InventoryManager.Initialize();
             DialogueManager.InitializeLater();
             RoomEditor.Initialize();
-            LayerManager.AddInstance(player, "Player");
+            SettingsManager.Load();
+
+            LayerManager.Initialize();
             LayerManager.UpdateFrame(0);
+
             Window.Title = "Moonborne Engine";
         }
 

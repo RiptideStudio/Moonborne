@@ -67,8 +67,8 @@ namespace Moonborne.Engine.UI
             style.Colors[(int)ImGuiCol.SliderGrab] = new System.Numerics.Vector4(0.5f, 0.5f, 0.5f, 1.00f);
             style.Colors[(int)ImGuiCol.SliderGrabActive] = new System.Numerics.Vector4(0.65f, 0.65f, 0.65f, 1.00f);
             style.Colors[(int)ImGuiCol.TabHovered] = new System.Numerics.Vector4(0.5f, 0.5f, 0.5f, 1.00f);
-            style.Colors[(int)ImGuiCol.Tab] = new System.Numerics.Vector4(0.1f, 0.1f, 0.1f, 1.00f);
-            style.Colors[(int)ImGuiCol.TabUnfocused] = new System.Numerics.Vector4(0.1f, 0.1f, 0.1f, 1.00f);
+            style.Colors[(int)ImGuiCol.Tab] = new System.Numerics.Vector4(0.3f, 0.3f, 0.3f, 1.00f);
+            style.Colors[(int)ImGuiCol.TabUnfocused] = new System.Numerics.Vector4(0.3f, 0.3f, 0.3f, 1.00f);
             style.Colors[(int)ImGuiCol.TabActive] = new System.Numerics.Vector4(0.5f, 0.5f, 0.5f, 1.00f);
             style.Colors[(int)ImGuiCol.TabUnfocusedActive] = new System.Numerics.Vector4(0.3f, 0.3f, 0.3f, 1.00f);
             style.Colors[(int)ImGuiCol.TitleBgActive] = new System.Numerics.Vector4(0.35f, 0.35f, 0.35f, 1.00f);
