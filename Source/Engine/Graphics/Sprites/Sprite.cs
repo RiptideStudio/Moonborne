@@ -101,9 +101,13 @@ namespace Moonborne.Graphics
         public void SetSpritesheet(string tex)
         {
             Texture = SpriteManager.GetTexture(tex);
-            FrameHeight = Texture.FrameHeight;
-            FrameWidth = Texture.FrameWidth;
-            MaxFrames = 1;
+
+            if (Texture != null)
+            {
+                FrameHeight = Texture.FrameHeight;
+                FrameWidth = Texture.FrameWidth;
+                MaxFrames = 1;
+            }
         }
 
         /// <summary>

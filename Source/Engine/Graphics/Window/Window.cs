@@ -16,9 +16,11 @@ namespace Moonborne.Graphics.Window
 {
     public static class WindowManager
     {
-        public static int ViewportWidth { get; private set; } = 640; // Height of the viewport
-        public static int ViewportHeight { get; private set; } = 360; // Height of the viewport
-        public static int ViewportScale { get; private set; } = 3; // Scale of the viewport 
+        public static int ViewportWidth { get; private set; } = 320; // Height of the viewport
+        public static int ViewportHeight { get; private set; } = 180; // Height of the viewport
+        public static int BaseViewportWidth { get; private set; } = 320; // Height of the viewport
+        public static int BaseViewportHeight { get; private set; } = 180; // Height of the viewport
+        public static int ViewportScale { get; private set; } = 6; // Scale of the viewport 
         public static int PreviousViewportScale { get; private set; } = ViewportScale; // Scale of the viewport 
         public static bool StartInFullscreen { get; private set; } = false; // If we start in fullscreen
         public static bool IsFullscreen { get; private set; } = false; // If we are in fullscreen
@@ -122,8 +124,8 @@ namespace Moonborne.Graphics.Window
         {
             int maxDisplayScale = CalculateMaxScale();
             ViewportScale = Math.Clamp(scale, 1, maxDisplayScale);
-            ViewportHeight = 360 * ViewportScale;
-            ViewportWidth = 640 * ViewportScale;
+            ViewportWidth = BaseViewportWidth * ViewportScale;
+            ViewportHeight = BaseViewportHeight * ViewportScale;
 
             SetWindowSize(ViewportWidth, ViewportHeight);
         }
@@ -137,8 +139,8 @@ namespace Moonborne.Graphics.Window
             int screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
             // Calculate the maximum scale that fits within the screen dimensions
-            int maxScaleX = screenWidth / 640;
-            int maxScaleY = screenHeight / 360;
+            int maxScaleX = screenWidth / BaseViewportWidth;
+            int maxScaleY = screenHeight / BaseViewportHeight;
 
             return Math.Min(maxScaleX, maxScaleY);
         }

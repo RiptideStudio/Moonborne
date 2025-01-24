@@ -1,23 +1,65 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Moonborne.Engine;
+using Moonborne.Game.Gameplay;
 using Moonborne.Game.Objects;
 using Moonborne.Graphics;
 using Moonborne.Graphics.Window;
 
 namespace Moonborne.Graphics.Camera
 {
-    public static class Camera
+    public class Camera : GameObject
     {
         public static Vector2 Position = Vector2.Zero;
         public static Vector2 TargetPosition = Vector2.Zero;
         public static float Zoom = 2.0f; // Default zoom level
-        public static float TargetZoom = 2.0f; // Default zoom level
-        public static float DefaultZoom = 2.0f; // Default zoom level
-        public static float MaxZoom { get; private set; } = 10f; // Default zoom level
-        public static float Rotation { get; private set; } = 0f; // Default rotation
-        public static float InterpolationSpeed { get; private set; } = 0.2f; // How much the camera lags behind
-        public static Matrix Transform; // Transformation matrix
+        public static float CameraSize = 2.0f; // Our actual current camera size
+        public static float GameCameraScale { get; set; } = 1; // The value we use in our game
+        public static float MaxZoom = 100f; // How far we can zoom out
+        public static float Rotation = 0f; // Default rotation
+        public static float Smoothness { get; private set; } = 0.2f; // How much the camera lags behind
+        public static Matrix TransformMatrix; // Transformation matrix
         public static GameObject Target { get; set; } // Target object to follow
+
+        public static int CameraWidth;
+        public static int CameraHeight;
+        public static float ViewportScale = 1f;
+
+        /// <summary>
+        /// Object's create
+        /// </summary>
+        public override void Create()
+        {
+            base.Create();
+            SpriteIndex.SetSpritesheet("Camera");
+        }
+
+        /// <summary>
+        /// Follow the player
+        /// </summary>
+        /// <param name="dt"></param>
+        public override void Update(float dt)
+        {
+            base.Update(dt);
+
+            Transform.Position = Player.Instance.Transform.Position;
+        }
+
+        /// <summary>
+        /// Draw the rectangle of our viewport
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch);
+
+            CameraWidth = (int)(WindowManager.BaseViewportWidth * GameCameraScale);
+            CameraHeight = (int)(WindowManager.BaseViewportHeight * GameCameraScale);
+
+            Rectangle outline = new Rectangle((int)Transform.Position.X - CameraWidth / 2, (int)Transform.Position.Y - CameraHeight / 2, CameraWidth, CameraHeight);
+            SpriteManager.DrawRectangle(outline, Color.White, true);
+        }
 
         /// <summary>
         /// Initialize the camera's transform
@@ -55,9 +97,9 @@ namespace Moonborne.Graphics.Camera
             FollowTarget();
             UpdateTransform();
 
-            Zoom = MathHelper.Lerp(Zoom, TargetZoom, 0.25f);
-            Position.X = MathHelper.Lerp(Position.X, TargetPosition.X, InterpolationSpeed);
-            Position.Y = MathHelper.Lerp(Position.Y, TargetPosition.Y + 8, InterpolationSpeed);
+            Zoom = MathHelper.Lerp(Zoom, CameraSize, 0.25f);
+            Position.X = MathHelper.Lerp(Position.X, TargetPosition.X, Smoothness);
+            Position.Y = MathHelper.Lerp(Position.Y, TargetPosition.Y + 8, Smoothness);
 
             Position.Y = (float)Math.Round(Position.Y,1);
             Position.X = (float)Math.Round(Position.X,1);
@@ -98,10 +140,13 @@ namespace Moonborne.Graphics.Camera
         /// </summary>
         public static void UpdateTransform()
         {
+            // Update our viewport scale
+            ViewportScale = WindowManager.ViewportScale * (1 / Zoom);
+
             // Create the camera transformation matrix
-            Transform = Matrix.CreateTranslation(new Vector3(-Position, 0f)) *
+            TransformMatrix = Matrix.CreateTranslation(new Vector3(-Position, 0f)) *
                         Matrix.CreateRotationZ(Rotation) *
-                        Matrix.CreateScale(WindowManager.ViewportScale*Zoom, WindowManager.ViewportScale*Zoom, 1f) *
+                        Matrix.CreateScale(ViewportScale, ViewportScale, 1f) *
                         Matrix.CreateTranslation(new Vector3(WindowManager.ViewportWidth / 2f, WindowManager.ViewportHeight / 2f, 0f));
         }
     }

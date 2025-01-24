@@ -143,8 +143,15 @@ namespace Moonborne.Game.Room
                         {
                             VariableData variableData = new VariableData();
                             variableData.Name = property.Name;
-                            variableData.Value = property.GetValue(obj);
+                            variableData.Value = property.GetValue(obj, null);
                             variableData.Type = property.GetType().ToString();
+
+                            // Strings are specific
+                            if (variableData.Value.GetType() == typeof(string))
+                            {
+                                // variableData.Value = property.GetValue(obj, "");
+                            }
+
                             objectProperties.Add(variableData);
                         }
 
@@ -167,6 +174,14 @@ namespace Moonborne.Game.Room
                                     variableData.Y = vectorValue.Y;
 
                                     variableData.Type = "Vector";
+                                    objectProperties.Add(variableData);
+                                }
+                                else if (propertyValue.GetType() == typeof(string))
+                                {
+                                    string value = (string)propertyValue;
+
+                                    variableData.Value = value;
+
                                     objectProperties.Add(variableData);
                                 }
                                 else

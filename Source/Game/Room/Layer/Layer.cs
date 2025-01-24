@@ -23,7 +23,6 @@ namespace Moonborne.Game.Room
     {
         Object,
         Tile,
-        Transition,
         UI
     }
 
@@ -129,7 +128,6 @@ namespace Moonborne.Game.Room
         /// <param name="spriteBatch"></param>
         public void Draw(SpriteBatch spriteBatch)
         {
-
             // Render each tilemap
             foreach (var tileMap in Tilemaps)
             {
@@ -139,7 +137,16 @@ namespace Moonborne.Game.Room
             // Render each object
             foreach (var obj in Objects)
             {
-                // Calculate the depth based on position (y sorting)
+                // No drawing if visibility marks
+                if (obj.SpriteIndex != null)
+                {
+                    if (!obj.SpriteIndex.Visible)
+                        continue;
+
+                    if (!obj.SpriteIndex.VisibleInGame && !GameManager.Paused)
+                        continue;
+                }
+
                 obj.Draw(spriteBatch);
             }
         }

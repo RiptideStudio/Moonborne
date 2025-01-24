@@ -45,11 +45,10 @@ namespace Moonborne.Engine
         {
             Console.WriteLine("Starting game...");
             Resume();
-            Camera.Zoom = Camera.DefaultZoom;
-            Camera.TargetZoom = Camera.DefaultZoom;
             Camera.SetTarget(Player.Instance);
             RoomEditor.InEditor = false;
             AudioManager.PauseAllSound(false);
+            Camera.CameraSize = Camera.GameCameraScale;
 
             // Iterate over each object and call their begin play function
             foreach (GameObject obj in LayerManager.Objects)

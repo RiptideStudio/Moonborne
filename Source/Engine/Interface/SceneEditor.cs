@@ -35,7 +35,7 @@ namespace Moonborne.Engine.UI
                 // Add Object Layer
                 if (ImGui.MenuItem("Create New Layer"))
                 {
-                    Layer newLayer = new Layer(1, () => Camera.Transform, LayerType.Object);
+                    Layer newLayer = new Layer(1, () => Camera.TransformMatrix, LayerType.Object);
                     LayerManager.AddLayer(newLayer, RoomEditor.NewLayerName);
                     LayerManager.AddTilemap(new Tilemap("None", new int[100, 100], 16, RoomEditor.NewLayerName), RoomEditor.NewLayerName);
                     RoomEditor.SelectLayer(newLayer);

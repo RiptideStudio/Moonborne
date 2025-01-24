@@ -127,7 +127,7 @@ namespace Moonborne.Input
             Vector2 viewportCenter = new Vector2(WindowManager.ViewportWidth / WindowManager.ViewportScale/2, WindowManager.ViewportHeight / WindowManager.ViewportScale/2);
 
             // Adjust mouse position for camera zoom and position
-            Vector2 worldPosition = ((MouseUIPosition - viewportCenter) / Camera.Zoom) + Camera.Position;
+            Vector2 worldPosition = ((MouseUIPosition - viewportCenter) / (1/Camera.Zoom)) + Camera.Position;
 
             return worldPosition;
         }

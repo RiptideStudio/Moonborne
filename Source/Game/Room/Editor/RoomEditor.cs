@@ -35,7 +35,7 @@ namespace Moonborne.Game.Room
         public static int PreviewX = 0;
         public static int PreviewY = 0;
         public static float PreviewZoom = 1f;
-        public static float ZoomScale = 0.25f; // How much we zoom when scrolling mouse
+        public static float ZoomScale = 0.5f; // How much we zoom when scrolling mouse
         public static string NewLayerName = "Layer";
         public static Layer selectedLayer = null;
         public static GameObject selectedObject;
@@ -257,13 +257,13 @@ namespace Moonborne.Game.Room
                 // Zoom in and out from the world
                 if (InputManager.MouseWheelDown())
                 {
-                    Camera.TargetZoom -= ZoomScale;
+                    Camera.CameraSize += ZoomScale;
                 }
 
                 if (InputManager.MouseWheelUp())
                 {
                     // Zoom in towards where our mouse is
-                    Camera.TargetZoom += ZoomScale;
+                    Camera.CameraSize -= ZoomScale;
                 }
 
                 if (InputManager.KeyDown(Keys.W))
@@ -316,7 +316,7 @@ namespace Moonborne.Game.Room
             }
 
             // Update our camera. We want to pan with WASD 
-            Camera.TargetZoom = Math.Clamp(Camera.TargetZoom, 0.25f, 4f);
+            Camera.CameraSize = Math.Clamp(Camera.CameraSize, 0.25f, 4f);
 
             // Update our tile selector
             if (SelectedTilemap != null)

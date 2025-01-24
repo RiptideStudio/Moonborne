@@ -98,7 +98,7 @@ namespace Moonborne.Game.Room
                     );
 
                     // Reconstruct layers
-                    Layer layer = new Layer(tilemapData.Depth, () => Camera.Transform, LayerType.Tile);
+                    Layer layer = new Layer(tilemapData.Depth, () => Camera.TransformMatrix, LayerType.Tile);
                     layer.Depth = tilemapData.Depth;
                     layer.Visible = tilemapData.Visible;
                     layer.Collideable = tilemapData.Collideable;
@@ -130,7 +130,7 @@ namespace Moonborne.Game.Room
             {
                 foreach (var objectData in roomData.Objects)
                 {
-                    Layer layer = new Layer(1, () => Camera.Transform, LayerType.Object);
+                    Layer layer = new Layer(1, () => Camera.TransformMatrix, LayerType.Object);
                     layer.Depth = objectData.Depth;
                     LayerManager.AddLayer(layer, objectData.LayerName);
 
@@ -208,7 +208,8 @@ namespace Moonborne.Game.Room
             }
             else if (prop.PropertyType == typeof(string))
             {
-                prop.SetValue(obj, property.Name, null);
+                string value = property.Value.ToString();
+                prop.SetValue(obj, value, null);
             }
             else if (property.Type == "Vector")
             {

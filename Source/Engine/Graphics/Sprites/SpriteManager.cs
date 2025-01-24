@@ -224,6 +224,33 @@ namespace Moonborne.Graphics
         }
 
         /// <summary>
+        /// Draw an outlined rectangle
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="color"></param>
+        /// <param name="outline"></param>
+        public static void DrawRectangle(Rectangle rect, Color color, bool outline)
+        {
+            color.A = (byte)Math.Clamp((int)(color.A * (DrawAlpha / 255f)), 0, 255);
+
+            Vector2 origin = Vector2.Zero;
+
+            // top
+            Rectangle line1 = new Rectangle(rect.X, rect.Y, rect.Width, 1);
+            // bottom
+            Rectangle line2 = new Rectangle(rect.X, rect.Y+rect.Height, rect.Width, 1);
+            // left
+            Rectangle line3 = new Rectangle(rect.X, rect.Y, 1, rect.Height);
+            // right
+            Rectangle line4 = new Rectangle(rect.X+rect.Width, rect.Y, 1, rect.Height);
+
+            spriteBatch.Draw(PixelTexture, line1, line1, color, 0, origin, SpriteEffects.None, 0);
+            spriteBatch.Draw(PixelTexture, line2, line2, color, 0, origin, SpriteEffects.None, 0);
+            spriteBatch.Draw(PixelTexture, line3, line3, color, 0, origin, SpriteEffects.None, 0);
+            spriteBatch.Draw(PixelTexture, line4, line4, color, 0, origin, SpriteEffects.None, 0);
+        }
+
+        /// <summary>
         /// Draw a rectangle given vectors
         /// </summary>
         /// <param name="position"></param>

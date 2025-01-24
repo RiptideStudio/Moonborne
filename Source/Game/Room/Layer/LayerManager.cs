@@ -74,7 +74,7 @@ namespace Moonborne.Game.Room
             // If there is no layer with this name, create one
             if (!Layers.ContainsKey(layerName))
             {
-                Layer newLayer = new Layer(Layers.Count, () => Camera.Transform, LayerType.Object);
+                Layer newLayer = new Layer(Layers.Count, () => Camera.TransformMatrix, LayerType.Object);
                 AddLayer(newLayer,layerName);
             }
 
@@ -136,7 +136,7 @@ namespace Moonborne.Game.Room
             var snapShot = Layers.Values.ToList();
 
             // Render world objects
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, Camera.Transform);
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, Camera.TransformMatrix);
             foreach (var layer in snapShot) 
             {
                 // Don't draw invisible layers
@@ -266,8 +266,8 @@ namespace Moonborne.Game.Room
         public static void Initialize()
         {
             // Static layers 
-            AddLayer(new Layer(3, () => Camera.Transform, LayerType.Object, true), "Player");
-            AddLayer(new Layer(1000, () => Camera.Transform, LayerType.Object, true), "TileEditorWorld");
+            AddLayer(new Layer(3, () => Camera.TransformMatrix, LayerType.Object, true), "Player");
+            AddLayer(new Layer(1000, () => Camera.TransformMatrix, LayerType.Object, true), "TileEditorWorld");
             AddLayer(new Layer(9999, () => WindowManager.Transform, LayerType.UI, true), "Dialogue");
             AddLayer(new Layer(1002, () => WindowManager.Transform, LayerType.UI, true), "Inventory");
             AddLayer(new Layer(1003, () => WindowManager.Transform, LayerType.UI, true), "RoomEditor");
