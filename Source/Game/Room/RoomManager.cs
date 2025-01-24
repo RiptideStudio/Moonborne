@@ -146,12 +146,6 @@ namespace Moonborne.Game.Room
                             variableData.Value = property.GetValue(obj, null);
                             variableData.Type = property.GetType().ToString();
 
-                            // Strings are specific
-                            if (variableData.Value.GetType() == typeof(string))
-                            {
-                                // variableData.Value = property.GetValue(obj, "");
-                            }
-
                             objectProperties.Add(variableData);
                         }
 

@@ -208,7 +208,16 @@ namespace Moonborne.Game.Room
             }
             else if (prop.PropertyType == typeof(string))
             {
-                string value = property.Value.ToString();
+                string fullString = property.Value.ToString();
+                string value = string.Empty;
+                foreach (char character in fullString)
+                {
+                    if (character == '\0')
+                        break;
+
+                    value += character;
+                }
+
                 prop.SetValue(obj, value, null);
             }
             else if (property.Type == "Vector")

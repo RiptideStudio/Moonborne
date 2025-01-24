@@ -33,6 +33,7 @@ namespace Moonborne.Graphics.Camera
         {
             base.Create();
             SpriteIndex.SetSpritesheet("Camera");
+            SpriteIndex.VisibleInGame = false;
         }
 
         /// <summary>
