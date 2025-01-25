@@ -7,7 +7,7 @@ namespace Moonborne.Game.Gameplay
 {
     public class PlayerStart : Actor
     {
-        public override void CreateLater()
+        public override void Create()
         {
             base.CreateLater();
             SpriteIndex.Texture = SpriteManager.GetTexture("GamepadIcon");
@@ -27,6 +27,7 @@ namespace Moonborne.Game.Gameplay
                 LayerManager.AddInstance(player, "Player");
             }
 
+            // Set our camera's position to be here and our players position
             Camera.Target = Player.Instance;
             Player.Instance.Transform.Position = Transform.Position;
         }

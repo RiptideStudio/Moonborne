@@ -13,6 +13,7 @@ using Moonborne.Input;
 using Microsoft.Xna.Framework;
 using Moonborne.Graphics.Camera;
 using Moonborne.Graphics;
+using Moonborne.Game.Objects.Prefabs;
 
 namespace Moonborne.Engine.UI
 {
@@ -148,7 +149,7 @@ namespace Moonborne.Engine.UI
                 }
             }
 
-            // Drag our selecting object in the world
+            // Drag our selecting object around the world
             if (Inspector.SelectedObject != null && RoomEditor.CanDrag)
             {
                 if (InputManager.MouseLeftDown())
@@ -157,6 +158,10 @@ namespace Moonborne.Engine.UI
                     mousePosition.X = ((int)(mousePosition.X+(RoomEditor.CellSize/2)) / RoomEditor.CellSize) * RoomEditor.CellSize;
                     mousePosition.Y = ((int)(mousePosition.Y+(RoomEditor.CellSize / 2)) / RoomEditor.CellSize) * RoomEditor.CellSize;
 
+                    ImGui.BeginTooltip();
+                    ImGui.SetTooltip($"{((GameObject)Inspector.SelectedObject).DisplayName}");
+
+                    ImGui.EndTooltip();
                     GameObject gameObject = (GameObject)Inspector.SelectedObject;
                     gameObject.Transform.Position = mousePosition;
                 }

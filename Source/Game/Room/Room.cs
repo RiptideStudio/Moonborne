@@ -8,6 +8,7 @@ using MonoGame.Extended.Tiled;
 using Moonborne.Engine.Components;
 using Moonborne.Engine.UI;
 using Moonborne.Game.Objects;
+using Moonborne.Game.Objects.Prefabs;
 using Moonborne.Graphics;
 using Moonborne.Graphics.Camera;
 using System;
@@ -24,7 +25,7 @@ namespace Moonborne.Game.Room
     {
         public string RoomName { get; set; }
         public List<TilemapData> Tilemaps { get; set; }
-        public List<GameObjectData> Objects { get; set; }
+        public List<GameObjectWorldData> Objects { get; set; }
         public string SelectedLayer { get; set; }
         public int SelectedObject { get; set; }
         public int SelectedTile { get; set; }
@@ -129,25 +130,24 @@ namespace Moonborne.Game.Room
                 }
             }
 
-            // Reconstruct objects in each layer
-            if (roomData.Objects != null) 
+            try
             {
-                foreach (var objectData in roomData.Objects)
+                // Reconstruct objects in each layer
+                if (roomData.Objects != null)
                 {
-                    Layer layer = new Layer(1, () => Camera.TransformMatrix, LayerType.Object);
-                    layer.Depth = objectData.Depth;
-                    LayerManager.AddLayer(layer, objectData.LayerName);
-
-                    Vector2 position = new Vector2(objectData.PositionX, objectData.PositionY);
-
-                    // Load properties for objects
-                    GameObject obj = ObjectLibrary.CreateObject(objectData.Name, position, objectData.LayerName);
-                    foreach (var property in objectData.Properties)
+                    foreach (var objectData in roomData.Objects)
                     {
-                        LoadProperty(obj, property);
+                        Vector2 position = new Vector2(objectData.PositionX, objectData.PositionY);
+                        ObjectLibrary.CreatePrefab(objectData.TypeName, objectData.Name, position, objectData.LayerName);
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                // If failed, throw an error
+                Console.WriteLine(ex.ToString());
+            }
+
 
             // Select the old selected layers and object if applicable
             RoomEditor.SelectLayer(LayerManager.GetLayer(roomData.SelectedLayer));
@@ -232,6 +232,14 @@ namespace Moonborne.Game.Room
             {
                 Vector2 vector = new Vector2(property.X, property.Y);
                 prop.SetValue(obj, vector, null);
+            }
+            else if (property.Type == "SpriteTexture")
+            {
+                if (property.Value != null)
+                {
+                    SpriteTexture tex = SpriteManager.GetTexture(property.Value.ToString());
+                    prop.SetValue(obj, tex, null);
+                }
             }
         }
     }

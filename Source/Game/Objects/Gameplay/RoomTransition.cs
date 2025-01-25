@@ -10,9 +10,9 @@ namespace Moonborne.Game.Gameplay
         public string TargetRoom { get; set; } = "Room";
         private bool Used = false;
 
-        public override void CreateLater()
+        public override void Create()
         {
-            base.CreateLater();
+            base.Create();
             SpriteIndex.SetSpritesheet("RoomTransition");
             SpriteIndex.VisibleInGame = false;
         }

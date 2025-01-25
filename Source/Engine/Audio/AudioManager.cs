@@ -21,7 +21,8 @@ namespace Moonborne.Engine.Audio
     public enum SoundID
     {
         Earthward,
-        CoreTable
+        CoreTable,
+        Home
     }
 
 
@@ -77,7 +78,7 @@ namespace Moonborne.Engine.Audio
                 }
             }
 
-            PlaySound(SoundID.Earthward);
+            PlaySound(SoundID.Home);
             PauseAllSound(true);
         }
 

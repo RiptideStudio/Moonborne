@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tiled.Renderers;
 using Moonborne.Engine.Components;
+using Moonborne.Engine.FileSystem;
 using Moonborne.Engine.UI;
 using Moonborne.Game.Objects;
 using System;
@@ -90,7 +91,7 @@ namespace Moonborne.Game.Room
             string filePath = Path.Combine(contentFolderPath, name + ".json");
 
             var tilemaps = new List<object>(); // List to store serialized tilemaps
-            var objects = new List<object>();
+            var objects = new List<GameObjectWorldData>();
 
             // Iterate over all layers in the LayerManager
             foreach (var layer in LayerManager.Layers)
@@ -135,70 +136,15 @@ namespace Moonborne.Game.Room
                     // Save objects on the layer
                     foreach (var obj in layer.Value.Objects)
                     {
-                        // Add each serializable property of the object to the property list
-                        PropertyInfo[] properties = obj.GetType().GetProperties();
-                        var objectProperties = new List<VariableData>();
-
-                        // Save object properties
-                        foreach (var property in properties)
-                        {
-                            VariableData variableData = new VariableData();
-                            variableData.Name = property.Name;
-                            variableData.Value = property.GetValue(obj, null);
-                            variableData.Type = property.GetType().ToString();
-
-                            objectProperties.Add(variableData);
-                        }
-
-                        // Save component properties
-                        foreach (ObjectComponent comp in obj.Components)
-                        {
-                            foreach (var property in comp.GetType().GetProperties())
-                            {
-                                VariableData variableData = new VariableData();
-                                variableData.Name = property.Name;
-                                variableData.Type = property.GetType().ToString();
-                                var propertyValue = property.GetValue(comp);
-                                
-                                // Vectors
-                                if (propertyValue.GetType() == typeof(Vector2))
-                                {
-                                    Vector2 vectorValue = (Vector2)propertyValue;
-
-                                    variableData.X = vectorValue.X;
-                                    variableData.Y = vectorValue.Y;
-
-                                    variableData.Type = "Vector";
-                                    objectProperties.Add(variableData);
-                                }
-                                else if (propertyValue.GetType() == typeof(string))
-                                {
-                                    string value = (string)propertyValue;
-
-                                    variableData.Value = value;
-
-                                    objectProperties.Add(variableData);
-                                }
-                                else
-                                // Built-in variables 
-                                {
-                                    variableData.Value = propertyValue;
-                                    objectProperties.Add(variableData);
-                                }
-                            }
-                        }
-
                         // Add the data to the json object
-                        objects.Add(new
-                        {
-                            PositionX = obj.Transform.Position.X,
-                            PositionY = obj.Transform.Position.Y,
-                            Name = obj.GetType().Name,
-                            Depth = obj.Layer.Depth,
-                            LayerName = layer.Value.Name,
-                            Properties = objectProperties,
-                            InstanceID = obj.InstanceID
-                        });
+                        GameObjectWorldData data = new GameObjectWorldData();
+                        data.PositionX = obj.Transform.Position.X;
+                        data.PositionY = obj.Transform.Position.Y;
+                        data.Name = obj.DisplayName;
+                        data.TypeName = obj.GetType().Name;
+                        data.LayerName = layer.Value.Name;
+                        data.InstanceID = obj.InstanceID;
+                        objects.Add(data);
                     }
                 }
             }
@@ -252,7 +198,6 @@ namespace Moonborne.Game.Room
         /// <param name="rm"></param>
         public static void SetActiveRoom(Room rm)
         {
-            Console.WriteLine($"Transitioned to room {rm.Name}");
             LayerManager.Clear();
             rm.Load(rm.Name);
             RoomEditor.CurrentRoom = rm;
@@ -300,12 +245,7 @@ namespace Moonborne.Game.Room
 
             // Find the room and delete it
             string filePath = @$"Content/Rooms/{currentRoom.Name}.json";
-
-            // Delete the file
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
+            FileHelper.DeleteFile(filePath);
 
             // Remove it from the room list
             Rooms.Remove(currentRoom.Name);

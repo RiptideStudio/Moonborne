@@ -10,22 +10,17 @@ using Microsoft.Xna.Framework.Graphics;
 using Moonborne.Engine.Components;
 using Moonborne.Graphics;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Moonborne.Game.Objects.Prefabs
 {
     public class Prefab : GameObject
     {
-
         /// <summary>
         /// Add sprite and transform by default
         /// </summary>
-        public Prefab()
+        public Prefab() : base()
         {
-            AddComponent(new Sprite(this));
-            AddComponent(new Transform(this));
         }
-
-
-
     }
 }

@@ -26,14 +26,7 @@ namespace Moonborne.Engine.UI
 
         public static void Draw()
         {
-            ImGui.Begin(WindowName);
 
-            if (ImGui.IsItemClicked())
-            {
-                PrefabEditor.IsActive = !PrefabEditor.IsActive;
-            }
-
-            ImGui.End();
         }
     }
 }

@@ -68,7 +68,6 @@ namespace Moonborne.Graphics
             sprites.Clear();
             textures.Clear();
             LoadAllTextures();
-            RoomManager.SetActiveRoom(RoomManager.CurrentRoom);
         }
 
         /// <summary>
@@ -103,7 +102,7 @@ namespace Moonborne.Graphics
                     if (!textures.ContainsKey(textureName))
                     {
                         textures[textureName] = texture;
-                        ImGuiTextures[textureName] = ImGuiManager.imGuiRenderer.BindTexture(texture);
+                        IntPtr IconData = ImGuiManager.imGuiRenderer.BindTexture(texture);
 
                         // Spritesheets should be uniform width and height
                         SpriteTexture sprite = new SpriteTexture(texture);
@@ -111,9 +110,13 @@ namespace Moonborne.Graphics
                         // Assuming same dimensions for width and height by default
                         sprite.FrameWidth = texture.Width;
                         sprite.FrameHeight = texture.Height;
+                        sprite.TextureWidth = texture.Width;
+                        sprite.TextureHeight = texture.Height;
                         sprite.Data = texture;
-                
+                        sprite.Icon = IconData;
+                        sprite.Name = textureName;
 
+                        ImGuiTextures[textureName] = IconData;
                         sprites[textureName] = sprite;
                     }
                 }

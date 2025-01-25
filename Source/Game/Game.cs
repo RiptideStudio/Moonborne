@@ -68,6 +68,7 @@ namespace Moonborne
             spriteBatch = new SpriteBatch(GraphicsDevice);
             SpriteManager.LoadAllTextures();
             SpriteManager.spriteBatch = spriteBatch;
+            PrefabEditor.LoadPrefabs();
             RoomManager.LoadRooms(GraphicsDevice, this);
             InitializeLater();
         }

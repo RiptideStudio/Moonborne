@@ -18,78 +18,83 @@ using Microsoft.Xna.Framework;
 using Moonborne.Graphics;
 using Microsoft.Xna.Framework.Graphics;
 using Moonborne.Game.Objects.Prefabs;
+using System.Xml.Linq;
+using Moonborne.Game.Gameplay;
 
 namespace Moonborne.Engine.UI
 {
     public static class ObjectEditor
     {
         public static string WindowName = "Resources";
+        public static GameObject newObject = null;
 
         public static void Draw()
         {
             ImGui.Begin(WindowName);
 
-            if (RoomEditor.selectedLayer != null && RoomEditor.selectedLayer.Type == LayerType.Object)
-            {
-                // Display a list of all objects, and allow us to drag them into the game
-                var list = ObjectLibrary.GetAllGameObjectNames();
+            // Display a list of all objects, and allow us to drag them into the game
+            var list = ObjectLibrary.GetAllGameObjectNames();
 
-                if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+            if (ImGui.IsMouseClicked(ImGuiMouseButton.Right) && ImGui.IsWindowHovered())
+            {
+                ImGui.OpenPopup("PrefabContextMenu");
+            }
+
+            // Opt to create a new prefab
+            if (ImGui.BeginPopupContextItem("PrefabContextMenu"))
+            {
+                // Create a new prefab
+                List<string> objectNames = ObjectLibrary.GetAllGameObjectNames();
+
+                if (ImGui.CollapsingHeader("Create Prefab"))
                 {
-                    // Opt to create a new prefab
-                    if (ImGui.BeginPopupContextItem("PrefabContextMenu"))
+                    // Display each possible game object type defined in code
+                    foreach (string objectName in objectNames)
                     {
-                        // Create a new prefab
-                        if (ImGui.MenuItem("Create Prefab"))
+                        if (ImGui.Selectable($"{objectName}"))
                         {
-                            Prefab prefab = new Prefab();
+                            GameObject prefab = ObjectLibrary.CreateObject(objectName);
+                            prefab.DisplayName = objectName;
                             PrefabEditor.Prefabs.Add(prefab);
                             PrefabEditor.SelectedPrefab = prefab;
-                        }                        
-                        // Delete a prefab
-                        if (ImGui.MenuItem("Delete Prefab"))
-                        {
                         }
                     }
+                }                        
+                // Delete a prefab
+                if (ImGui.MenuItem("Delete Prefab"))
+                {
+                    PrefabEditor.DeletePrefab(PrefabEditor.SelectedPrefab);
+                }
+                ImGui.EndPopup();
+            }
+
+            // Display each prefab and select it
+            foreach (GameObject prefab in PrefabEditor.Prefabs)
+            {
+                // Draw the prefab thumbnail image
+                IntPtr img = SpriteManager.GetImGuiTexture("None");
+                if (prefab.SpriteIndex.Texture.Data != null)
+                {
+                    img = prefab.SpriteIndex.Texture.Icon;
                 }
 
-                // Display each prefab and select it
-                foreach (Prefab prefab in PrefabEditor.Prefabs)
+                if (ImGui.ImageButton($"{prefab.DisplayName}{prefab.InstanceID}", img, new System.Numerics.Vector2(64,64)))
                 {
-                    if (ImGui.Button(prefab.Name))
-                    {
-                        PrefabEditor.SelectedPrefab = prefab;
-                    }
+                    PrefabEditor.SelectedPrefab = prefab;
+                    PrefabEditor.IsActive = true;
                 }
-
-                foreach (var name in list)
+                // Show the prefab name when hovered over
+                if (ImGui.IsItemHovered())
                 {
-                    // Draw the object image if possible
-                    IntPtr tex = SpriteManager.GetImGuiTexture(name);
-                    Texture2D realTex = SpriteManager.GetRawTexture(name);
-                    float imageWidth = realTex.Width;
-                    float imageHeight = realTex.Height;
-                    imageWidth = Math.Clamp(imageWidth, 64, 64);
-                    imageHeight = Math.Clamp(imageHeight, 64, 64);
+                    ImGui.BeginTooltip();
+                    ImGui.SetTooltip($"{prefab.DisplayName}");
+                    ImGui.EndTooltip();
+                }
+                // Keep horizontally alligned
+                ImGui.SameLine();
 
-                    if (tex == IntPtr.Zero)
-                        tex = SpriteManager.GetImGuiTexture("QuestionMark");
-
-                    ImGui.SameLine();
-
-                    ImGui.PushStyleColor(ImGuiCol.ButtonActive, new System.Numerics.Vector4(0, 0, 0, 0));
-                    ImGui.PushStyleColor(ImGuiCol.Button, new System.Numerics.Vector4(0, 0, 0, 0));
-                    ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new System.Numerics.Vector4(0, 0, 0, 0));
-                    System.Numerics.Vector2 pos = ImGui.GetCursorPos();
-                    ImGui.PopStyleColor(3);
-
-                    ImGui.ImageButton($"{name}", tex, new System.Numerics.Vector2(imageWidth, imageHeight));
-                    ImGui.SameLine();
-                    ImGui.SetCursorPos(pos);
-                    pos = ImGui.GetCursorPos();
-                    ImGui.SameLine();
-                    ImGui.SetCursorPos(pos);
-
+                if (RoomEditor.selectedLayer != null && RoomEditor.selectedLayer.Type == LayerType.Object)
+                {
                     // Select the object we want to drag into the game
                     if (ImGui.BeginDragDropSource())
                     {
@@ -97,7 +102,7 @@ namespace Moonborne.Engine.UI
 
                         if (!RoomEditor.Dragging)
                         {
-                            var newObject = ObjectLibrary.CreateObject(name, position, RoomEditor.selectedLayer.Name);
+                            newObject = ObjectLibrary.CreatePrefab(prefab.GetType().Name, prefab.DisplayName, position, RoomEditor.selectedLayer.Name);
                             RoomEditor.selectedObject = newObject;
                         }
 
@@ -105,29 +110,32 @@ namespace Moonborne.Engine.UI
                         position.Y = ((int)position.Y / RoomEditor.CellSize) * RoomEditor.CellSize;
                         RoomEditor.selectedObject.Transform.Position = position;
 
-                        ImGui.Text($"Place: {name}"); // Visual feedback during dragging
+                        if (newObject != null)
+                        {
+                            ImGui.Text($"Place: {newObject.DisplayName}"); // Visual feedback during dragging
+                        }
+
                         RoomEditor.Dragging = true;
                         ImGui.EndDragDropSource();
                     }
                 }
-
-                // Drag object into world
-                if (InputManager.MouseLeftReleased() && RoomEditor.Dragging)
-                {
-                    if (RoomEditor.HoveringOverGameWorld)
-                    {
-                        Vector2 position = InputManager.MouseWorldCoords();
-                        Console.WriteLine($"Created {RoomEditor.selectedObject} at {position}");
-                        Inspector.SelectedObject = RoomEditor.selectedObject;
-                    }
-                    else
-                    {
-                        LayerManager.RemoveInstance(RoomEditor.selectedObject);
-                    }
-                    RoomEditor.Dragging = false;
-                }
             }
-            
+
+            // Drag object into world
+            if (InputManager.MouseLeftReleased() && RoomEditor.Dragging)
+            {
+                if (RoomEditor.HoveringOverGameWorld)
+                {
+                    Vector2 position = InputManager.MouseWorldCoords();
+                    Console.WriteLine($"Created {newObject.DisplayName} at {position}");
+                    Inspector.SelectedObject = RoomEditor.selectedObject;
+                }
+                else
+                {
+                    LayerManager.RemoveInstance(RoomEditor.selectedObject);
+                }
+                RoomEditor.Dragging = false;
+            }
 
             ImGui.End();
         }

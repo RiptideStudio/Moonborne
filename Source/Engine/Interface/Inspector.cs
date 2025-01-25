@@ -14,6 +14,9 @@ using Microsoft.Xna.Framework;
 using Moonborne.Engine.Components;
 using System.Linq;
 using System.Collections.Generic;
+using Moonborne.Graphics;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json.Linq;
 
 namespace Moonborne.Engine.UI
 {
@@ -130,7 +133,7 @@ namespace Moonborne.Engine.UI
                 {
                     string newValue = stringValue;
                     byte[] buffer = new byte[256];
-                    Array.Copy(System.Text.Encoding.UTF8.GetBytes(stringValue), buffer, stringValue.Length);
+                    Array.Copy(System.Text.Encoding.ASCII.GetBytes(stringValue), buffer, stringValue.Length);
 
                     if (ImGui.InputText(property.Name, buffer, (uint)buffer.Length))
                     {
@@ -161,6 +164,26 @@ namespace Moonborne.Engine.UI
                         targetVal.Y = yValue;
                     }
                     property.SetValue(obj, targetVal);
+                }
+                else if (value is SpriteTexture)
+                {
+                    // Draw the dropdown menu
+                    if (ImGui.CollapsingHeader("Texture"))
+                    {
+                        // Display a dropdown of all textures to swap to
+                        foreach (var sprite in SpriteManager.sprites)
+                        {
+                            SpriteTexture spr = sprite.Value;
+                            SpriteTexture tex = (SpriteTexture)value;
+
+                            // Select the texture
+                            if (ImGui.Selectable(sprite.Key))
+                            {
+                                property.SetValue(obj, SpriteManager.GetTexture(sprite.Key));
+                                Console.WriteLine($"Texture is now {sprite.Key}");
+                            }
+                        }
+                    }
                 }
             }
         }

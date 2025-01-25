@@ -18,38 +18,115 @@ using Microsoft.Xna.Framework;
 using Moonborne.Graphics;
 using Microsoft.Xna.Framework.Graphics;
 using Moonborne.Game.Objects.Prefabs;
+using Moonborne.Graphics.Window;
+using System.Text.Json;
+using Moonborne.Engine.FileSystem;
 
 namespace Moonborne.Engine.UI
 {
     public static class PrefabEditor
     {
-        public static string WindowName = "Prefab";
         public static bool IsActive;
         public static GameObject SelectedPrefab;
-        public static List<Prefab> Prefabs = new List<Prefab>();
+        public static List<GameObject> Prefabs = new List<GameObject>();
 
+        /// <summary>
+        /// Draws the preview of the prefab
+        /// </summary>
+        /// <param name="spriteBatch"></param>
         public static void Draw(SpriteBatch spriteBatch)
         {
-            ImGui.Begin(WindowName);
+            // Draw background
+            SpriteManager.DrawRectangle(0, 0, 320, 180, Color.Gray);
 
+            // Draw the prefab
             if (SelectedPrefab != null)
             {
-                var imgPos = ImGui.GetItemRectMin(); // Top-left corner of the image
-                var imgSize = ImGui.GetItemRectSize(); // Size of the image
+                // Select this prefab
+                Inspector.SelectedObject = SelectedPrefab;
 
-                // Calculate the object's position in the ImGui Window
-                float x = 1;
-                float y = 1;
+                float drawX = (WindowManager.BaseViewportWidth/2);
+                float drawY = (WindowManager.BaseViewportHeight/2);
 
-                float drawX = imgPos.X + x * RoomEditor.PreviewZoom;
-                float drawY = imgPos.Y + y * RoomEditor.PreviewZoom;
+                // Scale the preview 
                 SelectedPrefab.Transform.Position = new Vector2(drawX, drawY);
 
                 // Draw the object
                 SelectedPrefab.Draw(spriteBatch);
             }
+        }
 
-            ImGui.End();
+        /// <summary>
+        /// Saves all prefabs
+        /// </summary>
+        public static void SavePrefabs()
+        {
+            // Delete old prefabs
+            string directory = Directory.GetCurrentDirectory() + "/Content/Data/Prefabs";
+
+            // Save each prefab we currently have
+            foreach (GameObject prefab in Prefabs)
+            {
+                GameObjectData data = GameObject.SaveData(prefab);
+                FileHelper.DeleteFile(directory + "/" + data.Name + ".json");
+                GameObject.SaveObjectDataToFile(data, "Content/Data/Prefabs");
+            }
+
+            Prefabs.Clear();
+
+            LoadPrefabs();
+        }
+
+        /// <summary>
+        /// Loads the prefabs into the list
+        /// </summary>
+        public static void LoadPrefabs()
+        {
+            // Get the directory
+            string fileDirectory = $@"Content/Data/Prefabs";
+
+            string[] files = Directory.GetFiles(fileDirectory);
+
+            // Load all prefabs
+            foreach (string file in files)
+            {
+                string json = File.ReadAllText(file);
+                var prefabData = JsonSerializer.Deserialize<GameObjectData>(json);
+
+                GameObject prefab = ObjectLibrary.CreateObject(prefabData.Name);
+                GameObject.LoadData(prefab, prefabData);
+                Prefabs.Add(prefab);
+            }
+        }
+
+        /// <summary>
+        /// Delete a selected prefab
+        /// </summary>
+        /// <param name="selectedPrefab"></param>
+        public static void DeletePrefab(GameObject selectedPrefab)
+        {
+            if (selectedPrefab == null) 
+                return;
+
+            FileHelper.DeleteFile($"Content/Data/Prefabs/{selectedPrefab.DisplayName}.json");
+            Prefabs.Remove(selectedPrefab);
+            SelectedPrefab = null;
+        }
+
+        /// <summary>
+        /// Reloads prefab data
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        public static void ReloadPrefabs()
+        {
+            try
+            {
+                SavePrefabs();
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.ToString());
+            }
         }
     }
 }

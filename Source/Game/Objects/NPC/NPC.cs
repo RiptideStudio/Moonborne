@@ -98,7 +98,6 @@ namespace Moonborne.Game.Objects
             SetSprite("PlayerWalkRight", 16, 16, State.Wander, Direction.Right);
             SetSprite("PlayerWalkDown", 16, 16, State.Wander, Direction.Down);
             SetSprite("PlayerWalkUp", 16, 16, State.Wander, Direction.Up);
-            SpriteIndex = GetSprites(State.Idle, Direction.Down);
         }
 
         /// <summary>

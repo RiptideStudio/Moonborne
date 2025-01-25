@@ -3,6 +3,7 @@ using Moonborne.Engine.UI;
 using Moonborne.Game.Gameplay;
 using Moonborne.Game.Objects;
 using Moonborne.Game.Room;
+using Moonborne.Graphics;
 using Moonborne.Graphics.Camera;
 using System;
 
@@ -44,6 +45,8 @@ namespace Moonborne.Engine
         public static void Start()
         {
             Console.WriteLine("Starting game...");
+            SpriteManager.ReloadTextures();
+            Save();
             Resume();
             Camera.SetTarget(Player.Instance);
             RoomEditor.InEditor = false;
@@ -90,6 +93,7 @@ namespace Moonborne.Engine
         {
             RoomEditor.CurrentRoom.Save(RoomEditor.CurrentRoom.Name);
             SettingsManager.Save();
+            PrefabEditor.ReloadPrefabs();
         }
 
         /// <summary>

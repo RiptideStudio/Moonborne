@@ -323,7 +323,7 @@ namespace Moonborne.Game.Room
             }
 
             // Update our camera. We want to pan with WASD 
-            Camera.CameraSize = Math.Clamp(Camera.CameraSize, 0.25f, 4f);
+            Camera.CameraSize = Math.Clamp(Camera.CameraSize, 0.25f, Camera.MaxZoom);
 
             // Update our tile selector
             if (SelectedTilemap != null)
