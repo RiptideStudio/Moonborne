@@ -89,6 +89,7 @@ namespace Moonborne.Engine
         public static void Save()
         {
             RoomEditor.CurrentRoom.Save(RoomEditor.CurrentRoom.Name);
+            SettingsManager.Save();
         }
 
         /// <summary>

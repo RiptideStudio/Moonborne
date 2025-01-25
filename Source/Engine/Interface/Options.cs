@@ -55,6 +55,10 @@ namespace Moonborne.Engine.UI
             {
                 RoomManager.SetActiveRoom(CurrentRoom);
             }
+            else
+            {
+                RoomManager.SetActiveRoom(RoomManager.GetDefaultRoom());
+            }
         }
     }
 }

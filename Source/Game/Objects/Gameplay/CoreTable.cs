@@ -12,7 +12,7 @@ namespace Moonborne.Game.Gameplay
 {
     public class CoreTable : Actor
     {
-        private Vector2 DisplayPosition = new Vector2(320,160);
+        private Vector2 DisplayPosition = new Vector2(160,80);
         private Vector2 ButtonSize = new Vector2(1,1);
         private Button UpgradeButton;
         private Button ExitButton;
@@ -26,8 +26,8 @@ namespace Moonborne.Game.Gameplay
             InteractDistance = 32;
             Collideable = false;
 
-            UpgradeButton = new Button(new Vector2(320,160), ButtonSize, "Upgrade Gun", () => UpgradeGun());
-            ExitButton = new Button(new Vector2(320,210), ButtonSize, "Exit", () => Exit());
+            UpgradeButton = new Button(new Vector2(160, 80), ButtonSize, "Upgrade Gun", () => UpgradeGun());
+            ExitButton = new Button(new Vector2(160,105), ButtonSize, "Exit", () => Exit());
         }
 
         public override void DrawUI(SpriteBatch spriteBatch)
@@ -36,9 +36,9 @@ namespace Moonborne.Game.Gameplay
             {
                 SetDrawAlpha(0.75f);
                 DrawSetAlignment(true);
-                DrawRectangle(DisplayPosition, 400, 240, Color.Black);
+                DrawRectangle(DisplayPosition, 200, 120, Color.Black);
                 SetDrawAlpha(1);
-                DrawText("Core Table", DisplayPosition+new Vector2(0,-60), new Vector2(2, 2), 0, Color.White);
+                DrawText("Core Table", DisplayPosition+new Vector2(0,-30), new Vector2(1, 1), 0, Color.White);
                 DrawSetAlignment(false);
                 UpgradeButton.Draw(spriteBatch);
                 ExitButton.Draw(spriteBatch);

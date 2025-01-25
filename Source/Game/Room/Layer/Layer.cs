@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Moonborne.Engine;
 using Moonborne.Engine.Collision;
+using Moonborne.Engine.UI;
 using Moonborne.Game.Inventory;
 using Moonborne.Game.Objects;
 using Moonborne.Graphics;
@@ -56,6 +57,32 @@ namespace Moonborne.Game.Room
             GetTransform = matrix;
             Type = layerType;
             Locked = locked;
+        }
+
+        /// <summary>
+        /// Gets a game object given its ID
+        /// </summary>
+        /// <param name="instanceID"></param>
+        /// <returns></returns>
+        public GameObject GetInstance(int instanceID)
+        {
+            foreach (GameObject obj in Objects)
+            {
+                if (obj.InstanceID == instanceID)
+                {
+                    return obj;
+                }
+            }
+
+            foreach (GameObject obj in ObjectsToCreate)
+            {
+                if (obj.InstanceID == instanceID)
+                {
+                    return obj;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -223,6 +250,41 @@ namespace Moonborne.Game.Room
             }
 
             objectsToRemove.Clear();
+        }
+
+        /// <summary>
+        /// Gets the name of a layer
+        /// </summary>
+        /// <param name="selectedLayer"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public static string GetName(object selectedLayer)
+        {
+            if (selectedLayer is Layer)
+            {
+                return ((Layer)selectedLayer).Name;
+            }
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Gets the selected tile index
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public static int GetSelectedTileID()
+        {
+            if (Inspector.SelectedLayer is Layer)
+            {
+                Layer layer = (Layer)Inspector.SelectedLayer;
+
+                if (layer.Type == LayerType.Tile)
+                {
+                    return ((Layer)(Inspector.SelectedLayer)).Tilemaps[0].SelectedTile;
+                }
+            }
+
+            return -1;
         }
     }
 }

@@ -8,6 +8,7 @@ using Moonborne.Engine.Components;
 using Moonborne.Engine.UI;
 using Moonborne.Game.Room;
 using Moonborne.Graphics;
+using Moonborne.Utils.Math;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,6 +23,7 @@ namespace Moonborne.Game.Objects
         public string Name { get; set; }
         public string LayerName { get; set; }
         public int Depth { get; set; }
+        public int InstanceID { get; set; }
         public List<VariableData> Properties { get; set; }
     }
 
@@ -36,6 +38,12 @@ namespace Moonborne.Game.Objects
 
     public abstract class GameObject
     {
+
+        /// <summary>
+        /// This represents a unique identifier for each object
+        /// </summary>
+        public int InstanceID;
+
         // Quick component pointers
         public Sprite SpriteIndex;
         public Transform Transform;
@@ -100,6 +108,7 @@ namespace Moonborne.Game.Objects
         /// </summary>
         public virtual void Create()
         {
+            InstanceID = MoonMath.RandomRange(0, 65535);
         }
 
         /// <summary>
@@ -247,6 +256,22 @@ namespace Moonborne.Game.Objects
             {
                 Actions.Add(action);
             }
+        }
+
+        /// <summary>
+        /// Returns an object's id if it exists
+        /// </summary>
+        /// <param name="gameObject"></param>
+        /// <returns>ID on success, -1 on fail</returns>
+        public static int GetID(object gameObject)
+        {
+            if (gameObject == null || !(gameObject is GameObject))
+            {
+                return -1;
+            }
+
+            // This is a game object and has a valid ID
+            return ((GameObject)(gameObject)).InstanceID;
         }
     }
 }

@@ -23,11 +23,11 @@ namespace Moonborne.Graphics.Window
         public static int ViewportScale { get; private set; } = 6; // Scale of the viewport 
         public static int PreviousViewportScale { get; private set; } = ViewportScale; // Scale of the viewport 
         public static bool StartInFullscreen { get; private set; } = false; // If we start in fullscreen
-        public static bool IsFullscreen { get; private set; } = false; // If we are in fullscreen
         public static Rectangle Viewport { get; private set; } // Defines the dimensions of our viewport
         private static GraphicsDeviceManager Graphics { get; set; } // Graphics device
         private static MGame Game { get; set; } // Graphics device
         public static Matrix Transform; // Transformation matrix for UI
+        public static bool IsFullscreen = false; // If we are in fullscreen
 
         /// <summary>
         /// Initialize window manager with graphics

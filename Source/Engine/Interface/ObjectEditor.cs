@@ -17,12 +17,13 @@ using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Moonborne.Graphics;
 using Microsoft.Xna.Framework.Graphics;
+using Moonborne.Game.Objects.Prefabs;
 
 namespace Moonborne.Engine.UI
 {
     public static class ObjectEditor
     {
-        public static string WindowName = "Object Editor";
+        public static string WindowName = "Resources";
 
         public static void Draw()
         {
@@ -30,9 +31,36 @@ namespace Moonborne.Engine.UI
 
             if (RoomEditor.selectedLayer != null && RoomEditor.selectedLayer.Type == LayerType.Object)
             {
-
                 // Display a list of all objects, and allow us to drag them into the game
                 var list = ObjectLibrary.GetAllGameObjectNames();
+
+                if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+                {
+                    // Opt to create a new prefab
+                    if (ImGui.BeginPopupContextItem("PrefabContextMenu"))
+                    {
+                        // Create a new prefab
+                        if (ImGui.MenuItem("Create Prefab"))
+                        {
+                            Prefab prefab = new Prefab();
+                            PrefabEditor.Prefabs.Add(prefab);
+                            PrefabEditor.SelectedPrefab = prefab;
+                        }                        
+                        // Delete a prefab
+                        if (ImGui.MenuItem("Delete Prefab"))
+                        {
+                        }
+                    }
+                }
+
+                // Display each prefab and select it
+                foreach (Prefab prefab in PrefabEditor.Prefabs)
+                {
+                    if (ImGui.Button(prefab.Name))
+                    {
+                        PrefabEditor.SelectedPrefab = prefab;
+                    }
+                }
 
                 foreach (var name in list)
                 {
@@ -49,9 +77,9 @@ namespace Moonborne.Engine.UI
 
                     ImGui.SameLine();
 
-                    ImGui.PushStyleColor(ImGuiCol.ButtonActive,new System.Numerics.Vector4(0,0,0,0));
-                    ImGui.PushStyleColor(ImGuiCol.Button,new System.Numerics.Vector4(0,0,0,0));
-                    ImGui.PushStyleColor(ImGuiCol.ButtonHovered,new System.Numerics.Vector4(0,0,0,0));
+                    ImGui.PushStyleColor(ImGuiCol.ButtonActive, new System.Numerics.Vector4(0, 0, 0, 0));
+                    ImGui.PushStyleColor(ImGuiCol.Button, new System.Numerics.Vector4(0, 0, 0, 0));
+                    ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new System.Numerics.Vector4(0, 0, 0, 0));
                     System.Numerics.Vector2 pos = ImGui.GetCursorPos();
                     ImGui.PopStyleColor(3);
 

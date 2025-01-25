@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Collisions.Layers;
 using MonoGame.Extended.Tiled;
 using Moonborne.Engine.Components;
+using Moonborne.Engine.UI;
 using Moonborne.Game.Objects;
 using Moonborne.Graphics;
 using Moonborne.Graphics.Camera;
@@ -24,6 +25,9 @@ namespace Moonborne.Game.Room
         public string RoomName { get; set; }
         public List<TilemapData> Tilemaps { get; set; }
         public List<GameObjectData> Objects { get; set; }
+        public string SelectedLayer { get; set; }
+        public int SelectedObject { get; set; }
+        public int SelectedTile { get; set; }
     }
 
     public class VariableData
@@ -144,6 +148,10 @@ namespace Moonborne.Game.Room
                     }
                 }
             }
+
+            // Select the old selected layers and object if applicable
+            RoomEditor.SelectLayer(LayerManager.GetLayer(roomData.SelectedLayer));
+            Inspector.SelectedObject = LayerManager.GetInstance(roomData.SelectedObject);
 
             Console.WriteLine($"Loaded Room '{name}'");
         }

@@ -5,6 +5,7 @@ using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tiled.Renderers;
 using Moonborne.Engine.Components;
 using Moonborne.Engine.UI;
+using Moonborne.Game.Objects;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,7 +31,6 @@ namespace Moonborne.Game.Room
                 TempIteration++;
                 SaveRoom(CurrentRoom.Name + $"tmp_{TempIteration}",@"Content/Temp",CurrentRoom.Name);
             }
-            SettingsManager.Save();
         }
 
         /// <summary>
@@ -38,6 +38,7 @@ namespace Moonborne.Game.Room
         /// </summary>
         public static void LoadSnapshot(int temp)
         {
+            // Re-load everything in the room
             if (CurrentRoom != null)
             {
                 CurrentRoom.Load(CurrentRoom.Name+$"tmp_{temp}", @"Content/Temp");
@@ -195,7 +196,8 @@ namespace Moonborne.Game.Room
                             Name = obj.GetType().Name,
                             Depth = obj.Layer.Depth,
                             LayerName = layer.Value.Name,
-                            Properties = objectProperties
+                            Properties = objectProperties,
+                            InstanceID = obj.InstanceID
                         });
                     }
                 }
@@ -206,7 +208,10 @@ namespace Moonborne.Game.Room
             {
                 RoomName = saveName,
                 Tilemaps = tilemaps,
-                Objects = objects
+                Objects = objects,
+                SelectedLayer = Layer.GetName(Inspector.SelectedLayer),
+                SelectedObject = GameObject.GetID(Inspector.SelectedObject),
+                SelectedTile = Layer.GetSelectedTileID()
             };
 
             // Serialize the room data to JSON
@@ -296,20 +301,20 @@ namespace Moonborne.Game.Room
             // Find the room and delete it
             string filePath = @$"Content/Rooms/{currentRoom.Name}.json";
 
+            // Delete the file
             if (File.Exists(filePath))
             {
-                // Delete the file
                 File.Delete(filePath);
-
-                // Remove it from the room list
-                Rooms.Remove(currentRoom.Name);
-
-                // Transition to a valid room
-                SetActiveRoom(GetDefaultRoom());
-
-                // Log success
-                Console.WriteLine($"Deleted room at {filePath}");
             }
+
+            // Remove it from the room list
+            Rooms.Remove(currentRoom.Name);
+
+            // Transition to a valid room
+            SetActiveRoom(GetDefaultRoom());
+
+            // Log success
+            Console.WriteLine($"Deleted room at {filePath}");
         }
 
         /// <summary>

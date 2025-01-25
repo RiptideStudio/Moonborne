@@ -39,6 +39,45 @@ namespace Moonborne.Game.Room
         }
 
         /// <summary>
+        /// Returns a layer given a string name
+        /// </summary>
+        /// <param name="name"></param>
+        public static Layer GetLayer(string name)
+        {
+            if (name == null)
+                return null;
+
+            return Layers.TryGetValue(name, out Layer layer) ? layer : null;
+        }
+
+        /// <summary>
+        /// Returns a game object given an ID if it exists
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static GameObject GetInstance(int ID)
+        {
+            // Bad ID
+            if (ID == -1)
+                return null;
+
+            GameObject obj = null;
+
+            // Search the layers for the instance
+            foreach (var layer in Layers)
+            {
+                obj = layer.Value.GetInstance(ID);
+
+                if (obj != null)
+                {
+                    return obj;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Sort layers by depth
         /// </summary>
         public static void Sort()

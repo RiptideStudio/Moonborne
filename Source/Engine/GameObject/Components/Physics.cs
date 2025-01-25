@@ -11,6 +11,11 @@ namespace Moonborne.Engine.Components
     {
         public Vector2 Velocity { get; set; }
         public Vector2 Acceleration { get; set; } = Vector2.One;
+
+        /// <summary>
+        /// Force of gravity
+        /// </summary>
+        public float Gravity { get; set; } = 0f; 
         public float LinearFriction { get; set; } = 8;
         public float MaxSpeed { get; set; } = 1000;
         public float Speed { get; set; } = 0;
@@ -75,6 +80,7 @@ namespace Moonborne.Engine.Components
 
             // Clamp velocity to maximum speed
             Vector2 velocity = Velocity;
+            velocity.Y += Gravity;
             velocity.X = MathHelper.Clamp(velocity.X, -MaxSpeed, MaxSpeed);
             velocity.Y = MathHelper.Clamp(velocity.Y, -MaxSpeed, MaxSpeed);
 

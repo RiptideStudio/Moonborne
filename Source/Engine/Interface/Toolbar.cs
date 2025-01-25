@@ -11,6 +11,7 @@ using Moonborne.Game.Room;
 using System.Numerics;
 using System.IO.Compression;
 using System.IO;
+using Moonborne.Graphics.Window;
 
 namespace Moonborne.Engine.UI
 {
@@ -84,9 +85,16 @@ namespace Moonborne.Engine.UI
             {
                 // Debug mode
                 ImGui.Checkbox("Debug Mode", ref RoomEditor.DebugDraw);
+                // Toggle fullscreen
+                if (ImGui.Button("Fullscreen"))
+                {
+                    WindowManager.ToggleFullsceen();
+                }
+
+                // Font selection
                 ImGui.ShowFontSelector("Fonts");
 
-                ImGui.EndMenu();
+                ImGui.EndMenu(); // End
             }
             // Help
             if (ImGui.BeginMenu("Help"))

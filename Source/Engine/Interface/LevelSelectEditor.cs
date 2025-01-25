@@ -18,6 +18,7 @@ namespace Moonborne.Engine.UI
         public static string WindowName = "Room Manager";
         public static string NewRoomName = "NewRoom";
         public static bool isSelected = false;
+        public static Room SelectedRoom = null;
 
         /// <summary>
         /// Draw the inspector
@@ -39,6 +40,7 @@ namespace Moonborne.Engine.UI
                 if (RoomEditor.CurrentRoom.Name == rm.Name)
                 {
                     isSelected = true;
+                    SelectedRoom = rm;
                 }
 
                 ImGui.Selectable(rm.Name, isSelected);
@@ -62,7 +64,15 @@ namespace Moonborne.Engine.UI
                         RoomManager.SetActiveRoom(rm);
                     }
                 }
-    
+                // Delete the room
+                if (ImGui.MenuItem("Delete Room"))
+                {
+                    if (SelectedRoom != null)
+                    {
+                        RoomManager.DeleteRoom(SelectedRoom);
+                        RoomManager.SetActiveRoom(RoomManager.GetDefaultRoom());
+                    }
+                }
                 // Input for room name
                 ImGui.InputText("Room Name", ref NewRoomName, 20);
 

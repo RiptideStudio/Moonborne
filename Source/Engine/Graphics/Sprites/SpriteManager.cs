@@ -68,7 +68,6 @@ namespace Moonborne.Graphics
             sprites.Clear();
             textures.Clear();
             LoadAllTextures();
-            GameManager.Save();
             RoomManager.SetActiveRoom(RoomManager.CurrentRoom);
         }
 

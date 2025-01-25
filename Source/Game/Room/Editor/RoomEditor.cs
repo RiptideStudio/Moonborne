@@ -212,6 +212,13 @@ namespace Moonborne.Game.Room
             ConsoleEditor.Draw();
             ObjectEditor.Draw();
             LevelSelectEditor.Draw();
+            PrefabWindow.Draw();
+
+            // Draw prefab editor if we are in it
+            if (PrefabEditor.IsActive)
+            {
+                PrefabEditor.Draw(spriteBatch);
+            }
 
             // Render the ImGui buttons for toggling different
             ImGui.Begin("World Editor");
@@ -293,7 +300,7 @@ namespace Moonborne.Game.Room
                 // Quick save
                 if (InputManager.KeyTriggered(Keys.S))
                 {
-                    CurrentRoom.Save(CurrentRoom.Name);
+                    GameManager.Save();
                 }
 
                 // Quick load

@@ -29,13 +29,25 @@ namespace Moonborne.Engine.UI
         {
             ImGui.Begin(WindowName);
 
-            /// Create new layers to the layer manager
+            if (ImGui.IsItemClicked())
+            {
+                PrefabEditor.IsActive = false;
+            }
+            // Create new layers to the layer manager
             if (ImGui.BeginPopupContextItem("LayerContextMenu"))
             {
                 // Add Object Layer
-                if (ImGui.MenuItem("Create New Layer"))
+                if (ImGui.MenuItem("Create New Object Layer"))
                 {
                     Layer newLayer = new Layer(1, () => Camera.TransformMatrix, LayerType.Object);
+                    LayerManager.AddLayer(newLayer, RoomEditor.NewLayerName);
+                    LayerManager.AddTilemap(new Tilemap("None", new int[100, 100], 16, RoomEditor.NewLayerName), RoomEditor.NewLayerName);
+                    RoomEditor.SelectLayer(newLayer);
+                }
+                // Add Tile Layer
+                if (ImGui.MenuItem("Create New Tile Layer"))
+                {
+                    Layer newLayer = new Layer(1, () => Camera.TransformMatrix, LayerType.Tile);
                     LayerManager.AddLayer(newLayer, RoomEditor.NewLayerName);
                     LayerManager.AddTilemap(new Tilemap("None", new int[100, 100], 16, RoomEditor.NewLayerName), RoomEditor.NewLayerName);
                     RoomEditor.SelectLayer(newLayer);
