@@ -29,6 +29,9 @@ namespace Moonborne.Engine.UI
         public static bool IsActive;
         public static GameObject SelectedPrefab;
         public static List<GameObject> Prefabs = new List<GameObject>();
+        public static float PreviewZoom = 1f;
+        public static float PreviewZoomScroll = 0.25f;
+        public static Vector2 PreviewOffset;
 
         /// <summary>
         /// Draws the preview of the prefab
@@ -38,6 +41,33 @@ namespace Moonborne.Engine.UI
         {
             // Draw background
             SpriteManager.DrawRectangle(0, 0, 320, 180, Color.Gray);
+
+            // Zoom in and out and control preview position
+            if (RoomEditor.HoveringOverGameWorld)
+            {
+                if (InputManager.MouseWheelDown())
+                {
+                    PreviewZoom -= PreviewZoomScroll;
+                }
+                if (InputManager.MouseWheelUp())
+                {
+                    PreviewZoom += PreviewZoomScroll;
+                }
+                PreviewZoom = Math.Clamp(PreviewZoom, 0.1f, 4f);
+
+                // Pan the camera using right click
+                if (InputManager.MouseRightDown())
+                {
+                    InputManager.SetMouseLocked(true);
+                    PreviewOffset += InputManager.GetMouseDeltaPosition() / 4;
+                }
+            }
+
+            // Stop panning
+            if (InputManager.MouseRightReleased())
+            {
+                InputManager.SetMouseLocked(false);
+            }
 
             // Draw the prefab
             if (SelectedPrefab != null)
@@ -49,10 +79,14 @@ namespace Moonborne.Engine.UI
                 float drawY = (WindowManager.BaseViewportHeight/2);
 
                 // Scale the preview 
-                SelectedPrefab.Transform.Position = new Vector2(drawX, drawY);
+                SelectedPrefab.Transform.Position = new Vector2(drawX, drawY)+PreviewOffset;
 
                 // Draw the object
+                Vector2 oldScale = SelectedPrefab.Transform.Scale;
+                SelectedPrefab.Transform.Scale = PreviewZoom*oldScale;
                 SelectedPrefab.Draw(spriteBatch);
+                SelectedPrefab.DrawUI(spriteBatch);
+                SelectedPrefab.Transform.Scale = oldScale;
             }
         }
 

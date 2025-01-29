@@ -45,6 +45,7 @@ namespace Moonborne
             }
             // IsMouseVisible = false;
             GameManager.Initialize(this);
+            InputManager.Initialize(this);
             SpriteManager.Initialize(Content,GraphicsDevice);
             GraphicsManager.Initialize(Content, GraphicsDevice, _graphics, this);
             Camera.Initialize();

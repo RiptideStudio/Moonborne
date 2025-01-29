@@ -15,11 +15,24 @@ namespace Moonborne.Input
         public static MouseState PreviousMouseState;
         public static MouseState MouseState;
         public static Vector2 MousePosition;
+        public static Vector2 PreviousMousePosition;
         public static Vector2 MouseUIPosition;
+        public static Vector2 PivotPoint;
         public static int PreviousScrollValue;
         public static int ScrollValue;
         public static Rectangle MouseHitbox = new Rectangle(0,0,6,6);
         public static Rectangle MouseWorldHitbox = new Rectangle(0,0,6,6);
+        public static bool MouseIsLocked = false;
+        public static Vector2 MouseDeltaPosition;
+        public static MGame Game;
+
+        /// <summary>
+        /// Init input manager
+        /// </summary>
+        public static void Initialize(MGame game)
+        {
+            Game = game;
+        }
 
         /// <summary>
         /// Check if a key is triggered by comparing previous and current state
@@ -30,6 +43,30 @@ namespace Moonborne.Input
         {
             return currentKeyboardState.IsKeyDown(key) && previousKeyboardState.IsKeyUp(key);
         }        
+
+        /// <summary>
+        /// Locks the cursor and prevents the mouse from moving
+        /// </summary>
+        public static void SetMouseLocked(bool val)
+        {
+            // Set our pivot point if we decide to lock
+            if (!MouseIsLocked)
+            {
+                PivotPoint = MousePosition;
+            }
+
+            Game.IsMouseVisible = !val;
+            MouseIsLocked = val;
+        }
+
+        /// <summary>
+        /// Returns the mouse's delta position (used for panning)
+        /// </summary>
+        /// <returns></returns>
+        public static Vector2 GetMouseDeltaPosition()
+        {
+            return MouseDeltaPosition;
+        }
         
         /// <summary>
         /// Check if a given key is held down
@@ -76,8 +113,17 @@ namespace Moonborne.Input
         public static bool MouseLeftReleased()
         {
             return MouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed;
-        }        
-        
+        }
+
+        /// <summary>
+        /// Returns whether or not the right mouse button was released
+        /// </summary>
+        /// <returns></returns>
+        public static bool MouseRightReleased()
+        {
+            return MouseState.RightButton == ButtonState.Released && PreviousMouseState.RightButton == ButtonState.Pressed;
+        }
+
         /// <summary>
         /// Check if mouse right is held down
         /// </summary>
@@ -161,6 +207,7 @@ namespace Moonborne.Input
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
             PreviousMouseState = MouseState;
+            PreviousMousePosition = MouseState.Position.ToVector2();
             MouseState = Mouse.GetState();
             MousePosition = MouseState.Position.ToVector2();
             MouseUIPosition = MouseState.Position.ToVector2() / WindowManager.ViewportScale;
@@ -170,6 +217,16 @@ namespace Moonborne.Input
             MouseHitbox.Y = (int)MouseUIPosition.Y-MouseHitbox.Height/2;
             MouseWorldHitbox.X = (int)MousePosition.X- MouseWorldHitbox.Height/2;
             MouseWorldHitbox.Y = (int)MousePosition.Y- MouseWorldHitbox.Height/2;
+
+            // Calculate the delta position of the mouse so we can detect how quickly it is moving
+            MouseDeltaPosition = MousePosition - PreviousMousePosition;
+
+            // Lock mouse position
+            if (MouseIsLocked)
+            {
+                MouseDeltaPosition = PreviousMousePosition - PivotPoint;
+                Mouse.SetPosition((int)PivotPoint.X, (int)PivotPoint.Y);
+            }
         }
     }
 }
