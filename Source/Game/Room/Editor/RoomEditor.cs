@@ -291,6 +291,19 @@ namespace Moonborne.Game.Room
                 {
                     Camera.TargetPosition.X += PanSpeed;
                 }
+
+                // Pan the camera using right click
+                if (InputManager.MouseRightDown())
+                {
+                    InputManager.SetMouseLocked(true);
+                    Camera.TargetPosition += InputManager.GetMouseDeltaPosition() / 2;
+                }
+            }
+
+            // Stop panning
+            if (InputManager.MouseRightReleased())
+            {
+                InputManager.SetMouseLocked(false);
             }
 
             // Hotkeys

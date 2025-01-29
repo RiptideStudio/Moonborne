@@ -59,7 +59,7 @@ namespace Moonborne.Engine.UI
                 if (InputManager.MouseRightDown())
                 {
                     InputManager.SetMouseLocked(true);
-                    PreviewOffset += InputManager.GetMouseDeltaPosition() / 4;
+                    PreviewOffset -= InputManager.GetMouseDeltaPosition() / 4;
                 }
             }
 
@@ -79,14 +79,16 @@ namespace Moonborne.Engine.UI
                 float drawY = (WindowManager.BaseViewportHeight/2);
 
                 // Scale the preview 
+                PreviewOffset.X = Math.Clamp(PreviewOffset.X, -100, 100);
+                PreviewOffset.Y = Math.Clamp(PreviewOffset.Y, -100, 100);
                 SelectedPrefab.Transform.Position = new Vector2(drawX, drawY)+PreviewOffset;
 
                 // Draw the object
                 Vector2 oldScale = SelectedPrefab.Transform.Scale;
                 SelectedPrefab.Transform.Scale = PreviewZoom*oldScale;
                 SelectedPrefab.Draw(spriteBatch);
-                SelectedPrefab.DrawUI(spriteBatch);
                 SelectedPrefab.Transform.Scale = oldScale;
+                SelectedPrefab.DrawUI(spriteBatch);
             }
         }
 

@@ -145,6 +145,8 @@ namespace Moonborne.Graphics
 
             Parent.Hitbox.Width = Texture.FrameWidth - Parent.HitboxWidthOffset;
             Parent.Hitbox.Height = Texture.FrameHeight - Parent.HitboxHeightOffset;
+            Parent.Hitbox.Height = (int)(Parent.Hitbox.Height*Parent.Transform.Scale.Y);
+            Parent.Hitbox.Width = (int)(Parent.Hitbox.Width * Parent.Transform.Scale.X);
 
             // Resort an object based on its layer's depth and Y Transform.Position
             if (Parent.NeedsLayerSort)

@@ -224,7 +224,7 @@ namespace Moonborne.Input
             // Lock mouse position
             if (MouseIsLocked)
             {
-                MouseDeltaPosition = PreviousMousePosition - PivotPoint;
+                MouseDeltaPosition = PivotPoint - PreviousMousePosition;
                 Mouse.SetPosition((int)PivotPoint.X, (int)PivotPoint.Y);
             }
         }
