@@ -9,7 +9,7 @@ using System;
 
 namespace Moonborne.Engine.UI
 {
-    public abstract class UIElement : GameObject
+    public class UIElement : GameObject
     {
         public bool Hover = false;
         Color IdleColor = Color.LightGray;

@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework;
 
 namespace Moonborne.Game.Projectiles
 {
-    public abstract class Projectile : Actor
+    public class Projectile : Actor
     {
         public bool CanCollide { get; set; } = true;
         public int LifeTime { get; set; } = 2; // Lifetime in seconds

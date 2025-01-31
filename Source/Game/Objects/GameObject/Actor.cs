@@ -29,7 +29,7 @@ namespace Moonborne.Game.Objects
     /// <summary>
     /// Extension of game object class. Has better interaction capabilities and more properties
     /// </summary>
-    public abstract class Actor : GameObject
+    public class Actor : GameObject
     {
         public bool Interactable = false; // Track interactable objects
         public bool Interacted = false;
@@ -53,12 +53,6 @@ namespace Moonborne.Game.Objects
         public List<Item> ItemsToDrop = new List<Item>();
         public int InteractDistance { get; set; } = 32;
 
-        /// <summary>
-        /// Base actor constructor: we always want a physics component on these
-        /// </summary>
-        public Actor() : base()
-        {
-        }
 
         /// <summary>
         /// Set a sprite for a state and direction

@@ -15,7 +15,7 @@ namespace Moonborne.Game.Objects
     /// <summary>
     /// Extension of game object class. Has better interaction capabilities and more properties
     /// </summary>
-    public abstract class Lifeform : Actor
+    public class Lifeform : Actor
     {
 
         /// <summary>

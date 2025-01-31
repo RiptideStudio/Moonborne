@@ -25,8 +25,9 @@ namespace Moonborne.Engine.UI
 {
     public static class ObjectEditor
     {
-        public static string WindowName = "Resources";
+        public static string WindowName = "Prefabs";
         public static GameObject newObject = null;
+        public static bool PrefabSelectTypeWindowOpen = false;
 
         public static void Draw()
         {
@@ -40,32 +41,53 @@ namespace Moonborne.Engine.UI
                 ImGui.OpenPopup("PrefabContextMenu");
             }
 
+            // Click out of the prefab window
+            if (ImGui.IsWindowHovered())
+            {
+                if (ImGui.IsMouseClicked(ImGuiMouseButton.Left) || ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+                {
+                    PrefabSelectTypeWindowOpen = false;
+                }
+            }
+
             // Opt to create a new prefab
             if (ImGui.BeginPopupContextItem("PrefabContextMenu"))
             {
-                // Create a new prefab
-                List<string> objectNames = ObjectLibrary.GetAllGameObjectNames();
-
-                if (ImGui.CollapsingHeader("Create Prefab"))
+                // Create a prefab
+                if (ImGui.MenuItem("Create Prefab"))
                 {
-                    // Display each possible game object type defined in code
-                    foreach (string objectName in objectNames)
-                    {
-                        if (ImGui.Selectable($"{objectName}"))
-                        {
-                            GameObject prefab = ObjectLibrary.CreateObject(objectName);
-                            prefab.DisplayName = objectName;
-                            PrefabEditor.Prefabs.Add(prefab);
-                            PrefabEditor.SelectedPrefab = prefab;
-                        }
-                    }
-                }                        
+                    PrefabSelectTypeWindowOpen = true;
+                }
+
                 // Delete a prefab
                 if (ImGui.MenuItem("Delete Prefab"))
                 {
                     PrefabEditor.DeletePrefab(PrefabEditor.SelectedPrefab);
                 }
                 ImGui.EndPopup();
+            }
+
+            // Show a window of game objects
+            if (PrefabSelectTypeWindowOpen && ImGui.Begin("Create Game Object",ImGuiWindowFlags.NoDocking))
+            {
+                // Create a new prefab
+                List<string> objectNames = ObjectLibrary.GetAllGameObjectNames();
+
+                // Display each possible game object type defined in code
+                foreach (string objectName in objectNames)
+                {
+                    if (ImGui.Selectable($"{objectName}"))
+                    {
+                        GameObject prefab = ObjectLibrary.CreateObject(objectName);
+                        prefab.DisplayName = objectName+PrefabEditor.Prefabs.Count.ToString();
+                        PrefabEditor.Prefabs.Add(prefab);
+                        PrefabEditor.SelectedPrefab = prefab;
+                        PrefabSelectTypeWindowOpen = false;
+                        Console.WriteLine($"Created new prefab {prefab.DisplayName}");
+                    }
+                }
+
+                ImGui.End();
             }
 
             // Display each prefab and select it
@@ -78,11 +100,32 @@ namespace Moonborne.Engine.UI
                     img = prefab.SpriteIndex.Texture.Icon;
                 }
 
-                if (ImGui.ImageButton($"{prefab.DisplayName}{prefab.InstanceID}", img, new System.Numerics.Vector2(64,64)))
+                float buttonSize = 64.0f; // Size of each button
+                float padding = 8.0f; // Spacing between buttons
+
+                // Get available space in the window
+                float windowWidth = ImGui.GetContentRegionAvail().X*4;
+                float xCursor = ImGui.GetCursorPosX(); // Current X position
+
+                if (xCursor + buttonSize + padding > windowWidth)
+                {
+                    ImGui.NewLine(); // Move to a new line if there's no space left
+                }
+
+                if (ImGui.ImageButton($"{prefab.DisplayName}{prefab.InstanceID}", img, new System.Numerics.Vector2(buttonSize, buttonSize)))
                 {
                     PrefabEditor.SelectedPrefab = prefab;
                     PrefabEditor.IsActive = true;
                 }
+
+                if (ImGui.IsItemHovered())
+                {
+                    if (ImGui.IsMouseClicked(ImGuiMouseButton.Left) || ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+                    {
+                        PrefabEditor.SelectedPrefab = prefab;
+                    }
+                }
+
                 // Show the prefab name when hovered over
                 if (ImGui.IsItemHovered())
                 {
@@ -90,8 +133,13 @@ namespace Moonborne.Engine.UI
                     ImGui.SetTooltip($"{prefab.DisplayName}");
                     ImGui.EndTooltip();
                 }
-                // Keep horizontally alligned
-                ImGui.SameLine();
+
+                // Move to the next button but check if it should wrap
+                xCursor = ImGui.GetCursorPosX();
+                if (xCursor + buttonSize + padding < windowWidth)
+                {
+                    ImGui.SameLine();
+                }
 
                 if (RoomEditor.selectedLayer != null && RoomEditor.selectedLayer.Type == LayerType.Object)
                 {
