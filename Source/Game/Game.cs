@@ -98,8 +98,9 @@ namespace Moonborne
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
             DeltaTime = dt;
 
-            ImGuiManager.UpdateInput();
             InputManager.Update(dt);
+            ImGuiManager.UpdateInput();
+            ImGui.UpdatePlatformWindows();
             WindowManager.Update(dt);
             Camera.Update();
             DialogueManager.Update(dt);
@@ -108,7 +109,6 @@ namespace Moonborne
 
             // Update everything
             LayerManager.Update(dt);
-
             base.Update(gameTime);
 
             // Save a snapshoft after releasing mouse (this actually works quite well)

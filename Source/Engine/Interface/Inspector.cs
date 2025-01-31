@@ -27,6 +27,7 @@ namespace Moonborne.Engine.UI
         public static object SelectedLayer;
         public static string WindowName = "Inspector";
         public static string SelectedItemTitle = "Inspector";
+        private static object cachedObj;
 
         /// <summary>
         /// Deletes the currently selected object
@@ -56,10 +57,13 @@ namespace Moonborne.Engine.UI
                 Type objectType = obj.GetType();
                 List<PropertyInfo> properties = objectType.GetProperties().ToList();
 
+                if (cachedObj == null || cachedObj.GetType() != obj.GetType())
+                    cachedObj = obj;
+
                 // Get all component properties 
                 if (obj as GameObject != null)
                 {
-                    GameObject gameObject = (GameObject)obj;
+                    GameObject gameObject = (GameObject)cachedObj;
 
                     foreach (ObjectComponent component in gameObject.Components)
                     {
@@ -84,11 +88,11 @@ namespace Moonborne.Engine.UI
                 }
 
                 // Draw object base properties
-                if (ImGui.TreeNodeEx($"{obj.GetType().Name} (Self)"))
+                if (ImGui.TreeNodeEx($"{cachedObj.GetType().Name} (Self)"))
                 {
                     foreach (var property in properties)
                     {
-                        DrawPropertyInEditor(property, obj);
+                        DrawPropertyInEditor(property, cachedObj);
                     }
                     ImGui.TreePop();
                 }
@@ -131,14 +135,13 @@ namespace Moonborne.Engine.UI
                 }
                 else if (value is string stringValue)
                 {
+                    // Create a local copy of the string to work with
                     string newValue = stringValue;
-                    byte[] buffer = new byte[256];
-                    Array.Copy(System.Text.Encoding.ASCII.GetBytes(stringValue), buffer, stringValue.Length);
 
-                    if (ImGui.InputText(property.Name, buffer, (uint)buffer.Length))
+                    // InputText modifies newValue directly
+                    if (ImGui.InputText(property.Name, ref newValue, 256))
                     {
-                        newValue = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
-                        property.SetValue(obj, newValue);
+                        property.SetValue(obj, newValue);                 
                     }
                 }
                 else if (value is Enum enumValue)
