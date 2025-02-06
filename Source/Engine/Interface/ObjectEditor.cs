@@ -95,7 +95,7 @@ namespace Moonborne.Engine.UI
             {
                 // Draw the prefab thumbnail image
                 IntPtr img = SpriteManager.GetImGuiTexture("None");
-                if (prefab.SpriteIndex.Texture.Data != null)
+                if (prefab.SpriteIndex.Texture.Name != null)
                 {
                     img = prefab.SpriteIndex.Texture.Icon;
                 }

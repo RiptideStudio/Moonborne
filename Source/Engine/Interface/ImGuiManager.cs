@@ -141,7 +141,6 @@ namespace Moonborne.Engine.UI
         /// </summary>
         public static void EndFrame(GameTime gameTime)
         {
-
             imGuiRenderer.EndLayout();
         }
 

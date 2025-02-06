@@ -14,6 +14,7 @@ using Moonborne.Game.Gameplay;
 using Moonborne.Engine.UI;
 using ImGuiNET;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Moonborne.Game.Room
 {
@@ -66,6 +67,7 @@ namespace Moonborne.Game.Room
         {
             // Normalize depth
             Depth = LayerManager.NormalizeLayerDepth(Layer.Depth, 1, 10000);
+            tileset = SpriteManager.GetRawTexture(TilesetTextureName);
 
             foreach (var tile in TileList)
             {

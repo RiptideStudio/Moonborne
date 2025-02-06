@@ -20,6 +20,7 @@ using ImGuiNET;
 using Moonborne.Engine.Audio;
 using Moonborne.Engine;
 using System.IO;
+using Moonborne.Engine.Files;
 
 namespace Moonborne
 {
@@ -109,6 +110,7 @@ namespace Moonborne
 
             // Update everything
             LayerManager.Update(dt);
+            GameWatcher.Update();
             base.Update(gameTime);
 
             // Save a snapshoft after releasing mouse (this actually works quite well)

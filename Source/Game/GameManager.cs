@@ -1,4 +1,5 @@
 ﻿using Moonborne.Engine.Audio;
+using Moonborne.Engine.Files;
 using Moonborne.Engine.UI;
 using Moonborne.Game.Gameplay;
 using Moonborne.Game.Objects;
@@ -22,6 +23,8 @@ namespace Moonborne.Engine
         public static void Initialize(MGame game)
         {
             Game = game;
+
+            GameWatcher.StartWatching("Content/Textures");
         }
 
         /// <summary>
@@ -48,10 +51,10 @@ namespace Moonborne.Engine
             SpriteManager.ReloadTextures();
             Save();
             Resume();
-            Camera.SetTarget(Player.Instance);
             RoomEditor.InEditor = false;
             AudioManager.PauseAllSound(false);
             Camera.CameraSize = Camera.GameCameraScale;
+            Camera.SetTarget(Player.Instance);
 
             // Iterate over each object and call their begin play function
             foreach (GameObject obj in LayerManager.Objects)
@@ -83,6 +86,7 @@ namespace Moonborne.Engine
         public static void Exit()
         {
             SettingsManager.Save();
+            GameWatcher.StopWatching();
             Game.Exit();
         }
 

@@ -12,6 +12,8 @@ using System.Collections;
 using Moonborne.Game.Room;
 using Moonborne.Engine;
 using Moonborne.Engine.UI;
+using System.Linq;
+using Moonborne.Game.Objects;
 
 namespace Moonborne.Graphics
 {
@@ -61,17 +63,54 @@ namespace Moonborne.Graphics
         }
 
         /// <summary>
-        /// Reload all textures
+        /// Reloads all textures held in memory.
         /// </summary>
         public static void ReloadTextures()
         {
+            // Reload textures only
             sprites.Clear();
             textures.Clear();
             LoadAllTextures();
         }
 
         /// <summary>
-        /// Loads all textures
+        /// Loads a texture given a filepath.
+        /// </summary>
+        /// <param name="filePath">The file path of the texture.</param>
+        public static void LoadTexture(string filePath)
+        {
+            // Extract the file name without the extension for use as a key
+            string textureName = Path.GetFileNameWithoutExtension(filePath);
+
+            // Load the texture from the file stream
+            using FileStream stream = new FileStream(filePath, FileMode.Open);
+            Texture2D texture = Texture2D.FromStream(graphicsDevice, stream);
+
+            // Add the texture to the dictionary
+            if (!textures.ContainsKey(textureName))
+            {
+                textures[textureName] = texture;
+                IntPtr iconData = ImGuiManager.imGuiRenderer.BindTexture(texture);
+
+                // Create a new SpriteTexture instance
+                SpriteTexture sprite = new SpriteTexture()
+                {
+                    FrameWidth = texture.Width,
+                    FrameHeight = texture.Height,
+                    TextureWidth = texture.Width,
+                    TextureHeight = texture.Height,
+                    Icon = iconData,
+                    Name = textureName
+                };
+
+                // Store the texture and sprite in their respective dictionaries
+                ImGuiTextures[textureName] = iconData;
+                sprites[textureName] = sprite;
+            }
+        }
+
+        /// <summary>
+        /// Loads all textures from the "Content/Textures" directory.
         /// </summary>
         public static void LoadAllTextures()
         {
@@ -89,39 +128,15 @@ namespace Moonborne.Graphics
             foreach (var file in files)
             {
                 // Only process image files
-                if (file.EndsWith(".png") || file.EndsWith(".jpg") || file.EndsWith(".jpeg"))
+                if (file.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+                    file.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                    file.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Extract the file name without the extension for use as a key
-                    string textureName = Path.GetFileNameWithoutExtension(file);
-
-                    // Load the texture from the file stream
-                    using FileStream stream = new FileStream(file, FileMode.Open);
-                    Texture2D texture = Texture2D.FromStream(graphicsDevice, stream);
-
-                    // Add the texture to the dictionary
-                    if (!textures.ContainsKey(textureName))
-                    {
-                        textures[textureName] = texture;
-                        IntPtr IconData = ImGuiManager.imGuiRenderer.BindTexture(texture);
-
-                        // Spritesheets should be uniform width and height
-                        SpriteTexture sprite = new SpriteTexture(texture);
-
-                        // Assuming same dimensions for width and height by default
-                        sprite.FrameWidth = texture.Width;
-                        sprite.FrameHeight = texture.Height;
-                        sprite.TextureWidth = texture.Width;
-                        sprite.TextureHeight = texture.Height;
-                        sprite.Data = texture;
-                        sprite.Icon = IconData;
-                        sprite.Name = textureName;
-
-                        ImGuiTextures[textureName] = IconData;
-                        sprites[textureName] = sprite;
-                    }
+                    LoadTexture(file);
                 }
             }
         }
+
 
         /// <summary>
         /// Draws a sprite given a texture name - this is very powerful and can be called from anywhere

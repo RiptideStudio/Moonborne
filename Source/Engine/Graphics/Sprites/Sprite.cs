@@ -43,7 +43,7 @@ namespace Moonborne.Graphics
 
         public Sprite(GameObject parent) : base(parent)
         {
-            Texture = new SpriteTexture(null);
+
         }
 
         /// <summary>

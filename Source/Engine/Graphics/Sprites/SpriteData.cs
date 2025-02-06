@@ -11,12 +11,8 @@ namespace Moonborne.Graphics
         public int TextureWidth;
         public int TextureHeight; // Height of actual texture
         public int MaxFrames = 1;
-        public Texture2D Data;
+        public string Name;
         public IntPtr Icon;
-        public string Name; // Name of this texture
-
-        public SpriteTexture(Texture2D texture)
-        {
-        }
+        public Texture2D Data => SpriteManager.GetRawTexture(Name);
     }
 }
