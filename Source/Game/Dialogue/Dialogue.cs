@@ -37,6 +37,8 @@ namespace Moonborne.UI.Dialogue
         // Keep track of the dialogue data
         public DialogueData Data;
 
+        public string Name = "None";
+
         // Eventually turn this into a dictionary of dictionaries
         // There will be some special escape sequences that define special effects
         // Like "*Bold Text*" and "**Italics**"

@@ -73,14 +73,14 @@ namespace Moonborne.Engine.UI
                 ImGui.OpenPopup("LayerContextMenu");
             }
 
-            /// Display all currently active layers and select them
+            // Display all currently active layers and select them
             ImGui.Text($"{RoomEditor.CurrentRoom.Name} Layers");
             ImGui.Separator();
             Inspector.Draw("Layer", Inspector.SelectedLayer);
 
             foreach (var layer in LayerManager.Layers)
             {
-                /// Can't edit locked layers
+                // Can't edit locked layers
                 if (layer.Value.Locked)
                     continue;
 
@@ -101,13 +101,38 @@ namespace Moonborne.Engine.UI
                     tex = texOff;
                 }
 
+                // Visibility toggle
                 if (ImGui.ImageButton(layer.Value.Name, tex, new System.Numerics.Vector2(16, 16)))
                 {
                     layer.Value.Visible = !layer.Value.Visible;
                 }
+
+                // Make sure these are all on the same line
                 ImGui.SameLine();
                 ImGui.SetCursorPosY(currentY);
                 ImGui.PopStyleColor(3);
+
+                // Show the layer's icon
+                IntPtr texIcon = SpriteManager.GetImGuiTexture("ObjectIcon");
+
+                switch (layer.Value.Type)
+                {
+                    case LayerType.Object:
+                        texIcon = SpriteManager.GetImGuiTexture("ObjectIcon");
+                        break;
+
+                    case LayerType.Tile:
+                        texIcon = SpriteManager.GetImGuiTexture("TileIcon");
+                        break;
+
+                    default:
+                        texIcon = SpriteManager.GetImGuiTexture("ObjectIcon");
+                        break;
+                }
+
+                ImGui.Image(texIcon, new System.Numerics.Vector2(16, 16));
+                ImGui.SameLine();
+                ImGui.SetCursorPosY(currentY);
 
                 // Draw each layer in the hierarchy and all of its objects that belong to it
                 // In the future there may be other properties like an array of tilemaps

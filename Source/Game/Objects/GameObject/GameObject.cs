@@ -7,11 +7,13 @@ using Moonborne.Engine.UI;
 using Moonborne.Game.Objects.Prefabs;
 using Moonborne.Game.Room;
 using Moonborne.Graphics;
+using Moonborne.UI.Dialogue;
 using Moonborne.Utils.Math;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Xml.Linq;
@@ -38,6 +40,7 @@ namespace Moonborne.Game.Objects
         public string TypeName { get; set; }
         public string LayerName { get; set; }
         public int InstanceID { get; set; }
+        public List<string> DialogueNames { get; set; } = new List<string>();
     }
 
     /// <summary>

@@ -27,8 +27,8 @@ namespace Moonborne.UI.Dialogue
         // Global variables for controlling dialogue
         public static int CharacterIndex { get; set; } = 0;
         public static int LineIndex {  get; set; } = 0;
-        public static int DialogueBoxWidth {  get; set; } = 540;
-        public static int DialogueBoxHeight {  get; set; } = 128;
+        public static int DialogueBoxWidth {  get; set; } = 300;
+        public static int DialogueBoxHeight {  get; set; } = 72;
         public static float TimeElapsed { get; set; } = 0;
         public static bool Open { get; set; } = false;
         public static bool SpeakerIsPlayer { get; set; } = true; // If the speaker is our player, draw portrait and name differently
@@ -37,14 +37,14 @@ namespace Moonborne.UI.Dialogue
         public static string TargetText { get; set; } = ""; // The text that is currently being displayed on the screen
         public static string Speaker { get; set; } = "";
         public static Vector2 FontScale { get; set; } = new Vector2(1,1);
-        public static Vector2 NameOffset { get; set; } = new Vector2(16,16);
-        public static Vector2 TextOffset { get; set; } = new Vector2(16,32);
+        public static Vector2 NameOffset { get; set; } = new Vector2(16,8);
+        public static Vector2 TextOffset { get; set; } = new Vector2(16,24);
         public static Dictionary<string, Dialogue> Dialogue { get; set; } = new Dictionary<string, Dialogue>(); // Keep track of dialogue
         public static Dialogue ActiveDialogue { get; set; }
         public static NPC ActiveNPC { get; set; }
-        public static Vector2 OriginalPosition { get; set; } = new Vector2(50, 400); // Positions for dialogue box animations
-        public static Vector2 RootPosition { get; set; } = new Vector2(50, 400);
-        public static Vector2 TargetPosition { get; set; } = new Vector2(50, 200);
+        public static Vector2 OriginalPosition { get; set; } = new Vector2(10, 100);
+        public static Vector2 RootPosition { get; set; } = OriginalPosition;
+        public static Vector2 TargetPosition { get; set; } = OriginalPosition;
         public static float AnimationInterpolation { get; set; } = 0.12f;
         public static GameObject DialogueObject;
 
@@ -78,7 +78,7 @@ namespace Moonborne.UI.Dialogue
             {
                 try
                 {
-                    // Only process hjson and json files
+                    // Only process hjson
                     if (file.EndsWith(".hjson"))
                     {
                         // Deserialze the json object
@@ -90,6 +90,8 @@ namespace Moonborne.UI.Dialogue
                         // Create a new Dialogue object with the json data
                         Dialogue dialogue = new Dialogue(dialogueData);
                         string fileName = Path.GetFileName(file);
+                        string fileNameNoExtension = Path.GetFileNameWithoutExtension(file);
+                        dialogue.Name = fileNameNoExtension;
 
                         // Add it to the Dialogue manager's list
                         Dialogue.Add(fileName, dialogue);
@@ -142,7 +144,6 @@ namespace Moonborne.UI.Dialogue
             ActiveNPC = npc;
             Open = true;
             DialogueObject.AddAction(new FadeAction(0.75f), false, true);
-
             if (ActiveNPC != null)
             {
                 ActiveNPC.StartTalking();
@@ -258,11 +259,12 @@ namespace Moonborne.UI.Dialogue
         /// </summary>
         public static void DrawDialogueBox()
         {
+
             RootPosition = MoonMath.Lerp(RootPosition, TargetPosition, AnimationInterpolation);
-            SpriteManager.SetDrawAlpha(DialogueObject.SpriteIndex.Alpha);
+            SpriteManager.SetDrawAlpha(0.75f);
             SpriteManager.DrawRectangle(RootPosition, DialogueBoxWidth, DialogueBoxHeight, Color.Black);
 
-            SpriteManager.SetDrawAlpha(DialogueObject.SpriteIndex.Alpha *2f);
+            SpriteManager.SetDrawAlpha(1f);
             SpriteManager.DrawText(Speaker, RootPosition+NameOffset, FontScale, 0, Color.Yellow);
             SpriteManager.DrawText(DisplayText, RootPosition+TextOffset, FontScale, 0, Color.White, DialogueBoxWidth-32);
             SpriteManager.ResetDraw();

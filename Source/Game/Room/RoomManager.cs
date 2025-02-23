@@ -7,6 +7,7 @@ using Moonborne.Engine.Components;
 using Moonborne.Engine.FileSystem;
 using Moonborne.Engine.UI;
 using Moonborne.Game.Objects;
+using Moonborne.UI.Dialogue;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -144,8 +145,20 @@ namespace Moonborne.Game.Room
                         data.TypeName = obj.GetType().Name;
                         data.LayerName = layer.Value.Name;
                         data.InstanceID = obj.InstanceID;
+
+                        // Check if the object has a List<Dialogue> property
+                        PropertyInfo dialogueProperty = obj.GetType().GetProperty("Dialogues");
+                        if (dialogueProperty != null && dialogueProperty.PropertyType == typeof(List<Dialogue>))
+                        {
+                            List<Dialogue> dialogueList = (List<Dialogue>)dialogueProperty.GetValue(obj);
+
+                            // Store only the names of the dialogues
+                            data.DialogueNames = dialogueList.Select(d => d.Name).ToList();
+                        }
+
                         objects.Add(data);
                     }
+
                 }
             }
 

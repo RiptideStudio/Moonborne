@@ -297,6 +297,7 @@ namespace Moonborne.Game.Room
                 {
                     InputManager.SetMouseLocked(true);
                     Camera.TargetPosition += InputManager.GetMouseDeltaPosition();
+                    Camera.Position = Camera.TargetPosition;
                 }
             }
 

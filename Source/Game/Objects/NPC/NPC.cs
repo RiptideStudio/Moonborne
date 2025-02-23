@@ -34,7 +34,7 @@ namespace Moonborne.Game.Objects
         public Gun Gun { get; set; }
         public State PreviousState = State.Idle;
         public int DialogueState = 0; // Allows us to cycle through dialogue
-        public Dictionary<int, string> Dialogue { get; set; } = new Dictionary<int, string>(); // List of our Dialogue objects
+        public List<Dialogue> DialogueObjects { get; set; } = new List<Dialogue>();
         public bool CanInteract { get; set; } = true; // Default, we can interact
         public bool CanTalk = false; 
         public float AggroDistance { get; set; } = 100f;
@@ -86,8 +86,6 @@ namespace Moonborne.Game.Objects
             Friendly = false;
             Interactable = true;
             Physics.Speed = 33;
-            Dialogue[0] = "Test";
-            Dialogue[1] = "Test2";
 
             SetSprite("NpcIdleLeft", 16, 16, State.Idle, Direction.Left);
             SetSprite("NpcIdleRight", 16, 16, State.Idle, Direction.Right);
@@ -209,7 +207,7 @@ namespace Moonborne.Game.Objects
             base.OnInteract();
 
             // Some NPCs don't have dialogue. In this case, do nothing
-            if (Dialogue.Count == 0 || DialogueState >= Dialogue.Count)
+            if (DialogueObjects.Count == 0 || DialogueState >= DialogueObjects.Count)
             {
                 return;
             }
@@ -218,7 +216,7 @@ namespace Moonborne.Game.Objects
             if (!DialogueManager.Open)
             {
                 // Start dialogue
-                string dialogue = Dialogue[DialogueState];
+                string dialogue = DialogueObjects[DialogueState].Name;
                 DialogueManager.StartDialogue(dialogue,this);
             }
             else
@@ -237,7 +235,7 @@ namespace Moonborne.Game.Objects
 
             // Advance dialogue state
             DialogueState++;
-            DialogueState = Math.Clamp(DialogueState, 0, Dialogue.Count - 1);
+            DialogueState = Math.Clamp(DialogueState, 0, DialogueObjects.Count - 1);
             ElapsedTime = 0;
         }        
         

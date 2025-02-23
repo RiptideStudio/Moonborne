@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using Moonborne.Graphics;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json.Linq;
+using Moonborne.UI.Dialogue;
 
 namespace Moonborne.Engine.UI
 {
@@ -26,6 +27,7 @@ namespace Moonborne.Engine.UI
         public static object SelectedObject;
         public static object SelectedLayer;
         public static string WindowName = "Inspector";
+        public static string SelectedKey = "";
         public static string SelectedItemTitle = "Inspector";
         private static object cachedObj;
 
@@ -188,6 +190,50 @@ namespace Moonborne.Engine.UI
                         }
                     }
                 }
+                else if (value is List<Dialogue> dialogueList)
+                {
+                    NPC npc = ((NPC)obj);
+
+                    if (ImGui.CollapsingHeader("Dialogue"))
+                    {
+                        // Dropdown for selecting a dialogue to add
+                        List<string> dialogueKeys = DialogueManager.Dialogue.Keys.ToList();
+
+                        if (ImGui.BeginCombo("Add Dialogue", SelectedKey))
+                        {
+                            foreach (var key in dialogueKeys)
+                            {
+                                bool isSelected = (SelectedKey == key);
+                                if (ImGui.Selectable(key, isSelected))
+                                {
+                                    SelectedKey = key;
+                                    npc.DialogueObjects.Add(DialogueManager.Dialogue[SelectedKey]);
+                                }
+
+                                if (isSelected)
+                                    ImGui.SetItemDefaultFocus();
+                            }
+                            ImGui.EndCombo();
+                        }
+
+                        // Display the list of assigned dialogues
+                        for (int i = 0; i < npc.DialogueObjects.Count; i++)
+                        {
+                            Dialogue dialogue = npc.DialogueObjects[i];
+
+                            ImGui.Text($"{i + 1}. {dialogue.Name}");
+
+                            // Remove button
+                            ImGui.SameLine();
+                            if (ImGui.Button($"Remove##{i}"))
+                            {
+                                npc.DialogueObjects.RemoveAt(i);
+                                break;
+                            }
+                        }
+                    }
+                }
+
             }
         }
     }

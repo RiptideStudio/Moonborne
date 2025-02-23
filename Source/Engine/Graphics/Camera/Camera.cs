@@ -55,8 +55,8 @@ namespace Moonborne.Graphics.Camera
         {
             base.Draw(spriteBatch);
 
-            CameraWidth = (int)(WindowManager.BaseViewportWidth * GameCameraScale);
-            CameraHeight = (int)(WindowManager.BaseViewportHeight * GameCameraScale);
+            CameraWidth = (int)(WindowManager.BaseViewportWidth * GameCameraScale * Transform.Scale.X);
+            CameraHeight = (int)(WindowManager.BaseViewportHeight * GameCameraScale * Transform.Scale.Y);
 
             Rectangle outline = new Rectangle((int)Transform.Position.X - CameraWidth / 2, (int)Transform.Position.Y - CameraHeight / 2, CameraWidth, CameraHeight);
             SpriteManager.DrawRectangle(outline, Color.White, true);

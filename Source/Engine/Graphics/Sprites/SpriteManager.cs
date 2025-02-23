@@ -406,7 +406,7 @@ namespace Moonborne.Graphics
         /// <returns></returns>
         public static IntPtr GetImGuiTexture(string name)
         {
-            return ImGuiTextures.TryGetValue(name, out var sprite) ? sprite : IntPtr.Zero;
+            return ImGuiTextures.TryGetValue(name, out var sprite) ? sprite : ImGuiTextures["None"];
         }
 
         /// <summary>

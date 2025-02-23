@@ -306,6 +306,7 @@ namespace Moonborne.Game.Room
         {
             // Static layers 
             AddLayer(new Layer(3, () => Camera.TransformMatrix, LayerType.Object, true), "Player");
+            AddLayer(new Layer(3, () => Camera.TransformMatrix, LayerType.Object, true), "Managers");
             AddLayer(new Layer(1000, () => Camera.TransformMatrix, LayerType.Object, true), "TileEditorWorld");
             AddLayer(new Layer(9999, () => WindowManager.Transform, LayerType.UI, true), "Dialogue");
             AddLayer(new Layer(1002, () => WindowManager.Transform, LayerType.UI, true), "Inventory");
