@@ -204,6 +204,7 @@ namespace Moonborne.Game.Room
                         SelectLayer(clickedObject.Layer);
                         Console.WriteLine($"Selected {clickedObject.GetType().Name} on {selectedLayer.Name}");
                     }
+
                     Inspector.SelectedObject = clickedObject;
                 }
             }

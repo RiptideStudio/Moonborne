@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Moonborne.Game.Objects;
 using Moonborne.Game.Room;
 using Newtonsoft.Json;
 
@@ -28,8 +29,7 @@ public class WorldState
             Console.WriteLine("Error saving world: " + ex);
         }
     }
-
-    /// <summary> Load all layers and objects from JSON </summary>
+    
     public void LoadJsonIntoWorld(string path = @"Content/World/WorldData.json")
     {
         if (!File.Exists(path))
