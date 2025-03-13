@@ -6,10 +6,10 @@ namespace Moonborne.Engine.Components
 {
     public class Transform : ObjectComponent
     {
-        public Vector2 Position { get; set; }
-        public Vector2 Scale { get; set; } = Vector2.One;
-        public float Rotation { get; set; }
-        public Vector2 OldPosition;
+        public Vector2 Position;
+        public Vector2 Scale = Vector2.One;
+        public float Rotation;
+        internal Vector2 OldPosition;
 
         public Transform(GameObject parent) : base(parent)
         {

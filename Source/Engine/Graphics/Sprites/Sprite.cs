@@ -21,16 +21,16 @@ namespace Moonborne.Graphics
             Vertical,
             None
         }
-        public bool Visible { get; set; } = true;
-        public bool VisibleInGame { get; set; } = true;
-        public int MaxFrames { get; set; } = 1;
-        public int AnimationSpeed { get; set; } = 10;
-        public float Alpha { get; set; } = 1f;
+        public bool Visible = true;
+        public bool VisibleInGame = true;
+        public int MaxFrames = 1;
+        public int AnimationSpeed = 10;
+        public float Alpha = 1f;
 
         public Color Color = Color.White;
         public int Frame = 0;
-        public float LayerDepth = 0;
-        public float FrameTime = 0;
+        internal float LayerDepth = 0;
+        internal float FrameTime = 0;
         public Vector2 DrawOffset = Vector2.Zero;
 
         public SpriteEffects CustomSpriteEffect = SpriteEffects.None;

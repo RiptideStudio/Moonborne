@@ -58,55 +58,45 @@ namespace Moonborne.Game.Objects
         /// <summary>
         /// This represents a unique identifier for each object
         /// </summary>
-        public int InstanceID;
+        internal int InstanceID;
 
         /// <summary>
         /// The name used in the display of this object
         /// </summary>
         public string DisplayName { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Stores the data for the ImGui icon
-        /// </summary>
-        public IntPtr Icon;
-
-        // Quick component pointers
         public Sprite SpriteIndex;
         public Transform Transform;
         public Physics Physics;
-
-        public List<GameAction> Actions = new List<GameAction>();
-        public List<GameAction> DeferredActions = new List<GameAction>();
-        public List<GameAction> ActionsToDestroy = new List<GameAction>();
-        public List<ObjectComponent> Components = new List<ObjectComponent>();
-
         public string Name;
-
-        public int Height = 1; // Defines our heightmap
-        public Vector2 StartPosition = Vector2.Zero; // Offset Transform.Position
-
-        public bool IsDestroyed = false; // If we are marked for destroy
-
-        public float Depth = 0;
 
         public Rectangle Hitbox = new Rectangle(0, 0, -1, -1);
         public bool Collideable = true;
         public bool IsStatic = false; // Static collisions don't get updated
-        public ECollisionState CollisionState = ECollisionState.None;
+        protected ECollisionState CollisionState = ECollisionState.None;
         public Color Tint = Color.White;
-        public Layer Layer; // The layer this object is on
-        public Layer PreviousLayer; // The layer this object is on
-        public int PreviousTileX = 0;
-        public int PreviousTileY = 0;
-        public List<Tile> TileList = new List<Tile>();
-
-        public bool NeedsLayerSort = false; // Used as a flag when changing layers
-        public bool Colliding = false;
-        public bool IsDirty = true;
         public int HitboxXOffset;
         public int HitboxYOffset;
         public int HitboxWidthOffset;
         public int HitboxHeightOffset;
+
+        internal List<ObjectComponent> Components = new List<ObjectComponent>();
+        internal List<GameAction> Actions = new List<GameAction>();
+        internal List<GameAction> DeferredActions = new List<GameAction>();
+        internal List<GameAction> ActionsToDestroy = new List<GameAction>();
+        internal IntPtr Icon;
+        internal int Height = 1; // Defines our heightmap
+        internal Vector2 StartPosition = Vector2.Zero; // Offset Transform.Position
+        internal bool IsDestroyed = false; // If we are marked for destroy
+        internal float Depth = 0;
+        internal Layer Layer; // The layer this object is on
+        internal Layer PreviousLayer; // The layer this object is on
+        internal int PreviousTileX = 0;
+        internal int PreviousTileY = 0;
+        internal List<Tile> TileList = new List<Tile>();
+        internal bool NeedsLayerSort = false; // Used as a flag when changing layers
+        internal bool Colliding = false;
+        internal bool IsDirty = true;
 
         /// <summary>
         /// Adds a component to this object
@@ -185,6 +175,23 @@ namespace Moonborne.Game.Objects
                     DeferredActions.Remove(action);
                 }
             }
+        }
+
+        /// <summary>
+        /// Get the tilelist of colliding tiles
+        /// </summary>
+        /// <returns></returns>
+        public List<Tile> GetTiles()
+        {
+            return TileList;
+        }
+
+        /// <summary>
+        /// Resort the object
+        /// </summary>
+        public void Resort()
+        {
+            NeedsLayerSort = true;
         }
 
         /// <summary>

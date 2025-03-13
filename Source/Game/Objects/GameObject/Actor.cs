@@ -32,8 +32,6 @@ namespace Moonborne.Game.Objects
     public class Actor : GameObject
     {
         public bool Interactable = false; // Track interactable objects
-        public bool Interacted = false;
-        public bool InteractingWith = false; // If we are currently interacting with this object
 
         public int Health = 5; // Default health is 10
         public int MaxHealth = 5;
@@ -43,16 +41,17 @@ namespace Moonborne.Game.Objects
         public bool IsHurt = false;
         public int HealthbarWidth = 32;
         public int HealthbarHeight = 4;
-        public Layer OurLayer = null; // This is the layer the object is currently attached to
 
-        public Direction Direction = Direction.Down;
         public State State = State.Idle;
-
-        public Sprite[,] Sprites = new Sprite[Enum.GetValues<State>().Length, Enum.GetValues<Direction>().Length];
 
         public List<Item> ItemsToDrop = new List<Item>();
         public int InteractDistance { get; set; } = 32;
 
+        protected Layer OurLayer = null; // This is the layer the object is currently attached to
+        protected Sprite[,] Sprites = new Sprite[Enum.GetValues<State>().Length, Enum.GetValues<Direction>().Length];
+        protected Direction Direction = Direction.Down;
+        protected bool InteractingWith = false; // If we are currently interacting with this object
+        protected bool Interacted = false;
 
         /// <summary>
         /// Set a sprite for a state and direction

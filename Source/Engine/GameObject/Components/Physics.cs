@@ -15,10 +15,10 @@ namespace Moonborne.Engine.Components
         /// <summary>
         /// Force of gravity
         /// </summary>
-        public float Gravity { get; set; } = 0f; 
-        public float LinearFriction { get; set; } = 8;
-        public float MaxSpeed { get; set; } = 1000;
-        public float Speed { get; set; } = 0;
+        public float Gravity = 0f; 
+        public float LinearFriction = 8;
+        public float MaxSpeed = 1000;
+        public float Speed = 0;
 
         // Keep track of the axes we are moving on
         private int Haxis = 1;

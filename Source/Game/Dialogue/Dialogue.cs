@@ -51,7 +51,11 @@ namespace Moonborne.UI.Dialogue
         public Dialogue(DialogueData data)
         {
             Data = data;
-        }   
+        }
 
+        public Dialogue()
+        {
+
+        }
     }
 }

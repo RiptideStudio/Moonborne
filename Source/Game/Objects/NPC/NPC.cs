@@ -31,21 +31,22 @@ namespace Moonborne.Game.Objects
 
     public class NPC : Lifeform
     {
-        public Gun Gun { get; set; }
-        public State PreviousState = State.Idle;
-        public int DialogueState = 0; // Allows us to cycle through dialogue
-        public List<Dialogue> DialogueObjects { get; set; } = new List<Dialogue>();
-        public bool CanInteract { get; set; } = true; // Default, we can interact
-        public bool CanTalk = false; 
-        public float AggroDistance { get; set; } = 100f;
-        public float WanderDistance { get; set; } = 80f;
-        public float ElapsedTime { get; set; } = 0;
-        public int WanderTimeMin { get; set; } = 120;
-        public int WanderTimeMax { get; set; } = 180;
-        public int WanderTime = 150;
-        public Vector2 WanderPosition = Vector2.One;
-        public GameObject Target { get; set; }
+        public Gun Gun;
+        public List<Dialogue> DialogueObjects = new List<Dialogue>();
+        public GameObject Target;
 
+        public bool CanInteract = true; // Default, we can interact
+        public bool CanTalk = false; 
+        public float AggroDistance = 100f;
+        public float WanderDistance = 80f;
+        public int WanderTimeMin = 120;
+        public int WanderTimeMax = 180;
+
+        private int WanderTime = 150;
+        private Vector2 WanderPosition = Vector2.One;
+        private float ElapsedTime = 0;
+        private State PreviousState = State.Idle;
+        private int DialogueState = 0; // Allows us to cycle through dialogue
 
         /// <summary>
         /// Extend the update method 

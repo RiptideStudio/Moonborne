@@ -6,9 +6,9 @@ namespace Moonborne.Engine.Components
 {
     public abstract class ObjectComponent
     {
-        public string Name = "Base Component"; // Display name of the component
-        public string Description = "Serves as a base component"; // What this component does
-        public GameObject Parent = null;
+        internal string Name = "Base Component"; // Display name of the component
+        internal string Description = "Serves as a base component"; // What this component does
+        internal GameObject Parent = null;
 
         /// <summary>
         /// Calls create

@@ -13,7 +13,7 @@ using Moonborne.Utils.Math;
 
 namespace Moonborne.Game.Inventory
 {
-    public abstract class Item : GameObject
+    public class Item : GameObject
     {
         public float PickupRange { get; set; } = 32f;
 

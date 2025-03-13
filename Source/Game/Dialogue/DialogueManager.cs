@@ -259,7 +259,6 @@ namespace Moonborne.UI.Dialogue
         /// </summary>
         public static void DrawDialogueBox()
         {
-
             RootPosition = MoonMath.Lerp(RootPosition, TargetPosition, AnimationInterpolation);
             SpriteManager.SetDrawAlpha(0.75f);
             SpriteManager.DrawRectangle(RootPosition, DialogueBoxWidth, DialogueBoxHeight, Color.Black);

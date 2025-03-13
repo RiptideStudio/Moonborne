@@ -68,7 +68,7 @@ namespace Moonborne.Engine.Collision
                 }
 
                 // Clear the TileList to avoid duplicates or stale collisions
-                obj.TileList.Clear();
+                obj.GetTiles().Clear();
 
                 foreach (var layer in LayerManager.Layers)
                 {
@@ -76,7 +76,7 @@ namespace Moonborne.Engine.Collision
                     if (layer.Value.Type != LayerType.Tile)
                         continue;
 
-                    obj.NeedsLayerSort = true;
+                    obj.Resort();
                 }
             }
 
