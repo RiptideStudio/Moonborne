@@ -69,6 +69,7 @@ public class WorldState
 
                 foreach (GameObject obj in layer.Objects)
                 {
+                    obj.Layer = layer;
                     LayerManager.Objects.Add(obj);
                 }
             }

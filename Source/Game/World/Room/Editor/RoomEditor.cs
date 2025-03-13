@@ -39,6 +39,7 @@ namespace Moonborne.Game.Room
         public static string NewLayerName = "Layer";
         public static Layer selectedLayer = null;
         public static GameObject selectedObject;
+        public static object CopiedObject;
         public static bool Dragging = false;
         public static bool HoveringOverGameWorld = false;
         public static bool InEditor = true; // Flag for if we're in editor mode or not
@@ -315,6 +316,22 @@ namespace Moonborne.Game.Room
                 if (InputManager.KeyTriggered(Keys.S))
                 {
                     GameManager.Save();
+                }
+                // Copy selected object
+                if (InputManager.KeyTriggered(Keys.C))
+                {
+                    if (Inspector.SelectedObject != null)
+                    {
+                        CopiedObject = Inspector.SelectedObject;
+                    }
+                }
+                // Paste the object
+                if (InputManager.KeyTriggered(Keys.V))
+                {
+                    if (CopiedObject != null)
+                    {
+                        Activator.CreateInstance(CopiedObject.GetType());
+                    }
                 }
             }
 
