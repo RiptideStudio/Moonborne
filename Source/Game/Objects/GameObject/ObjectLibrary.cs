@@ -133,7 +133,6 @@ namespace Moonborne.Game.Objects
             }
 
             var obj = (GameObject)Activator.CreateInstance(type);
-            GameObject.LoadData(obj, prefabFilePath, displayName);
 
             obj.Transform.Position = position;
             obj.StartPosition = position;

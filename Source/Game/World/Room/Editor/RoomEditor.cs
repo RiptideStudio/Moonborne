@@ -316,12 +316,6 @@ namespace Moonborne.Game.Room
                 {
                     GameManager.Save();
                 }
-
-                // Quick load
-                if (InputManager.KeyTriggered(Keys.L))
-                {
-                    CurrentRoom.Load(CurrentRoom.Name);
-                }
             }
 
             // Control the grid cell snap size

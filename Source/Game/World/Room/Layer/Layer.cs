@@ -59,12 +59,10 @@ namespace Moonborne.Game.Room
             GetTransform = matrix;
             Type = layerType;
             Locked = locked;
-            AddTilemap(new Tilemap("", new int[100, 100], 16, ""));
         }
 
         public Layer()
         {
-            AddTilemap(new Tilemap("", new int[100, 100], 16, ""));
         }
 
         /// <summary>

@@ -9,7 +9,10 @@ public class WorldState
 {
     public Dictionary<string, Layer> Layers = new Dictionary<string, Layer>();
 
-    /// <summary> Save all layers and objects to JSON </summary>
+    /// <summary>
+    /// Save the world
+    /// </summary>
+    /// <param name="path"></param>
     public void SaveJson(string path = @"Content/World/WorldData.json")
     {
         try
@@ -30,6 +33,10 @@ public class WorldState
         }
     }
     
+    /// <summary>
+    /// Load the world again
+    /// </summary>
+    /// <param name="path"></param>
     public void LoadJsonIntoWorld(string path = @"Content/World/WorldData.json")
     {
         if (!File.Exists(path))
@@ -53,6 +60,17 @@ public class WorldState
             foreach (var kvp in loadedWorld.Layers)
             {
                 LayerManager.Layers[kvp.Key] = kvp.Value;
+            }
+
+            // Add back the objects to the global list with the layer they're on
+            foreach (var kvp in loadedWorld.Layers)
+            {
+                Layer layer = kvp.Value;
+
+                foreach (GameObject obj in layer.Objects)
+                {
+                    LayerManager.Objects.Add(obj);
+                }
             }
 
             Console.WriteLine($"Loaded world from {path} successfully!");

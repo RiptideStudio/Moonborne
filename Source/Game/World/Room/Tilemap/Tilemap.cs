@@ -49,7 +49,7 @@ namespace Moonborne.Game.Room
             grid = grid_;
             tileSize = tileSize_;
             LayerName = layerName;
-            tilesetColumns = tileset.Width / 16;
+            tilesetColumns = tileset.Width / 16;       
         }
 
         /// <summary>

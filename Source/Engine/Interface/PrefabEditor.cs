@@ -97,20 +97,7 @@ namespace Moonborne.Engine.UI
         /// </summary>
         public static void SavePrefabs()
         {
-            // Delete old prefabs
-            string directory = Directory.GetCurrentDirectory() + "/Content/Data/Prefabs";
 
-            // Save each prefab we currently have
-            foreach (GameObject prefab in Prefabs)
-            {
-                GameObjectData data = GameObject.SaveData(prefab);
-                FileHelper.DeleteFile(directory + "/" + data.Name + ".json");
-                GameObject.SaveObjectDataToFile(data, "Content/Data/Prefabs");
-            }
-
-            Prefabs.Clear();
-
-            LoadPrefabs();
         }
 
         /// <summary>
@@ -118,21 +105,7 @@ namespace Moonborne.Engine.UI
         /// </summary>
         public static void LoadPrefabs()
         {
-            // Get the directory
-            string fileDirectory = $@"Content/Data/Prefabs";
-
-            string[] files = Directory.GetFiles(fileDirectory);
-
-            // Load all prefabs
-            foreach (string file in files)
-            {
-                string json = File.ReadAllText(file);
-                var prefabData = JsonSerializer.Deserialize<GameObjectData>(json);
-
-                GameObject prefab = ObjectLibrary.CreateObject(prefabData.Name);
-                GameObject.LoadData(prefab, prefabData);
-                Prefabs.Add(prefab);
-            }
+           
         }
 
         /// <summary>

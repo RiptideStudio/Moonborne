@@ -39,11 +39,7 @@ namespace Moonborne.Game.Room
         /// </summary>
         public static void LoadSnapshot(int temp)
         {
-            // Re-load everything in the room
-            if (CurrentRoom != null)
-            {
-                CurrentRoom.Load(CurrentRoom.Name+$"tmp_{temp}", @"Content/Temp");
-            }
+
         }
 
         /// <summary>
