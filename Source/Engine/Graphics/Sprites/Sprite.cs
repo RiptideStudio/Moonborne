@@ -8,11 +8,13 @@ using Moonborne.Game.Room;
 using Moonborne.Graphics.Window;
 using System;
 using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace Moonborne.Graphics
 {
     public class Sprite : ObjectComponent
     {
+        [JsonIgnore]
         public SpriteTexture Texture { get; set; }
 
         public enum Axis

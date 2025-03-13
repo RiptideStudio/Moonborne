@@ -125,6 +125,24 @@ namespace Moonborne.Input
         }
 
         /// <summary>
+        /// Middle mouse button down
+        /// </summary>
+        /// <returns></returns>
+        public static bool MouseMiddleDown()
+        {
+            return MouseState.MiddleButton == ButtonState.Pressed;
+        }
+
+        /// <summary>
+        /// Middle released
+        /// </summary>
+        /// <returns></returns>
+        public static bool MouseMiddleReleased()
+        {
+            return MouseState.MiddleButton == ButtonState.Released && PreviousMouseState.MiddleButton == ButtonState.Pressed;
+        }
+
+        /// <summary>
         /// Check if mouse right is held down
         /// </summary>
         /// <returns></returns>

@@ -15,6 +15,7 @@ namespace Moonborne.Engine
         public static MGame Game;
         public static bool Paused = true;
         public static bool DebugMode = false;
+        public static WorldState WorldState;
 
         /// <summary>
         /// Initialize the game manager
@@ -23,6 +24,7 @@ namespace Moonborne.Engine
         public static void Initialize(MGame game)
         {
             Game = game;
+            WorldState = new WorldState();
 
             GameWatcher.StartWatching("Content/Textures");
         }
@@ -95,6 +97,7 @@ namespace Moonborne.Engine
         /// </summary>
         public static void Save()
         {
+            WorldState.SaveJson();
             RoomEditor.CurrentRoom.Save(RoomEditor.CurrentRoom.Name);
             SettingsManager.Save();
             PrefabEditor.ReloadPrefabs();

@@ -293,7 +293,7 @@ namespace Moonborne.Game.Room
                 }
 
                 // Pan the camera using right click
-                if (InputManager.MouseRightDown())
+                if (InputManager.MouseMiddleDown())
                 {
                     InputManager.SetMouseLocked(true);
                     Camera.TargetPosition += InputManager.GetMouseDeltaPosition();
@@ -302,7 +302,7 @@ namespace Moonborne.Game.Room
             }
 
             // Stop panning
-            if (InputManager.MouseRightReleased())
+            if (InputManager.MouseMiddleReleased())
             {
                 InputManager.SetMouseLocked(false);
             }
@@ -400,7 +400,10 @@ namespace Moonborne.Game.Room
             // Select different tile layers
             if (newLayer.Type == LayerType.Tile)
             {
-                SelectedTilemap = newLayer.Tilemaps[0];
+                if (newLayer.Tilemaps.Count > 0)
+                {
+                    SelectedTilemap = newLayer.Tilemaps[0];
+                }
             }
             else if (newLayer.Type == LayerType.Object)
             {

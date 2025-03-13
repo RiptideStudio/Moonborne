@@ -54,7 +54,6 @@ namespace Moonborne.Game.Objects
 
     public abstract class GameObject
     {
-
         /// <summary>
         /// This represents a unique identifier for each object
         /// </summary>

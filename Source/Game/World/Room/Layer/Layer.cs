@@ -30,21 +30,23 @@ namespace Moonborne.Game.Room
     public class Layer
     {
         private readonly Func<Matrix> GetTransform;
+
         public bool Locked = false;
-        public bool Collideable { get; set; } = false;
-        public bool Visible { get; set; } = true;
-        public int Depth { get; set; } = 0;
-        public string Name { get; set; } = string.Empty;
-        public SpriteSortMode SortMode = SpriteSortMode.Deferred; // The way sprites are sorted
-        public BlendState BlendState = BlendState.NonPremultiplied; // Type of blend state used
-        public SamplerState SamplerState = SamplerState.PointClamp; // Sampler state used (usually pixel)
-        public Matrix Transform => GetTransform(); // The matrix used to transform the layer
-        public List<GameObject> Objects { get; set; } = new List<GameObject>(); // Objects on this layer
-        public List<GameObject> ObjectsToCreate { get; set; } = new List<GameObject>(); // Objects on this layer
-        public List<Tilemap> Tilemaps { get; set; } = new List<Tilemap>(); // Tiles on this layer
-        public LayerType Type {  get; set; } = LayerType.Object;
-        public int Height { get; set; } = 1; // Defines the heightmap of this layer
-        
+        public bool Collideable = false;
+        public bool Visible = true;
+        public int Depth = 0;
+        public string Name = string.Empty;
+        public LayerType Type = LayerType.Object;
+        public int Height = 1; // Defines the heightmap of this layer
+        public List<Tilemap> Tilemaps = new List<Tilemap>(); // Tiles on this layer
+        public List<GameObject> Objects = new List<GameObject>(); // Objects on this layer
+
+        internal List<GameObject> ObjectsToCreate = new List<GameObject>();
+        internal Matrix Transform => GetTransform(); // The matrix used to transform the layer
+        internal SpriteSortMode SortMode = SpriteSortMode.Deferred; // The way sprites are sorted
+        internal BlendState BlendState = BlendState.NonPremultiplied; // Type of blend state used
+        internal SamplerState SamplerState = SamplerState.PointClamp; // Sampler state used (usually pixel)
+
         /// <summary>
         /// Construct a new layer
         /// </summary>
@@ -57,6 +59,12 @@ namespace Moonborne.Game.Room
             GetTransform = matrix;
             Type = layerType;
             Locked = locked;
+            AddTilemap(new Tilemap("", new int[100, 100], 16, ""));
+        }
+
+        public Layer()
+        {
+            AddTilemap(new Tilemap("", new int[100, 100], 16, ""));
         }
 
         /// <summary>

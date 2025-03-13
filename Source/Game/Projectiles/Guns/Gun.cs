@@ -37,6 +37,12 @@ namespace Moonborne.Game.Projectiles
             SpriteIndex.VisibleInGame = false;
         }
 
+        public Gun() : base()
+        {
+            SpriteIndex.SetSpritesheet("Gun");
+            SpriteIndex.VisibleInGame = false;
+        }
+
         /// <summary>
         /// Override of the base create event
         /// </summary>

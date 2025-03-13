@@ -53,7 +53,6 @@ namespace Moonborne.Game.Room
         /// <param name="overridePath"></param>
         public void Save(string name, string overridePath = null)
         {
-            RoomManager.SaveRoom(name, overridePath);
             Console.WriteLine($"Saved Room '{name}'");
         }
 

@@ -13,6 +13,7 @@ namespace Moonborne.Graphics
         public int MaxFrames = 1;
         public string Name;
         public IntPtr Icon;
+
         public Texture2D Data => SpriteManager.GetRawTexture(Name);
     }
 }

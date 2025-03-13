@@ -264,10 +264,7 @@ namespace Moonborne.Game.Room
             List<GameObject> clearList = new List<GameObject>();
 
             foreach (GameObject obj in Objects)
-            {
-                if (obj.Layer.Locked)
-                    continue;
-
+            {           
                 clearList.Add(obj);
             }
 

@@ -15,6 +15,7 @@ using Moonborne.Engine.UI;
 using ImGuiNET;
 using System.Linq;
 using static System.Net.Mime.MediaTypeNames;
+using Newtonsoft.Json;
 
 namespace Moonborne.Game.Room
 {
@@ -22,7 +23,6 @@ namespace Moonborne.Game.Room
     {
         public int SelectedTile = 0;
         public int[,] grid = new int[100, 100];
-        public Texture2D tileset;
         public int tileSize = 16;
         public int Height = 0;
         public int tilesetColumns = 10;
@@ -34,6 +34,9 @@ namespace Moonborne.Game.Room
         public Rectangle SelectedSourceTileRectangle;
         public Dictionary<int, Tile> TileList = new Dictionary<int, Tile>();
         public Layer Layer;
+
+        [JsonIgnore]
+        public Texture2D tileset;
 
         /// <summary>
         /// New tilemap
@@ -66,7 +69,6 @@ namespace Moonborne.Game.Room
         public void Draw(SpriteBatch spriteBatch)
         {
             // Normalize depth
-            Depth = LayerManager.NormalizeLayerDepth(Layer.Depth, 1, 10000);
             tileset = SpriteManager.GetRawTexture(TilesetTextureName);
 
             foreach (var tile in TileList)

@@ -56,7 +56,7 @@ namespace Moonborne.Engine.UI
                 PreviewZoom = Math.Clamp(PreviewZoom, 0.1f, 4f);
 
                 // Pan the camera using right click
-                if (InputManager.MouseRightDown())
+                if (InputManager.MouseMiddleDown())
                 {
                     InputManager.SetMouseLocked(true);
                     PreviewOffset -= InputManager.GetMouseDeltaPosition() / 4;
@@ -64,7 +64,7 @@ namespace Moonborne.Engine.UI
             }
 
             // Stop panning
-            if (InputManager.MouseRightReleased())
+            if (InputManager.MouseMiddleReleased())
             {
                 InputManager.SetMouseLocked(false);
             }

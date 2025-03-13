@@ -50,15 +50,7 @@ namespace Moonborne.Engine.UI
         {
             IniFile ini = new IniFile($"{SavePath}");
             string CurrentRoom = ini.GetValue("RoomEditor", "CurrentRoom");
-
-            if (ini.IsValid())
-            {
-                RoomManager.SetActiveRoom(CurrentRoom);
-            }
-            else
-            {
-                RoomManager.SetActiveRoom(RoomManager.GetDefaultRoom());
-            }
+            RoomManager.SetActiveRoom(CurrentRoom);
         }
     }
 }
