@@ -21,6 +21,7 @@ using Moonborne.Engine.Audio;
 using Moonborne.Engine;
 using System.IO;
 using Moonborne.Engine.Files;
+using Moonborne.Game.Assets;
 
 namespace Moonborne
 {
@@ -70,7 +71,7 @@ namespace Moonborne
             spriteBatch = new SpriteBatch(GraphicsDevice);
             SpriteManager.LoadAllTextures();
             SpriteManager.spriteBatch = spriteBatch;
-            PrefabEditor.LoadPrefabs();
+            AssetManager.LoadAssets();
             InitializeLater();
         }
 

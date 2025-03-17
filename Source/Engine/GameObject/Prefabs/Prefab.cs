@@ -8,19 +8,36 @@
 
 using Microsoft.Xna.Framework.Graphics;
 using Moonborne.Engine.Components;
+using Moonborne.Game.Assets;
 using Moonborne.Graphics;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 
 namespace Moonborne.Game.Objects.Prefabs
 {
-    public class Prefab : GameObject
+    public class Prefab : Asset
     {
-        /// <summary>
-        /// Add sprite and transform by default
-        /// </summary>
-        public Prefab() : base()
+        public List<ObjectComponentData> Components;
+
+        public Prefab(string name, string folder) : base(name, folder)
         {
+        }
+
+        /// <summary>
+        /// Instantiate a prefab
+        /// </summary>
+        /// <param name="position"></param>
+        public void Instantiate(Vector2 position)
+        {
+            GameObject gameObject = (GameObject)Activator.CreateInstance(AssetType);
+            gameObject.Transform.Position = position;
+
+            foreach (ObjectComponentData component in Components)
+            {
+                gameObject.AddComponent(component.CreateComponent());
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Moonborne.Engine.Audio;
 using Moonborne.Engine.Files;
 using Moonborne.Engine.UI;
+using Moonborne.Game.Assets;
 using Moonborne.Game.Gameplay;
 using Moonborne.Game.Objects;
 using Moonborne.Game.Room;
@@ -100,7 +101,7 @@ namespace Moonborne.Engine
             WorldState.SaveJson();
             RoomEditor.CurrentRoom.Save(RoomEditor.CurrentRoom.Name);
             SettingsManager.Save();
-            PrefabEditor.ReloadPrefabs();
+            AssetManager.SaveAssets();
         }
 
         /// <summary>

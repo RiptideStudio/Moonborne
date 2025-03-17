@@ -214,12 +214,13 @@ namespace Moonborne.Game.Room
             SceneEditor.Draw();
             ConsoleEditor.Draw();
             ObjectEditor.Draw();
+            ContentDrawer.Draw();
             LevelSelectEditor.Draw();
 
             // Draw prefab editor if we are in it
-            if (PrefabEditor.IsActive)
+            if (PrefabManager.IsActive)
             {
-                PrefabEditor.Draw(spriteBatch);
+                PrefabManager.Draw(spriteBatch);
             }
 
             // Render the ImGui buttons for toggling different

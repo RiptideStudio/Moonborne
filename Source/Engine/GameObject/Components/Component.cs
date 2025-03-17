@@ -1,6 +1,8 @@
 ﻿
 using Microsoft.Xna.Framework.Graphics;
 using Moonborne.Game.Objects;
+using System.Collections.Generic;
+using System;
 
 namespace Moonborne.Engine.Components
 {
@@ -52,4 +54,29 @@ namespace Moonborne.Engine.Components
 
         }
     }
+
+    public class ObjectComponentData
+    {
+        public string Type { get; set; } // Stores class name (e.g., "SpriteRenderer")
+        public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
+
+        public ObjectComponent CreateComponent()
+        {
+            Type componentType = Type.GetType();
+            if (componentType == null) return null;
+
+            ObjectComponent component = (ObjectComponent)Activator.CreateInstance(componentType);
+            foreach (var property in Properties)
+            {
+                var propInfo = componentType.GetProperty(property.Key);
+                if (propInfo != null)
+                {
+                    object value = Convert.ChangeType(property.Value, propInfo.PropertyType);
+                    propInfo.SetValue(component, value);
+                }
+            }
+            return component;
+        }
+    }
+
 }

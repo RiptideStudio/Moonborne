@@ -35,7 +35,7 @@ namespace Moonborne.Engine.UI
 
             if (ImGui.IsItemClicked())
             {
-                PrefabEditor.IsActive = false;
+                PrefabManager.IsActive = false;
             }
 
             // Create new layers to the layer manager
