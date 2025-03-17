@@ -21,6 +21,7 @@ using MonoGame.Extended.Screens;
 using Moonborne.Engine.UI;
 using Moonborne.Engine.Collision;
 using System.Runtime.CompilerServices;
+using Force.DeepCloner;
 
 namespace Moonborne.Game.Room
 {
@@ -328,9 +329,10 @@ namespace Moonborne.Game.Room
                 // Paste the object
                 if (InputManager.KeyTriggered(Keys.V))
                 {
-                    if (CopiedObject != null)
+                    if (CopiedObject != null && selectedLayer != null)
                     {
-                        Activator.CreateInstance(CopiedObject.GetType());
+                        GameObject newCopy = (GameObject)CopiedObject.DeepClone();
+                        LayerManager.AddInstance(newCopy, selectedLayer);
                     }
                 }
             }

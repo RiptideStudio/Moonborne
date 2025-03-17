@@ -9,12 +9,14 @@ using Moonborne.Game.Room;
 using Moonborne.Graphics;
 using Moonborne.UI.Dialogue;
 using Moonborne.Utils.Math;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
@@ -30,6 +32,7 @@ namespace Moonborne.Game.Objects
         None
     }
 
+    [Serializable]
     public abstract class GameObject
     {
         /// <summary>
@@ -283,5 +286,6 @@ namespace Moonborne.Game.Objects
             // This is a game object and has a valid ID
             return ((GameObject)(gameObject)).InstanceID;
         }
+
     }
 }

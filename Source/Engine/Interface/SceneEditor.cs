@@ -14,6 +14,8 @@ using Microsoft.Xna.Framework;
 using Moonborne.Graphics.Camera;
 using Moonborne.Graphics;
 using Moonborne.Game.Objects.Prefabs;
+using Moonborne.Game.Gameplay;
+using Microsoft.Xna.Framework.Input;
 
 namespace Moonborne.Engine.UI
 {
@@ -22,6 +24,7 @@ namespace Moonborne.Engine.UI
         public static string WindowName = "Scene Editor";
         public static bool SelectedLayer = false;
         public static Layer LayerToRemove;
+        public static bool isSelected = false;
 
         /// <summary>
         /// Draw the inspector
@@ -34,6 +37,7 @@ namespace Moonborne.Engine.UI
             {
                 PrefabEditor.IsActive = false;
             }
+
             // Create new layers to the layer manager
             if (ImGui.BeginPopupContextItem("LayerContextMenu"))
             {
@@ -45,6 +49,7 @@ namespace Moonborne.Engine.UI
                     LayerManager.AddTilemap(new Tilemap("None", new int[100, 100], 16, RoomEditor.NewLayerName), RoomEditor.NewLayerName);
                     RoomEditor.SelectLayer(newLayer);
                 }
+
                 // Add Tile Layer
                 if (ImGui.MenuItem("Create New Tile Layer"))
                 {
@@ -54,11 +59,30 @@ namespace Moonborne.Engine.UI
                     RoomEditor.SelectLayer(newLayer);
                 }
 
-                // Delete layer
-                if (ImGui.MenuItem("Delete Layer"))
+                // Create object
+                if (Inspector.SelectedLayer != null)
                 {
-                    LayerManager.RemoveLayer(LayerToRemove);
-                    RoomEditor.SelectLayer(null);
+                    if (ImGui.MenuItem("Create Object"))
+                    {
+                        EmptyObject obj = new EmptyObject();
+                        LayerManager.AddInstance(obj, (Layer)Inspector.SelectedLayer);
+                    }
+
+                    // Delete layer
+                    if (ImGui.MenuItem("Delete Layer"))
+                    {
+                        LayerManager.RemoveLayer(LayerToRemove);
+                        RoomEditor.SelectLayer(null);
+                    }
+                }
+
+                // Delete object
+                if (Inspector.SelectedObject != null)
+                {
+                    if (ImGui.MenuItem("Delete Object"))
+                    {
+                        LayerManager.RemoveInstance((GameObject)Inspector.SelectedObject);
+                    }
                 }
 
                 // Input for layer name
@@ -158,16 +182,30 @@ namespace Moonborne.Engine.UI
                     RoomEditor.SelectLayer(layer.Value);
                 }
 
+                // delete hotkey
+                if (InputManager.KeyReleased(Keys.Delete))
+                {
+                    LayerManager.RemoveInstance((GameObject)Inspector.SelectedObject);
+                }
+
                 if (isNodeOpen) // Start layer tree
                 {
                     // Show each object in this layer and click on it to inspect it
                     foreach (GameObject obj in layer.Value.Objects)
                     {
                         ImGui.PushID(obj.GetHashCode()); // Use the hash code as the unique ID
-                        if (ImGui.Selectable($"{obj.GetType().Name}"))
+
+                        // Use selectable with selection state
+                        if (ImGui.Selectable($"{obj.GetType().Name}", isSelected))
+                        {
+                            isSelected = (Inspector.SelectedObject == obj);
+                            Inspector.SelectedObject = obj;
+                        }
+                        if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
                         {
                             Inspector.SelectedObject = obj;
                         }
+                        ImGui.PopID();
                     }
 
                     ImGui.TreePop(); // End layer tree
@@ -184,7 +222,7 @@ namespace Moonborne.Engine.UI
                     mousePosition.Y = ((int)(mousePosition.Y+(RoomEditor.CellSize / 2)) / RoomEditor.CellSize) * RoomEditor.CellSize;
 
                     ImGui.BeginTooltip();
-                    ImGui.SetTooltip($"{((GameObject)Inspector.SelectedObject).DisplayName}");
+                    ImGui.SetTooltip($"{((GameObject)Inspector.SelectedObject).Name}");
 
                     ImGui.EndTooltip();
                     GameObject gameObject = (GameObject)Inspector.SelectedObject;

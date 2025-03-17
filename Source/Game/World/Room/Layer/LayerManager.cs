@@ -129,6 +129,23 @@ namespace Moonborne.Game.Room
         }
 
         /// <summary>
+        /// Add to layer class
+        /// </summary>
+        /// <param name="gameObject"></param>
+        /// <param name="layer"></param>
+        public static void AddInstance(GameObject gameObject, Layer layer)
+        {
+            if (layer != null)
+            {
+                AddInstance(gameObject, layer.Name);
+            }
+            else
+            {
+                Console.WriteLine("Failed to add instance to layer");
+            }
+        }
+
+        /// <summary>
         /// Remove an object from the game
         /// </summary>
         /// <param name="obj"></param>
