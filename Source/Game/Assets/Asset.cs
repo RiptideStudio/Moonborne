@@ -9,9 +9,9 @@ namespace Moonborne.Game.Assets
     public abstract class Asset
     {
         public string Name;
-        public string Path;
         public string Folder;
-        public Type AssetType;
+        internal bool IsDraggable = false;
+        internal Type AssetType;
 
         /// <summary>
         /// Construct a new asset given a filename and path
@@ -23,12 +23,23 @@ namespace Moonborne.Game.Assets
         {
             Name = name;
             Folder = folder;
-            Path = "Assets/"+folder +"/"+ name;
+            AssetType = typeof(Asset);
         }
 
+        /// <summary>
+        /// For editable lists
+        /// </summary>
         public Asset()
         {
-            AssetType = GetType();
+
+        }
+
+        /// <summary>
+        /// Called after an asset is created
+        /// </summary>
+        public virtual void PostLoad()
+        {
+
         }
     }
 }

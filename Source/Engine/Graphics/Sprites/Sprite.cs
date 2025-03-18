@@ -14,8 +14,7 @@ namespace Moonborne.Graphics
 {
     public class Sprite : ObjectComponent
     {
-        [JsonIgnore]
-        public SpriteTexture Texture { get; set; }
+        internal override string Name => "Sprite 2D";
 
         public enum Axis
         {
@@ -23,6 +22,8 @@ namespace Moonborne.Graphics
             Vertical,
             None
         }
+
+        public SpriteTexture Texture = null;
         public bool Visible = true;
         public bool VisibleInGame = true;
         public int MaxFrames = 1;
@@ -37,26 +38,23 @@ namespace Moonborne.Graphics
 
         public SpriteEffects CustomSpriteEffect = SpriteEffects.None;
 
-        public override void Create()
-        {
-            Name = "Sprite";
-            Description = "Stores object's sprite and texture data";
-        }
-
-        public Sprite(GameObject parent) : base(parent)
-        {
-
-        }
-
         /// <summary>
         /// Constructor to create a new sprite
         /// </summary>
         /// <param name="texture"></param>
         /// <param name="position"></param>
-        public Sprite(SpriteTexture texture = null, GameObject parent = null) : base(parent)
+        public Sprite(SpriteTexture texture = null, GameObject parent = null) : base()
         {
             Texture = texture;
             Parent = parent;
+        }
+
+        /// <summary>
+        /// Default
+        /// </summary>
+        public Sprite() : base()
+        {
+            Description = "Stores object's sprite and texture data";
         }
 
         /// <summary>
@@ -141,24 +139,19 @@ namespace Moonborne.Graphics
             if (!GameManager.Paused && !VisibleInGame)
                 return;
 
-            // Update our hitbox if we are moving
-            Parent.Hitbox.X = Parent.HitboxXOffset + (int)Parent.Transform.Position.X - Parent.Hitbox.Width / 2;
-            Parent.Hitbox.Y = Parent.HitboxYOffset + (int)Parent.Transform.Position.Y - Parent.Hitbox.Height / 2;
+            Transform Transform = Parent.GetComponent<Transform>();
+
+            Parent.Hitbox.X = Parent.HitboxXOffset + (int)Transform.Position.X - Parent.Hitbox.Width / 2;
+            Parent.Hitbox.Y = Parent.HitboxYOffset + (int)Transform.Position.Y - Parent.Hitbox.Height / 2;
 
             Parent.Hitbox.Width = Texture.FrameWidth - Parent.HitboxWidthOffset;
             Parent.Hitbox.Height = Texture.FrameHeight - Parent.HitboxHeightOffset;
-            Parent.Hitbox.Height = (int)(Parent.Hitbox.Height*Parent.Transform.Scale.Y);
-            Parent.Hitbox.Width = (int)(Parent.Hitbox.Width * Parent.Transform.Scale.X);
+            Parent.Hitbox.Height = (int)(Parent.Hitbox.Height*Transform.Scale.Y);
+            Parent.Hitbox.Width = (int)(Parent.Hitbox.Width * Transform.Scale.X);
 
-            // Resort an object based on its layer's depth and Y Transform.Position
-            if (Parent.NeedsLayerSort)
-            {
-                Parent.Depth = LayerManager.NormalizeLayerDepth((int)Parent.Transform.Position.Y, 1, 99999999) - 0.0001f;
-                Parent.Depth = Math.Clamp(Parent.Depth, 0, 1);
-                LayerDepth = Parent.Depth;
-            }
+            LayerDepth = Parent.Depth;
 
-            DrawSprite(spriteBatch, Frame, Parent.Transform.Position + DrawOffset, Parent.Transform.Scale, Parent.Transform.Rotation, Color);
+            DrawSprite(spriteBatch, Frame, Transform.Position + DrawOffset, Transform.Scale, Transform.Rotation, Color);
         }
 
         /// <summary>

@@ -22,6 +22,7 @@ using Moonborne.Graphics.Window;
 using System.Text.Json;
 using Moonborne.Engine.FileSystem;
 using Newtonsoft.Json;
+using Moonborne.Game.Assets;
 
 namespace Moonborne.Engine.UI
 {
@@ -76,13 +77,25 @@ namespace Moonborne.Engine.UI
                 InputManager.SetMouseLocked(false);
             }
         }
+
+        /// <summary>
+        /// Load a prefab from a file
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
         public static Prefab LoadPrefab(string filePath)
         {
             string json = File.ReadAllText(filePath);
-            Prefab prefab = JsonConvert.DeserializeObject<Prefab>(json);
+
+            JsonSerializerSettings settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                Formatting = Formatting.Indented
+            };
+
+            Prefab prefab = JsonConvert.DeserializeObject<Prefab>(json, settings);
             Prefabs.Add(prefab);
             return prefab;
         }
-
     }
 }

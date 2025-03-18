@@ -87,7 +87,7 @@ namespace Moonborne.Game.Room
                      0,
                      Vector2.Zero,
                      SpriteEffects.None,
-                     Depth
+                     LayerManager.Layers[LayerName].NormalizedDepth
                  );
             }
         }

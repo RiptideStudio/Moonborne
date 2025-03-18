@@ -6,19 +6,15 @@ namespace Moonborne.Engine.Components
 {
     public class Transform : ObjectComponent
     {
+        internal override string Name => "Transform";
+
         public Vector2 Position;
         public Vector2 Scale = Vector2.One;
         public float Rotation;
         internal Vector2 OldPosition;
 
-        public Transform(GameObject parent) : base(parent)
+        public Transform() : base()
         {
-
-        }
-
-        public override void Create()
-        {
-            Name = "Transform";
             Description = "Stores object's transform data (position, scale, rotation)";
         }
 
@@ -30,6 +26,12 @@ namespace Moonborne.Engine.Components
         {
             // Update our position and velocity
             OldPosition = Position;
+
+            // Update our quick pointer
+            if (Parent != null)
+            {
+                Parent.Transform = this;
+            }
         }
     }
 }

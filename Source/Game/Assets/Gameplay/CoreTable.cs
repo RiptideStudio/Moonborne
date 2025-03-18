@@ -49,7 +49,6 @@ namespace Moonborne.Game.Gameplay
         {
             if (InventoryManager.HasItem(typeof(LunarCore), Cost))
             {
-                Player.Instance.Gun.Upgrade();
                 InventoryManager.RemoveItem(typeof(LunarCore), Cost);
             }
         }

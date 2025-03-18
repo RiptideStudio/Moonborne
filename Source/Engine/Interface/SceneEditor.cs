@@ -16,6 +16,7 @@ using Moonborne.Graphics;
 using Moonborne.Game.Objects.Prefabs;
 using Moonborne.Game.Gameplay;
 using Microsoft.Xna.Framework.Input;
+using Moonborne.Engine.Components;
 
 namespace Moonborne.Engine.UI
 {
@@ -196,11 +197,14 @@ namespace Moonborne.Engine.UI
                         ImGui.PushID(obj.GetHashCode()); // Use the hash code as the unique ID
 
                         // Use selectable with selection state
-                        if (ImGui.Selectable($"{obj.GetType().Name}", isSelected))
+                        if (ImGui.Selectable($"{obj.Name}", isSelected))
                         {
                             isSelected = (Inspector.SelectedObject == obj);
                             Inspector.SelectedObject = obj;
+                            Camera.TargetPosition = obj.GetComponent<Transform>().Position;
+                            Camera.Position = obj.GetComponent<Transform>().Position;
                         }
+
                         if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
                         {
                             Inspector.SelectedObject = obj;
@@ -226,7 +230,7 @@ namespace Moonborne.Engine.UI
 
                     ImGui.EndTooltip();
                     GameObject gameObject = (GameObject)Inspector.SelectedObject;
-                    gameObject.Transform.Position = mousePosition;
+                    gameObject.GetComponent<Transform>().Position = mousePosition;
                 }
             }
 

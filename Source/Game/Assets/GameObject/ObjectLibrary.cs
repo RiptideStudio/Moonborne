@@ -102,6 +102,7 @@ namespace Moonborne.Game.Objects
 
             // Create the object
             var obj = (GameObject)Activator.CreateInstance(type);
+            obj.AddComponent(obj.Transform = new Transform());
             obj.Transform.Position = position;
             obj.StartPosition = position;
             obj.NeedsLayerSort = true;

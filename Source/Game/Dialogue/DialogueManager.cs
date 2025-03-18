@@ -41,69 +41,19 @@ namespace Moonborne.UI.Dialogue
         public static Vector2 TextOffset { get; set; } = new Vector2(16,24);
         public static Dictionary<string, Dialogue> Dialogue { get; set; } = new Dictionary<string, Dialogue>(); // Keep track of dialogue
         public static Dialogue ActiveDialogue { get; set; }
-        public static NPC ActiveNPC { get; set; }
+        public static GameObject SpeakerObject { get; set; }
         public static Vector2 OriginalPosition { get; set; } = new Vector2(10, 100);
         public static Vector2 RootPosition { get; set; } = OriginalPosition;
         public static Vector2 TargetPosition { get; set; } = OriginalPosition;
         public static float AnimationInterpolation { get; set; } = 0.12f;
         public static GameObject DialogueObject;
+        private static float DialogueBoxAlpha = 0f;
 
         /// <summary>
         /// Create our dialogue object
         /// </summary>
         public static void InitializeLater()
         {
-            DialogueObject = new EmptyObject();
-            DialogueObject.SpriteIndex.Alpha = 0f;
-            LayerManager.AddInstance(DialogueObject, "Managers");
-        }
-
-        /// <summary>
-        /// Load all dialogue data on game start
-        /// </summary>
-        public static void LoadDialogue()
-        {
-            // Path to the raw Textures folder
-            string dialogueDirectory = "Content/Data/Dialogue";
-
-            if (!Directory.Exists(dialogueDirectory))
-            {
-                throw new DirectoryNotFoundException($"Textures directory not found at: {dialogueDirectory}");
-            }
-
-            // Retrieve every json file in the dialogue folder
-            string[] files = Directory.GetFiles(dialogueDirectory, "*.*", SearchOption.AllDirectories);
-
-            foreach (var file in files)
-            {
-                try
-                {
-                    // Only process hjson
-                    if (file.EndsWith(".hjson"))
-                    {
-                        // Deserialze the json object
-                        string hjson = File.ReadAllText(file);
-                        string json = HjsonValue.Parse(hjson).ToString();
-
-                        DialogueData dialogueData = JsonConvert.DeserializeObject<DialogueData>(json);
-
-                        // Create a new Dialogue object with the json data
-                        Dialogue dialogue = new Dialogue(dialogueData);
-                        string fileName = Path.GetFileName(file);
-                        string fileNameNoExtension = Path.GetFileNameWithoutExtension(file);
-                        dialogue.Name = fileNameNoExtension;
-
-                        // Add it to the Dialogue manager's list
-                        Dialogue.Add(fileName, dialogue);
-                    }
-                }
-                catch (Exception e)
-                {
-                    // Failed to load dialogue (usually issue with formatting json)
-                    Console.Write(e.ToString());
-                    throw new Exception("Error: Dialogue in " + file + " was invalid");
-                }
-            }
         }
 
         /// <summary>
@@ -126,27 +76,34 @@ namespace Moonborne.UI.Dialogue
             if (Open)
             {
                 WriteDialogue(dt);
+                DialogueBoxAlpha = 1;
             }
+            else
+            {
+                DialogueBoxAlpha = 0;
+            }
+
         }
 
         /// <summary>
         /// Start dialogue given a string that corresponds to the dialogue
         /// </summary>
         /// <param name="DialogueName"></param>
-        public static void StartDialogue(string DialogueName, NPC npc)
+        public static void StartDialogue(string DialogueName, GameObject npc)
         {
             // Update the active dialogue and set the first target text
             string filePath = DialogueName + ".hjson";
             ActiveDialogue = Dialogue[filePath];
             DisplayText = "";
-            TargetText = ActiveDialogue.Data.Text[0];
-            Speaker = ActiveDialogue.Data.Speaker;
-            ActiveNPC = npc;
+            TargetText = ActiveDialogue.Text[0];
+            Speaker = ActiveDialogue.Speaker;
             Open = true;
-            DialogueObject.AddAction(new FadeAction(0.75f), false, true);
-            if (ActiveNPC != null)
+
+            if (npc != null)
             {
-                ActiveNPC.StartTalking();
+                NPCBehavior npcBehavior = npc.GetComponent<NPCBehavior>();
+                SpeakerObject = npc;
+                npcBehavior.StartTalking();
             }
 
             ResetDialogue();
@@ -158,12 +115,11 @@ namespace Moonborne.UI.Dialogue
         public static void StopDialogue()
         {
             Open = false;
-            DialogueObject.AddAction(new FadeAction(0), false, true);
 
             // If this dialogue is linked to an NPC, set it's state back to idle
-            if (ActiveNPC != null)
+            if (SpeakerObject != null)
             {
-                ActiveNPC.StopTalking();
+                SpeakerObject.GetComponent<NPCBehavior>().StopTalking();
             }
 
             ResetDialogue();
@@ -174,7 +130,7 @@ namespace Moonborne.UI.Dialogue
         /// </summary>
         public static void SkipDialogue()
         {
-            if (ActiveDialogue.Data.Skip)
+            if (ActiveDialogue.Skip)
             {
                 StopDialogue();
             }
@@ -204,7 +160,7 @@ namespace Moonborne.UI.Dialogue
                 // If we have not finished updating our text, add the next character
                 TimeElapsed += dt;
 
-                int talkSpeed = ActiveDialogue.Data.TalkSpeed;
+                int talkSpeed = ActiveDialogue.TalkSpeed;
 
                 // Add the next character
                 if (TimeElapsed >= talkSpeed * dt)
@@ -237,7 +193,7 @@ namespace Moonborne.UI.Dialogue
         /// </summary>
         public static void AdvanceDialogue()
         {
-            if (LineIndex >= ActiveDialogue.Data.Text.Count-1)
+            if (LineIndex >= ActiveDialogue.Text.Count-1)
             {
                 // We are done with this dialogue
                 StopDialogue();
@@ -250,7 +206,7 @@ namespace Moonborne.UI.Dialogue
                 TimeElapsed = 0;
                 WaitingForNextLine = false;
                 DisplayText = "";
-                TargetText = ActiveDialogue.Data.Text[LineIndex];
+                TargetText = ActiveDialogue.Text[LineIndex];
             }
         }
 
@@ -260,10 +216,9 @@ namespace Moonborne.UI.Dialogue
         public static void DrawDialogueBox()
         {
             RootPosition = MoonMath.Lerp(RootPosition, TargetPosition, AnimationInterpolation);
-            SpriteManager.SetDrawAlpha(0.75f);
+            SpriteManager.SetDrawAlpha(DialogueBoxAlpha);
             SpriteManager.DrawRectangle(RootPosition, DialogueBoxWidth, DialogueBoxHeight, Color.Black);
 
-            SpriteManager.SetDrawAlpha(1f);
             SpriteManager.DrawText(Speaker, RootPosition+NameOffset, FontScale, 0, Color.Yellow);
             SpriteManager.DrawText(DisplayText, RootPosition+TextOffset, FontScale, 0, Color.White, DialogueBoxWidth-32);
             SpriteManager.ResetDraw();

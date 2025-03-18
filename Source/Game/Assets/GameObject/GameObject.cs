@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Force.DeepCloner;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.ImGui;
 using Moonborne.Engine;
@@ -33,8 +34,10 @@ namespace Moonborne.Game.Objects
     }
 
     [Serializable]
-    public abstract class GameObject
+    public abstract class GameObject : BaseGameBehavior, IComponentContainer
     {
+        public List<ObjectComponent> Components { get; private set; } = new List<ObjectComponent>();
+
         /// <summary>
         /// This represents a unique identifier for each object
         /// </summary>
@@ -45,9 +48,9 @@ namespace Moonborne.Game.Objects
         /// </summary>
         public string DisplayName { get; set; } = string.Empty;
 
-        public Sprite SpriteIndex;
-        public Transform Transform;
-        public Physics Physics;
+        internal Sprite SpriteIndex;
+        internal Transform Transform;
+        internal Physics Physics;
         public string Name;
 
         public Rectangle Hitbox = new Rectangle(0, 0, -1, -1);
@@ -55,12 +58,11 @@ namespace Moonborne.Game.Objects
         public bool IsStatic = false; // Static collisions don't get updated
         protected ECollisionState CollisionState = ECollisionState.None;
         public Color Tint = Color.White;
-        public int HitboxXOffset;
-        public int HitboxYOffset;
-        public int HitboxWidthOffset;
-        public int HitboxHeightOffset;
+        internal int HitboxXOffset;
+        internal int HitboxYOffset;
+        internal int HitboxWidthOffset;
+        internal int HitboxHeightOffset;
 
-        internal List<ObjectComponent> Components = new List<ObjectComponent>();
         internal List<GameAction> Actions = new List<GameAction>();
         internal List<GameAction> DeferredActions = new List<GameAction>();
         internal List<GameAction> ActionsToDestroy = new List<GameAction>();
@@ -79,30 +81,49 @@ namespace Moonborne.Game.Objects
         internal bool IsDirty = true;
 
         /// <summary>
+        /// Base constructor
+        /// </summary>
+        public GameObject()
+        {
+            Name = GetType().BaseType.Name;
+            Create();
+        }
+
+        /// <summary>
         /// Adds a component to this object
         /// </summary>
         /// <param name="component"></param>
         /// <returns></returns>
         public void AddComponent(ObjectComponent component)
         {
+            component.Parent = this;
+            component.Create();
             Components.Add(component);
         }
 
         /// <summary>
-        /// Base constructor
+        /// Remove a component
         /// </summary>
-        public GameObject()
+        /// <param name="component"></param>
+        public void RemoveComponent(ObjectComponent component)
         {
-            AddComponent(SpriteIndex = new Sprite(this));
-            AddComponent(Transform = new Transform(this));
-            Name = GetType().BaseType.Name;
-            Create();
+            Components.Remove(component);
+        }
+
+        /// <summary>
+        /// Get a component
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public T GetComponent<T>() where T : ObjectComponent
+        {
+            return Components.OfType<T>().FirstOrDefault();
         }
 
         /// <summary>
         /// Called when an object is created
         /// </summary>
-        public virtual void Create()
+        public override void Create()
         {
             InstanceID = MoonMath.RandomRange(0, 65535);
         }
@@ -119,7 +140,7 @@ namespace Moonborne.Game.Objects
         /// Called when an object is updated
         /// </summary>
         /// <param name="dt"></param>
-        public virtual void Update(float dt)
+        public override void Update(float dt)
         {
             // Update each component
             foreach (ObjectComponent component in Components)
@@ -177,11 +198,17 @@ namespace Moonborne.Game.Objects
         /// <summary>
         /// Called when an object is drawn. Draws base sprite by default
         /// </summary>
-        public virtual void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             // Draw each component
             foreach (ObjectComponent component in Components)
             {
+                // Do not draw components if they are invisible
+                if (!component.Visible || (!component.VisibleInGame && !GameManager.Paused))
+                {
+                    continue;
+                }
+
                 component.Draw(spriteBatch);
             }
 
@@ -239,12 +266,25 @@ namespace Moonborne.Game.Objects
             CollisionState = ECollisionState.None;
         }
 
-                /// <summary>
+        /// <summary>
         /// Marks an object for destruction
         /// </summary>
-        public void Destroy()
+        public override void Destroy()
         {
             IsDestroyed = true;
+        }
+
+        /// <summary>
+        /// Call all begin play for components and self
+        /// </summary>
+        public override void OnBeginPlay()
+        {
+            base.OnBeginPlay();
+
+            foreach (ObjectComponent component in Components)
+            {
+                component.OnBeginPlay();
+            }
         }
 
         /// <summary>
@@ -287,5 +327,6 @@ namespace Moonborne.Game.Objects
             return ((GameObject)(gameObject)).InstanceID;
         }
 
+       
     }
 }

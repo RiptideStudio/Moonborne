@@ -40,6 +40,7 @@ namespace Moonborne.Game.Room
         public int Height = 1; // Defines the heightmap of this layer
         public List<Tilemap> Tilemaps = new List<Tilemap>(); // Tiles on this layer
         public List<GameObject> Objects = new List<GameObject>(); // Objects on this layer
+        public float NormalizedDepth = 0;
 
         internal List<GameObject> ObjectsToCreate = new List<GameObject>();
         internal Matrix Transform => GetTransform(); // The matrix used to transform the layer

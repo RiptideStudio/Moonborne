@@ -19,6 +19,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json.Linq;
 using Moonborne.UI.Dialogue;
 using System.Collections;
+using Moonborne.Game.Objects.Prefabs;
+using System.ComponentModel;
+using System.Diagnostics.Metrics;
+using System.Xml.Linq;
+using Moonborne.Game.Assets;
 
 namespace Moonborne.Engine.UI
 {
@@ -30,32 +35,60 @@ namespace Moonborne.Engine.UI
         public static string WindowName = "Inspector";
         public static string SelectedKey = "";
         public static string SelectedItemTitle = "Inspector";
-        private static object cachedObj;
 
         private static void RenderFields(object obj)
         {
             if (obj == null) return;
+
             Type type = obj.GetType();
             ImGui.Separator();
             ImGui.NewLine();
 
-            foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance))
+            foreach (var member in type.GetMembers(BindingFlags.Public | BindingFlags.Instance))
             {
-                object value = field.GetValue(obj);
-                RenderField(obj, field, value);
+                object value = null;
+                MemberInfo memberInfo = member;
+
+                if (member is FieldInfo field)
+                {
+                    value = field.GetValue(obj);
+                }
+
+                RenderValue(obj, memberInfo, value);
             }
 
             ImGui.NewLine();
             ImGui.Separator();
         }
 
-        private static void RenderField(object obj, FieldInfo field, object value)
+        private static void SetValue(object obj, MemberInfo member, object newValue)
         {
-            string name = field.Name;
+            if (member is FieldInfo field)
+            {
+                field.SetValue(obj, newValue);
+            }
+            else if (member is PropertyInfo property)
+            {
+                if (property.CanWrite)
+                    property.SetValue(obj, newValue);
+            }
+        }
+
+        private static void RenderValue(object obj, MemberInfo member, object value)
+        {
+            string name = member.Name;
+
+            if (member is FieldInfo field)
+            {
+                if (field.FieldType == typeof(SpriteTexture))
+                {
+                    RenderTextureField(obj, member, ((Sprite)(obj)).Texture);
+                    return;
+                }
+            }
 
             if (value == null)
             {
-                ImGui.Text($"{name}: NULL");
                 return;
             }
 
@@ -64,25 +97,27 @@ namespace Moonborne.Engine.UI
             // Primitive Types
             if (valueType.IsPrimitive || value is decimal || value is string)
             {
-                if (value is int intValue) { if (ImGui.DragInt(name, ref intValue)) field.SetValue(obj, intValue); }
-                else if (value is float floatValue) { if (ImGui.DragFloat(name, ref floatValue, 0.1f)) field.SetValue(obj, floatValue); }
-                else if (value is double doubleValue) { float f = (float)doubleValue; if (ImGui.DragFloat(name, ref f)) field.SetValue(obj, (double)f); }
-                else if (value is bool boolValue) { if (ImGui.Checkbox(name, ref boolValue)) field.SetValue(obj, boolValue); }
+                if (value is int intValue) { if (ImGui.InputInt(name, ref intValue)) SetValue(obj, member, intValue); }
+                else if (value is float floatValue) { if (ImGui.InputFloat(name, ref floatValue, 0.1f)) SetValue(obj, member, floatValue); }
+                else if (value is bool boolValue) { if (ImGui.Checkbox(name, ref boolValue)) SetValue(obj, member, boolValue); }
                 else if (value is string strValue)
                 {
-                    // Convert string to a mutable buffer
                     byte[] buffer = new byte[256];
                     byte[] strBytes = System.Text.Encoding.UTF8.GetBytes(strValue);
                     Array.Copy(strBytes, buffer, Math.Min(strBytes.Length, buffer.Length - 1));
 
-                    // Editable text field
                     if (ImGui.InputText(name, buffer, (uint)buffer.Length))
                     {
-                        // Convert back to a C# string
-                        string newStr = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
-                        field.SetValue(obj, newStr);
+                        // Convert bytes to string properly
+                        string newStr = System.Text.Encoding.UTF8.GetString(buffer).Split('\0')[0];
+
+                        // Ensure null or empty string is handled safely
+                        newStr = string.IsNullOrWhiteSpace(newStr) ? "" : newStr;
+
+                        SetValue(obj, member, newStr);
                     }
                 }
+
                 return;
             }
 
@@ -90,45 +125,53 @@ namespace Moonborne.Engine.UI
             if (value is Vector2 xnaVector2)
             {
                 System.Numerics.Vector2 temp = new System.Numerics.Vector2(xnaVector2.X, xnaVector2.Y);
-                if (ImGui.DragFloat2(name, ref temp))
+                if (ImGui.InputFloat2(name, ref temp))
                 {
-                    field.SetValue(obj, new Vector2(temp.X, temp.Y));
+                    SetValue(obj, member, new Vector2(temp.X, temp.Y));
                 }
                 return;
             }
-            // Lists & Arrays
+
+            // Handle Lists
             if (typeof(IList).IsAssignableFrom(valueType))
             {
                 IList list = (IList)value;
-
-                // Check if it's a generic list
                 Type listType = valueType.IsGenericType ? valueType.GetGenericArguments()[0] : typeof(object);
 
                 if (ImGui.TreeNode($"{name} (List of {listType.Name})"))
                 {
-                    // Display all list elements
                     for (int i = 0; i < list.Count; i++)
                     {
                         if (ImGui.TreeNode($"{name}[{i}]"))
                         {
-                            RenderField(obj, field, list[i]); // Recursively render list elements
+                            RenderFields(list[i]);
 
-                            // Remove Button
                             if (ImGui.Button($"Remove##{name}{i}"))
                             {
                                 list.RemoveAt(i);
                                 ImGui.TreePop();
-                                break; // Avoid modifying list while iterating
+                                break;
                             }
 
                             ImGui.TreePop();
                         }
                     }
 
-                    // Add New Element Button
                     if (ImGui.Button($"Add New {listType.Name}##{name}"))
                     {
-                        object newInstance = Activator.CreateInstance(listType);
+                        object newInstance;
+
+                        if (listType == typeof(string))
+                            newInstance = string.Empty;
+                        else if (listType == typeof(int))
+                            newInstance = 0;
+                        else if (listType == typeof(float))
+                            newInstance = 0f;
+                        else if (listType == typeof(bool))
+                            newInstance = false;
+                        else
+                            newInstance = Activator.CreateInstance(listType);
+
                         list.Add(newInstance);
                     }
 
@@ -138,16 +181,49 @@ namespace Moonborne.Engine.UI
             }
 
 
-            // Custom Objects (Recurse)
-            if (valueType.IsClass)
+            // Nested classes
+            if (valueType.IsClass && valueType != typeof(string))
             {
-                if (ImGui.TreeNode(name))
+                if (ImGui.TreeNode(name)) // Expandable section for nested objects
                 {
-                    RenderFields(value);
+                    RenderFields(value); // Recursively render fields of the nested object
                     ImGui.TreePop();
                 }
+                return;
+            }
+
+        }
+
+        private static void RenderTextureField(object obj, MemberInfo member, SpriteTexture currentTexture)
+        {
+            // Button to open texture selection popup
+            if (ImGui.Button($"Select Texture##{member.Name}"))
+            {
+                ImGui.OpenPopup("TextureSelector");
+            }
+
+            // Show texture selection menu
+            if (ImGui.BeginPopup("TextureSelector"))
+            {
+                foreach (var tex in SpriteManager.textures) // Replace with your texture manager
+                {
+                    if (ImGui.Selectable(tex.Key))
+                    {
+                        SpriteTexture newSpriteTexture = SpriteManager.GetTexture(tex.Key);
+
+                        SetValue(obj, member, newSpriteTexture);
+                    }
+                }
+                ImGui.EndPopup();
+            }
+
+            // Display a preview image (if available)
+            if (currentTexture != null)
+            {
+                ImGui.Image(SpriteManager.GetImGuiTexture(currentTexture.Name), new System.Numerics.Vector2(64, 64));
             }
         }
+
 
         /// <summary>
         /// Deletes the currently selected object
@@ -164,15 +240,58 @@ namespace Moonborne.Engine.UI
         /// <summary>
         /// Draw the inspector
         /// </summary>
-        public static void Draw(string name="Inspector", object obj = null)
+        public static void Draw(string name = "Inspector", object obj = null)
         {
             if (obj == null)
                 return;
 
             ImGui.Begin(name);
-            ImGui.Text($"Editing {obj.GetType().Name}");
 
+            // Show the display name of the asset
+            if (obj is Asset asset)
+            {
+                ImGui.Text($"Editing {asset.Name}");
+            }
+            else
+            {
+                ImGui.Text($"Editing {obj.GetType().Name}");
+            }
+
+            // Draw the object's public fields
             RenderFields(obj);
+
+            // Draw the components
+            if (obj is IComponentContainer holder)
+            {
+                // Draw component
+                foreach (ObjectComponent component in holder.Components)
+                {
+                    if (ImGui.TreeNodeEx($"{component.Name}"))
+                    {
+                        RenderFields(component);
+                        ImGui.TreePop();
+                    }
+                }
+
+                // Button to add a new component
+                if (ImGui.Button("Add Component"))
+                {
+                    ImGui.OpenPopup("AddComponentPopup");
+                }
+
+                // Show popup for adding components
+                if (ImGui.BeginPopup("AddComponentPopup"))
+                {
+                    foreach (var componentType in ComponentRegistry.GetAllComponentTypes())
+                    {
+                        if (ImGui.MenuItem(componentType.Name))
+                        {
+                            holder.AddComponent(Activator.CreateInstance(componentType) as ObjectComponent);
+                        }
+                    }
+                    ImGui.EndPopup();
+                }
+            }
 
             ImGui.End();
         }

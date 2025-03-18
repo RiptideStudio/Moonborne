@@ -9,6 +9,7 @@ namespace Moonborne.Engine.Components
 {
     public class Physics : ObjectComponent
     {
+        internal override string Name => "Physics";
         public Vector2 Velocity { get; set; }
         public Vector2 Acceleration { get; set; } = Vector2.One;
 
@@ -18,7 +19,7 @@ namespace Moonborne.Engine.Components
         public float Gravity = 0f; 
         public float LinearFriction = 8;
         public float MaxSpeed = 1000;
-        public float Speed = 0;
+        public float Speed = 50;
 
         // Keep track of the axes we are moving on
         private int Haxis = 1;
@@ -28,17 +29,8 @@ namespace Moonborne.Engine.Components
         /// Default constructor
         /// </summary>
         /// <param name="parent"></param>
-        public Physics(GameObject parent) : base(parent)
+        public Physics() : base()
         {
-
-        }
-
-        /// <summary>
-        /// Initialize physics
-        /// </summary>
-        public override void Create()
-        {
-            Name = "Physics";
             Description = "Stores an object's physics data (velocity, acceleration, friction)";
         }
 
@@ -94,25 +86,27 @@ namespace Moonborne.Engine.Components
             else if (velocity.Y > 0)
                 Vaxis = 1;
 
-            Rectangle horizontalRect = new Rectangle((int)Parent.Transform.Position.X - Parent.Hitbox.Width / 2 + Haxis + (int)(velocity.X * dt), (int)Parent.Transform.Position.Y - Parent.Hitbox.Height / 2, Parent.Hitbox.Width, Parent.Hitbox.Height);
-            Rectangle verticalRect = new Rectangle((int)Parent.Transform.Position.X - Parent.Hitbox.Width / 2, (int)Parent.Transform.Position.Y - Parent.Hitbox.Height / 2 + Vaxis + (int)(velocity.Y * dt), Parent.Hitbox.Width, Parent.Hitbox.Height);
-            Vector2 finalPos = Parent.Transform.Position;
+            Transform Transform = Parent.GetComponent<Transform>();
 
-            if (CollisionHandler.CollidingWithTile(Parent.Transform.Position.X, Parent.Transform.Position.Y, horizontalRect))
+            Rectangle horizontalRect = new Rectangle((int)Transform.Position.X - Parent.Hitbox.Width / 2 + Haxis + (int)(velocity.X * dt), (int)Transform.Position.Y - Parent.Hitbox.Height / 2, Parent.Hitbox.Width, Parent.Hitbox.Height);
+            Rectangle verticalRect = new Rectangle((int)Transform.Position.X - Parent.Hitbox.Width / 2, (int)Transform.Position.Y - Parent.Hitbox.Height / 2 + Vaxis + (int)(velocity.Y * dt), Parent.Hitbox.Width, Parent.Hitbox.Height);
+            Vector2 finalPos = Transform.Position;
+
+            if (CollisionHandler.CollidingWithTile(Transform.Position.X, Transform.Position.Y, horizontalRect))
             {
                 velocity.X = 0;
-                finalPos.X = Parent.Hitbox.Width / 2 + (int)(Parent.Transform.Position.X / Parent.Hitbox.Width) * Parent.Hitbox.Width;
+                finalPos.X = Parent.Hitbox.Width / 2 + (int)(Transform.Position.X / Parent.Hitbox.Width) * Parent.Hitbox.Width;
             }
-            if (CollisionHandler.CollidingWithTile(Parent.Transform.Position.X, Parent.Transform.Position.Y, verticalRect))
+            if (CollisionHandler.CollidingWithTile(Transform.Position.X, Transform.Position.Y, verticalRect))
             {
                 velocity.Y = 0;
-                finalPos.Y = Parent.Hitbox.Height / 2 + (int)(Parent.Transform.Position.Y / Parent.Hitbox.Height) * Parent.Hitbox.Height;
+                finalPos.Y = Parent.Hitbox.Height / 2 + (int)(Transform.Position.Y / Parent.Hitbox.Height) * Parent.Hitbox.Height;
             }
 
             Velocity = velocity;
 
-            Parent.Transform.Position = finalPos;
-            Parent.Transform.Position += Velocity * dt;
+            Transform.Position = finalPos;
+            Transform.Position += Velocity * dt;
         }
 
         /// <summary>

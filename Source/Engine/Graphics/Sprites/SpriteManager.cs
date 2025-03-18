@@ -14,6 +14,7 @@ using Moonborne.Engine;
 using Moonborne.Engine.UI;
 using System.Linq;
 using Moonborne.Game.Objects;
+using Moonborne.Game.Assets;
 
 namespace Moonborne.Graphics
 {
@@ -93,7 +94,7 @@ namespace Moonborne.Graphics
                 IntPtr iconData = ImGuiManager.imGuiRenderer.BindTexture(texture);
 
                 // Create a new SpriteTexture instance
-                SpriteTexture sprite = new SpriteTexture()
+                SpriteTexture sprite = new SpriteTexture(textureName,"Sprites")
                 {
                     FrameWidth = texture.Width,
                     FrameHeight = texture.Height,
@@ -102,6 +103,9 @@ namespace Moonborne.Graphics
                     Icon = iconData,
                     Name = textureName
                 };
+
+                // Add to assets
+                AssetManager.Assets.Add(sprite);
 
                 // Store the texture and sprite in their respective dictionaries
                 ImGuiTextures[textureName] = iconData;
@@ -144,13 +148,24 @@ namespace Moonborne.Graphics
         /// <param name="sprite"></param>
         public static void DrawSprite(string spriteName, int frame, Vector2 position, Vector2 scale, float rotation, Color color)
         {
-/*            Sprite sprite = GetSprite(spriteName);
+            SpriteTexture sprite = GetTexture(spriteName);
 
             // Draw a sprite given parameters, and use UI positioning if defined as such
             if (sprite != null)
             {
-                // sprite.Draw(spriteBatch, frame, position, scale, rotation, color);
-            }*/
+                spriteBatch.Draw(sprite.Data, new Rectangle((int)position.X-sprite.TextureWidth/2,(int)position.Y,sprite.TextureWidth,sprite.TextureHeight), color);
+            }
+        }
+
+        /// <summary>
+        /// Draw a sprite texture directly
+        /// </summary>
+        /// <param name="sprite"></param>
+        /// <param name="frame"></param>
+        /// <param name="position"></param>
+        public static void DrawSprite(SpriteTexture sprite, int frame, Vector2 position)
+        {
+            DrawSprite(sprite.Name, frame, position, Vector2.One, 0f, Color.White);
         }
 
         /// Draw text with optional scale, rotation, and UI overlay handling.
@@ -168,7 +183,7 @@ namespace Moonborne.Graphics
 
             // Word-wrapping logic
             maxWidth -= (int)(scale.X*GameFont.MeasureString(" ").X);
-            string[] words = text.Split(' '); // Split text by spaces
+            string[] words = text.Split(' ');
             List<string> lines = new List<string>();
 
             string currentLine = "";
@@ -406,7 +421,12 @@ namespace Moonborne.Graphics
         /// <returns></returns>
         public static IntPtr GetImGuiTexture(string name)
         {
-            return ImGuiTextures.TryGetValue(name, out var sprite) ? sprite : ImGuiTextures["None"];
+            if (name == null || !textures.ContainsKey(name))
+            {
+                return ImGuiTextures["None"];
+            }
+
+            return ImGuiTextures.TryGetValue(name, out var texture) ? texture : IntPtr.Zero;
         }
 
         /// <summary>

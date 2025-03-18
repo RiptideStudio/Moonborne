@@ -54,7 +54,6 @@ namespace Moonborne
             ImGuiManager.Initialize(this, GraphicsDevice);
             WindowManager.Initialize(_graphics,this);
             AudioManager.Initialize();
-            DialogueManager.LoadDialogue();
             ConsoleEditor.Initialize();
             Window.TextInput += OnTextInput;
             base.Initialize();
@@ -71,7 +70,6 @@ namespace Moonborne
             spriteBatch = new SpriteBatch(GraphicsDevice);
             SpriteManager.LoadAllTextures();
             SpriteManager.spriteBatch = spriteBatch;
-            AssetManager.LoadAssets();
             InitializeLater();
         }
 
@@ -81,6 +79,7 @@ namespace Moonborne
             DialogueManager.InitializeLater();
             RoomEditor.Initialize();
             SettingsManager.Load();
+            AssetManager.LoadAssets();
             LayerManager.Initialize();
             GameManager.WorldState.LoadJsonIntoWorld();
             LayerManager.UpdateFrame(0);

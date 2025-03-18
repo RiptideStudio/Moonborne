@@ -62,12 +62,7 @@ namespace Moonborne.Engine
             // Iterate over each object and call their begin play function
             foreach (GameObject obj in LayerManager.Objects)
             {
-                Actor actor = obj as Actor;
-
-                if (actor != null)
-                {
-                    actor.OnBeginPlay();
-                }
+                obj.OnBeginPlay();
             }
         }
 

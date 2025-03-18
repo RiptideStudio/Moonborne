@@ -24,9 +24,7 @@ namespace Moonborne.Engine.UI
         /// </summary>
         public static void Draw()
         {
-            ImGui.Begin("");
-            ImGui.End();
-            ImGui.BeginMainMenuBar();
+            ImGui.Begin(WindowName);
 
             // Play/ Stop button
             string playButtonName = "Play";
@@ -42,6 +40,7 @@ namespace Moonborne.Engine.UI
             }
 
             // File menu options
+            ImGui.BeginGroup();
             if (ImGui.BeginMenu("File"))
             {
                 // Save Current room
@@ -107,7 +106,8 @@ namespace Moonborne.Engine.UI
 
                 ImGui.EndMenu();
             }
-            ImGui.EndMainMenuBar();
+            ImGui.EndGroup();
+            ImGui.End();
         }
 
         /// <summary>

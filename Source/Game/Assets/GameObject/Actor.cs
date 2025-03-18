@@ -91,7 +91,9 @@ namespace Moonborne.Game.Objects
         public override void Create()
         {
             base.Create();
-            AddComponent(Physics = new Physics(this));
+            AddComponent(Physics = new Physics());
+            AddComponent(SpriteIndex = new Sprite());
+            AddComponent(Transform = new Transform());
         }
 
         /// <summary>

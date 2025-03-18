@@ -21,6 +21,8 @@ using Moonborne.Game.Objects.Prefabs;
 using System.Xml.Linq;
 using Moonborne.Game.Gameplay;
 using Moonborne.Game.Assets;
+using Moonborne.Engine.Components;
+using Moonborne.UI.Dialogue;
 
 namespace Moonborne.Engine.UI
 {
@@ -39,22 +41,9 @@ namespace Moonborne.Engine.UI
             AssetManager.ShowAssetBrowser();
 
             // Handle actions for right clicking
-
-            // Display a list of all objects, and allow us to drag them into the game
-            var list = ObjectLibrary.GetAllGameObjectNames();
-
             if (ImGui.IsMouseClicked(ImGuiMouseButton.Right) && ImGui.IsWindowHovered())
             {
                 ImGui.OpenPopup("PrefabContextMenu");
-            }
-
-            // Click out of the prefab window
-            if (ImGui.IsWindowHovered())
-            {
-                if (ImGui.IsMouseClicked(ImGuiMouseButton.Left) || ImGui.IsMouseClicked(ImGuiMouseButton.Right))
-                {
-                    // Open prefab for edit
-                }
             }
 
             // Opt to create a new prefab
@@ -63,21 +52,34 @@ namespace Moonborne.Engine.UI
                 // Create a prefab
                 if (ImGui.MenuItem("Create Prefab"))
                 {
-                    Prefab prefab = new Prefab("Test", "Prefabs");
+                    Prefab prefab = new Prefab("GameObject", "Prefabs");
                     AssetManager.Assets.Add(prefab);
                     PrefabManager.Prefabs.Add(prefab);
+                    prefab.Components.Add(new Transform());
                 }
 
-                // Create a model
-                if (ImGui.MenuItem("Create Model"))
+                // Create a dialogue object
+                if (ImGui.MenuItem("Create Dialogue"))
                 {
-                    Prefab prefab = new Prefab("Tree", "Models");
-                    AssetManager.Assets.Add(prefab);
+                    Dialogue dialogue = new Dialogue("Dialogue_1", "Dialogue");
+                    AssetManager.Assets.Add(dialogue);
                 }
 
-                // Delete a prefab
-                if (ImGui.MenuItem("Delete Prefab"))
+                // Delete an asset
+                if (ImGui.MenuItem("Delete Asset"))
                 {
+                    AssetManager.Assets.Remove(AssetManager.SelectedAsset);
+                }
+                // Create a folder
+                if (ImGui.MenuItem("Create New Folder"))
+                {
+
+                }
+
+                // Delete a folder
+                if (ImGui.MenuItem("Delete Folder"))
+                {
+
                 }
                 ImGui.EndPopup();
             }

@@ -22,8 +22,6 @@ namespace Moonborne.Graphics.Camera
         public static Matrix TransformMatrix; // Transformation matrix
         public static GameObject Target { get; set; } // Target object to follow
 
-        public static int CameraWidth;
-        public static int CameraHeight;
         public static float ViewportScale = 1f;
 
         /// <summary>
@@ -54,12 +52,6 @@ namespace Moonborne.Graphics.Camera
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
-
-            CameraWidth = (int)(WindowManager.BaseViewportWidth * GameCameraScale * Transform.Scale.X);
-            CameraHeight = (int)(WindowManager.BaseViewportHeight * GameCameraScale * Transform.Scale.Y);
-
-            Rectangle outline = new Rectangle((int)Transform.Position.X - CameraWidth / 2, (int)Transform.Position.Y - CameraHeight / 2, CameraWidth, CameraHeight);
-            SpriteManager.DrawRectangle(outline, Color.White, true);
         }
 
         /// <summary>

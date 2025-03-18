@@ -78,12 +78,23 @@ namespace Moonborne.Game.Room
         }
 
         /// <summary>
-        /// Sort layers by depth
+        /// Sort layers by depth and normalize between 0 and 1
         /// </summary>
         public static void Sort()
         {
-            Layers = Layers.Values.OrderBy(layer => layer.Depth).ToDictionary(layer => layer.Name);
+            // Find the max depth to normalize
+            float maxDepth = 255f; // Max depth is explicitly set to 255
+
+            // Normalize and sort layers
+            Layers = Layers.Values
+                .OrderBy(layer => layer.Depth) // Sort by original depth
+                .ToDictionary(layer => layer.Name, layer =>
+                {
+                    layer.NormalizedDepth = layer.Depth / maxDepth;
+                    return layer;
+                });
         }
+
 
         /// <summary>
         /// Add a tilemap layer

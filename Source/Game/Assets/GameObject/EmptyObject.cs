@@ -3,13 +3,11 @@ using Moonborne.Graphics;
 
 namespace Moonborne.Game.Gameplay
 {
-    public class EmptyObject : Actor
+    public class EmptyObject : GameObject
     {
         public override void Create()
         {
             base.Create();
-            SpriteIndex.Texture = SpriteManager.GetTexture("QuestionMark");
-            SpriteIndex.VisibleInGame = false;
         }
     }
 }

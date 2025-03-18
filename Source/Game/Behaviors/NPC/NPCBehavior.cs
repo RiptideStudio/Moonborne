@@ -14,6 +14,8 @@ using Moonborne.Utils.Math;
 using System.Collections.Generic;
 using System;
 using Microsoft.Xna.Framework.Graphics;
+using Moonborne.Game.Behavior;
+using Moonborne.Engine.Components;
 
 namespace Moonborne.Game.Objects
 {
@@ -29,24 +31,28 @@ namespace Moonborne.Game.Objects
         Attack
     }
 
-    public class NPC : Lifeform
+    public class NPCBehavior : GameBehavior
     {
-        public Gun Gun;
-        public List<Dialogue> DialogueObjects = new List<Dialogue>();
-        public GameObject Target;
+        internal override string Name => "NPC Behavior";
 
-        public bool CanInteract = true; // Default, we can interact
+        public GameObject Target;
+        public List<Dialogue> DialogueObjects = new List<Dialogue>();
+
+        public bool CanInteract = true;
         public bool CanTalk = false; 
+        public bool Friendly = true; 
         public float AggroDistance = 100f;
         public float WanderDistance = 80f;
         public int WanderTimeMin = 120;
         public int WanderTimeMax = 180;
+        public float InteractDistance = 32f;
 
         private int WanderTime = 150;
         private Vector2 WanderPosition = Vector2.One;
         private float ElapsedTime = 0;
-        private State PreviousState = State.Idle;
-        private int DialogueState = 0; // Allows us to cycle through dialogue
+        private State State = State.Idle;
+        private int DialogueState = 0;
+        private bool InteractingWith = false;
 
         /// <summary>
         /// Extend the update method 
@@ -75,6 +81,26 @@ namespace Moonborne.Game.Objects
                     Talking();
                     break;
             }
+
+            // If we can interact with this NPC
+            if (CanInteract)
+            {
+                float distance = MoonMath.Distance(Parent.Transform.Position, Player.Instance.Transform.Position);
+
+                if (distance < InteractDistance)
+                {
+                    if (InputManager.KeyTriggered(Keys.E))
+                    {
+                        OnInteract();
+                        InteractingWith = !InteractingWith;
+                    }
+                }
+                else if (InteractingWith)
+                {
+                    LeaveInteract();
+                    InteractingWith = false;
+                }
+            }
         }
 
         /// <summary>
@@ -83,20 +109,6 @@ namespace Moonborne.Game.Objects
         public override void Create()
         {
             base.Create();
-            WanderPosition = Transform.Position;
-            Friendly = false;
-            Interactable = true;
-            Physics.Speed = 33;
-
-            SetSprite("NpcIdleLeft", 16, 16, State.Idle, Direction.Left);
-            SetSprite("NpcIdleRight", 16, 16, State.Idle, Direction.Right);
-            SetSprite("NpcIdleDown", 16, 16, State.Idle, Direction.Down);
-            SetSprite("NpcIdleUp", 16, 16, State.Idle, Direction.Up);
-
-            SetSprite("PlayerWalkLeft", 16, 16, State.Wander, Direction.Left);
-            SetSprite("PlayerWalkRight", 16, 16, State.Wander, Direction.Right);
-            SetSprite("PlayerWalkDown", 16, 16, State.Wander, Direction.Down);
-            SetSprite("PlayerWalkUp", 16, 16, State.Wander, Direction.Up);
         }
 
         /// <summary>
@@ -114,12 +126,12 @@ namespace Moonborne.Game.Objects
 
                 float angle = MoonMath.RandomRange(0f, 2*MathF.PI);
                 Vector2 randomDir = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-                WanderPosition = Transform.Position + randomDir * 48;
+                WanderPosition = Parent.Transform.Position + randomDir * 48;
 
                 // Return back to our original spawn
-                if (MoonMath.Distance(StartPosition,WanderPosition) >= WanderDistance)
+                if (MoonMath.Distance(Parent.StartPosition,WanderPosition) >= WanderDistance)
                 {
-                    WanderPosition = StartPosition;
+                    WanderPosition = Parent.StartPosition;
                 }
 
                 State = State.Wander;
@@ -141,7 +153,7 @@ namespace Moonborne.Game.Objects
         /// <param name="dt"></param>
         public virtual void Wander(float dt)
         {
-            float distanceToTarget = MoonMath.Distance(Transform.Position, WanderPosition);
+            float distanceToTarget = MoonMath.Distance(Parent.Transform.Position, WanderPosition);
             ElapsedTime += dt;
 
             if (ElapsedTime > WanderTime * dt)
@@ -149,6 +161,8 @@ namespace Moonborne.Game.Objects
                 ElapsedTime = 0;
                 State = State.Idle;
             }
+
+            Physics Physics = Parent.GetComponent<Physics>();
 
             if (distanceToTarget <= Physics.Velocity.Length())
             {
@@ -159,7 +173,7 @@ namespace Moonborne.Game.Objects
             else
             {
                 // Walk to target position
-                Vector2 targetDirection = MoonMath.Direction(Transform.Position, WanderPosition);
+                Vector2 targetDirection = MoonMath.Direction(Parent.Transform.Position, WanderPosition);
                 targetDirection.Normalize();
                 Physics.Velocity = targetDirection * Physics.Speed;
             }
@@ -172,8 +186,10 @@ namespace Moonborne.Game.Objects
         {
             if (Target != null && !Friendly)
             {
+                Physics Physics = Parent.GetComponent<Physics>();
+
                 Target = Player.Instance;
-                Vector2 targetDirection = Target.Transform.Position - Transform.Position;
+                Vector2 targetDirection = Target.Transform.Position - Parent.Transform.Position;
                 targetDirection.Normalize();
                 Physics.Velocity = targetDirection * Physics.Speed;
             }
@@ -184,15 +200,15 @@ namespace Moonborne.Game.Objects
         /// </summary>
         public virtual void Talking()
         {
-            // Talk to NPC
         }
 
-        public override void LeaveInteract()
+        /// <summary>
+        /// When we leave an interaction
+        /// </summary>
+        public virtual void LeaveInteract()
         {
-            base.LeaveInteract();
-
             // Stop dialogue if we walk away
-            float playerDistance = MoonMath.Distance(Transform.Position, Player.Instance.Transform.Position);
+            float playerDistance = MoonMath.Distance(Parent.Transform.Position, Player.Instance.Transform.Position);
 
             if (playerDistance >= InteractDistance)
             {
@@ -203,12 +219,10 @@ namespace Moonborne.Game.Objects
         /// <summary>
         /// Called when an NPC is talked to
         /// </summary>
-        public override void OnInteract()
+        public virtual void OnInteract()
         {
-            base.OnInteract();
-
             // Some NPCs don't have dialogue. In this case, do nothing
-            if (DialogueObjects.Count == 0 || DialogueState >= DialogueObjects.Count)
+            if (DialogueObjects.Count <= 0 || DialogueState >= DialogueObjects.Count)
             {
                 return;
             }
@@ -218,7 +232,7 @@ namespace Moonborne.Game.Objects
             {
                 // Start dialogue
                 string dialogue = DialogueObjects[DialogueState].Name;
-                DialogueManager.StartDialogue(dialogue,this);
+                DialogueManager.StartDialogue(dialogue,Parent);
             }
             else
             {
@@ -238,6 +252,7 @@ namespace Moonborne.Game.Objects
             DialogueState++;
             DialogueState = Math.Clamp(DialogueState, 0, DialogueObjects.Count - 1);
             ElapsedTime = 0;
+            InteractingWith = false;
         }        
         
         /// <summary>

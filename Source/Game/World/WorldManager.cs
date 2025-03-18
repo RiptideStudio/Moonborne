@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Moonborne.Engine.Components;
 using Moonborne.Game.Objects;
 using Moonborne.Game.Room;
 using Newtonsoft.Json;
@@ -71,6 +72,11 @@ public class WorldState
                 {
                     obj.Layer = layer;
                     LayerManager.Objects.Add(obj);
+
+                    foreach (ObjectComponent comp in obj.Components)
+                    {
+                        comp.Parent = obj;
+                    }
                 }
             }
 
