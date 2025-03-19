@@ -223,15 +223,13 @@ namespace Moonborne.Game.Objects
         {
             // Some NPCs don't have dialogue. In this case, do nothing
             if (DialogueObjects.Count <= 0 || DialogueState >= DialogueObjects.Count)
-            {
                 return;
-            }
 
             // Attempt to start dialogue
             if (!DialogueManager.Open)
             {
                 // Start dialogue
-                string dialogue = DialogueObjects[DialogueState].Name;
+                Dialogue dialogue = DialogueObjects[DialogueState];
                 DialogueManager.StartDialogue(dialogue,Parent);
             }
             else

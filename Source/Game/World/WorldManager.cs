@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using Moonborne.Engine.Components;
+using Moonborne.Game.Assets;
 using Moonborne.Game.Objects;
 using Moonborne.Game.Room;
 using Newtonsoft.Json;
@@ -25,6 +28,7 @@ public class WorldState
                 TypeNameHandling = TypeNameHandling.All,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
+
             File.WriteAllText(path, json);
             Console.WriteLine("Game world saved successfully!");
         }
@@ -38,7 +42,7 @@ public class WorldState
     /// Load the world again
     /// </summary>
     /// <param name="path"></param>
-    public void LoadJsonIntoWorld(string path = @"Content/World/WorldData.json")
+    public void LoadJsonIntoWorld(string path = @"Content/World/")
     {
         if (!File.Exists(path))
         {
@@ -53,6 +57,7 @@ public class WorldState
                 TypeNameHandling = TypeNameHandling.All,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
+
 
             // Clear existing layers
             LayerManager.Layers.Clear();
@@ -76,10 +81,11 @@ public class WorldState
                     foreach (ObjectComponent comp in obj.Components)
                     {
                         comp.Parent = obj;
+                        ResolveAssetReferences(comp);
                     }
+                    ResolveAssetReferences(obj);
                 }
             }
-
             Console.WriteLine($"Loaded world from {path} successfully!");
         }
         catch (Exception ex)
@@ -87,4 +93,65 @@ public class WorldState
             Console.WriteLine($"Error loading world from {path}: " + ex);
         }
     }
+
+    /// <summary>
+    /// Update all asset references saved in objects
+    /// </summary>
+    /// <param name="obj"></param>
+    private static void ResolveAssetReferences(object obj)
+    {
+        if (obj == null) return;
+
+        Type objType = obj.GetType();
+        foreach (var field in objType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+        {
+            object fieldValue = field.GetValue(obj);
+
+            if (fieldValue is Asset assetValue)
+            {
+                // Replace outdated asset with the latest one from the registry
+                Asset updatedAsset = AssetManager.GetAsset(assetValue.Folder, assetValue.Name);
+                if (updatedAsset != null)
+                {
+                    field.SetValue(obj, updatedAsset);
+                }
+            }
+            else if (fieldValue is IList list)
+            {
+                // Loop through lists and update any asset references inside
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (list[i] is Asset assetItem)
+                    {
+                        Asset updatedAsset = AssetManager.GetAsset(assetItem.Folder, assetItem.Name);
+                        if (updatedAsset != null)
+                        {
+                            list[i] = updatedAsset;
+                        }
+                    }
+                }
+            }
+            else if (fieldValue is IDictionary dictionary)
+            {
+                // Loop through dictionaries and update any asset values
+                foreach (var key in dictionary.Keys)
+                {
+                    if (dictionary[key] is Asset assetItem)
+                    {
+                        Asset updatedAsset = AssetManager.GetAsset(assetItem.Folder, assetItem.Name);
+                        if (updatedAsset != null)
+                        {
+                            dictionary[key] = updatedAsset;
+                        }
+                    }
+                }
+            }
+            else if (fieldValue != null && fieldValue.GetType().IsClass)
+            {
+                // Recursively process nested objects
+                ResolveAssetReferences(fieldValue);
+            }
+        }
+    }
+
 }

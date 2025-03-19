@@ -20,11 +20,11 @@ namespace Moonborne.UI.Dialogue
         public Dialogue(string Name, string Folder) : base(Name, Folder)
         {
             AssetType = typeof(Dialogue);
+            Text.Add("Lorem Ipsum");
         }
 
         public Dialogue()
         {
-
         }
 
         public string Speaker = "You";

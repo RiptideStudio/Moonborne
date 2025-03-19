@@ -423,7 +423,7 @@ namespace Moonborne.Graphics
         {
             if (name == null || !textures.ContainsKey(name))
             {
-                return ImGuiTextures["None"];
+                return ImGuiTextures["FileIcon"];
             }
 
             return ImGuiTextures.TryGetValue(name, out var texture) ? texture : IntPtr.Zero;

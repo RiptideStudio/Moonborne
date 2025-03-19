@@ -36,10 +36,9 @@ namespace Moonborne.UI.Dialogue
         public static string DisplayText { get; set; } = ""; // The text that is currently being displayed on the screen
         public static string TargetText { get; set; } = ""; // The text that is currently being displayed on the screen
         public static string Speaker { get; set; } = "";
-        public static Vector2 FontScale { get; set; } = new Vector2(1,1);
+        public static Vector2 FontScale { get; set; } = new Vector2(0.75f,0.75f);
         public static Vector2 NameOffset { get; set; } = new Vector2(16,8);
         public static Vector2 TextOffset { get; set; } = new Vector2(16,24);
-        public static Dictionary<string, Dialogue> Dialogue { get; set; } = new Dictionary<string, Dialogue>(); // Keep track of dialogue
         public static Dialogue ActiveDialogue { get; set; }
         public static GameObject SpeakerObject { get; set; }
         public static Vector2 OriginalPosition { get; set; } = new Vector2(10, 100);
@@ -89,16 +88,18 @@ namespace Moonborne.UI.Dialogue
         /// Start dialogue given a string that corresponds to the dialogue
         /// </summary>
         /// <param name="DialogueName"></param>
-        public static void StartDialogue(string DialogueName, GameObject npc)
+        public static void StartDialogue(Dialogue dialog, GameObject npc)
         {
-            // Update the active dialogue and set the first target text
-            string filePath = DialogueName + ".hjson";
-            ActiveDialogue = Dialogue[filePath];
+            if (dialog == null || dialog.Text.Count == 0)
+                return;
+
+            ActiveDialogue = dialog;
             DisplayText = "";
             TargetText = ActiveDialogue.Text[0];
             Speaker = ActiveDialogue.Speaker;
             Open = true;
 
+            // If this dialogue is attached to an NPC, set that to be our speaker
             if (npc != null)
             {
                 NPCBehavior npcBehavior = npc.GetComponent<NPCBehavior>();

@@ -35,6 +35,7 @@ namespace Moonborne.Engine.UI
         public static string WindowName = "Inspector";
         public static string SelectedKey = "";
         public static string SelectedItemTitle = "Inspector";
+        private static ObjectComponent SelectedComponent = null;
 
         private static void RenderFields(object obj)
         {
@@ -142,26 +143,78 @@ namespace Moonborne.Engine.UI
                 {
                     for (int i = 0; i < list.Count; i++)
                     {
-                        if (ImGui.TreeNode($"{name}[{i}]"))
+                        if (listType == typeof(string))
                         {
-                            RenderFields(list[i]);
+                            // Ensure the string is not null before displaying
+                            string strValue = list[i] as string ?? "";
 
-                            if (ImGui.Button($"Remove##{name}{i}"))
+                            // Create a buffer for ImGui text input
+                            byte[] buffer = new byte[256];
+                            byte[] strBytes = System.Text.Encoding.UTF8.GetBytes(strValue);
+                            Array.Copy(strBytes, buffer, Math.Min(strBytes.Length, buffer.Length - 1));
+
+                            ImGui.Text($"Element [{i}]");
+                            ImGui.SameLine();
+
+                            if (ImGui.InputText($"##StringInput{name}{i}", buffer, (uint)buffer.Length))
                             {
-                                list.RemoveAt(i);
-                                ImGui.TreePop();
-                                break;
-                            }
+                                string newStr = System.Text.Encoding.UTF8.GetString(buffer).Split('\0')[0];
 
-                            ImGui.TreePop();
+                                // Ensure null or empty string is handled safely
+                                newStr = string.IsNullOrWhiteSpace(newStr) ? "" : newStr;
+
+                                // Explicitly update the list item
+                                list[i] = newStr;
+                            }
+                        }
+                        else if (typeof(Asset).IsAssignableFrom(listType))
+                        {
+                            Asset currentAsset = list[i] as Asset;
+                            List<Asset> validAssets = AssetManager.Assets.Where(asset => listType.IsAssignableFrom(asset.GetType())).ToList();
+
+                            ImGui.Text($"Element [{i}]");
+                            ImGui.SameLine();
+
+                            // Display a dropdown or selection UI for assets
+                            if (ImGui.BeginCombo($"##AssetSelection{name}{i}", currentAsset?.Name ?? "None"))
+                            {
+                                foreach (Asset asset in validAssets)
+                                {
+                                    bool isSelected = asset == currentAsset;
+                                    if (ImGui.Selectable(asset.Name, isSelected))
+                                    {
+                                        list[i] = asset; // Assign selected asset
+                                    }
+                                    if (isSelected)
+                                        ImGui.SetItemDefaultFocus();
+                                }
+                                ImGui.EndCombo();
+                            }
+                        }
+                        else
+                        {
+                            // Render normal fields
+                            RenderFields(list[i]);
+                        }
+
+                        ImGui.SameLine();
+                        if (ImGui.Button($"X##{name}{i}"))
+                        {
+                            list.RemoveAt(i);
+                            i--;
                         }
                     }
 
-                    if (ImGui.Button($"Add New {listType.Name}##{name}"))
+                    // Add new item button
+                    if (ImGui.Button($"Add {listType.Name}##{name}"))
                     {
                         object newInstance;
 
-                        if (listType == typeof(string))
+                        if (typeof(Asset).IsAssignableFrom(listType))
+                        {
+                            newInstance = null; // Allow setting to null initially
+                        }
+                        else if (listType == typeof(string))
                             newInstance = string.Empty;
                         else if (listType == typeof(int))
                             newInstance = 0;
@@ -179,6 +232,7 @@ namespace Moonborne.Engine.UI
                 }
                 return;
             }
+
 
 
             // Nested classes
@@ -266,11 +320,25 @@ namespace Moonborne.Engine.UI
                 // Draw component
                 foreach (ObjectComponent component in holder.Components)
                 {
+                    ImGui.PushID(component.GetHashCode());
+
                     if (ImGui.TreeNodeEx($"{component.Name}"))
                     {
                         RenderFields(component);
                         ImGui.TreePop();
                     }
+
+                    // Right-click context menu for deleting the component
+                    if (ImGui.BeginPopupContextItem("DeleteComponentPopup"))
+                    {
+                        if (ImGui.MenuItem("Remove Component"))
+                        {
+                            holder.RemoveComponent(component);
+                            break;
+                        }
+                        ImGui.EndPopup();
+                    }
+                    ImGui.PopID(); // Restore ID state
                 }
 
                 // Button to add a new component

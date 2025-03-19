@@ -24,8 +24,6 @@ namespace Moonborne.Graphics
         }
 
         public SpriteTexture Texture = null;
-        public bool Visible = true;
-        public bool VisibleInGame = true;
         public int MaxFrames = 1;
         public int AnimationSpeed = 10;
         public float Alpha = 1f;

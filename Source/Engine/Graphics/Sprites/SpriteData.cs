@@ -15,7 +15,7 @@ namespace Moonborne.Graphics
         public int MaxFrames = 1;
 
         [JsonIgnore]
-        public IntPtr Icon;
+        public IntPtr Icon = IntPtr.Zero;
 
         [JsonIgnore]
         public Texture2D Data;

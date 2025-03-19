@@ -7,6 +7,7 @@ using MonoGame.Extended.Collisions.Layers;
 using MonoGame.Extended.Tiled;
 using Moonborne.Engine.Components;
 using Moonborne.Engine.UI;
+using Moonborne.Game.Assets;
 using Moonborne.Game.Objects;
 using Moonborne.Game.Objects.Prefabs;
 using Moonborne.Graphics;
@@ -21,9 +22,17 @@ using System.Text.Json.Nodes;
 
 namespace Moonborne.Game.Room
 {
-    public class Room
+    public class Room : Asset
     {
-        public string Name { get; set; } = "Room";
+        public Room(string Name, string Folder) : base(Name, Folder) 
+        {
+
+        }
+
+        public Room()
+        {
+
+        }
 
         /// <summary>
         /// Save a room to a json file made of multiple tilemaps

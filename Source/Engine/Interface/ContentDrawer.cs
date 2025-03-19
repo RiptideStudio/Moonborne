@@ -65,6 +65,13 @@ namespace Moonborne.Engine.UI
                     AssetManager.Assets.Add(dialogue);
                 }
 
+                // Create rooms
+                if (ImGui.MenuItem("Create Room"))
+                {
+                    Room rm = new Room("Room_1", "Rooms");
+                    AssetManager.Assets.Add(rm);
+                }
+
                 // Delete an asset
                 if (ImGui.MenuItem("Delete Asset"))
                 {

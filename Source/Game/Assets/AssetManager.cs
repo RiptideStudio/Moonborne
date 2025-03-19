@@ -99,6 +99,7 @@ namespace Moonborne.Game.Assets
                         assetIcon = texture.Icon;          
                     }
 
+
                     if (ImGui.ImageButton(asset.Name, assetIcon, finalSize))
                     {
                         SelectAsset(asset);
@@ -245,6 +246,8 @@ namespace Moonborne.Game.Assets
             };
 
             T obj = JsonConvert.DeserializeObject<T>(json, settings);
+
+
             return obj;
         }
 
@@ -280,5 +283,20 @@ namespace Moonborne.Game.Assets
 
             Console.WriteLine("Assets saved!");
         }
+
+        /// <summary>
+        /// Get an asset 
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static Asset GetAsset(string folder, string name)
+        {
+            return Assets.FirstOrDefault(asset =>
+                asset.Folder.Equals(folder, StringComparison.OrdinalIgnoreCase) &&
+                asset.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
+
+
     }
 }
