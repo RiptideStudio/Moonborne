@@ -81,7 +81,7 @@ namespace Moonborne
             SettingsManager.Load();
             AssetManager.LoadAssets();
             LayerManager.Initialize();
-            GameManager.WorldState.LoadJsonIntoWorld();
+            RoomManager.LoadRoom("rm_village");
             LayerManager.UpdateFrame(0);
 
             Window.Title = "Moonborne Engine";

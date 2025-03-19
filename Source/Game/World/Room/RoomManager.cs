@@ -6,6 +6,7 @@ using MonoGame.Extended.Tiled.Renderers;
 using Moonborne.Engine.Components;
 using Moonborne.Engine.FileSystem;
 using Moonborne.Engine.UI;
+using Moonborne.Game.Assets;
 using Moonborne.Game.Objects;
 using Moonborne.UI.Dialogue;
 using System;
@@ -22,6 +23,20 @@ namespace Moonborne.Game.Room
         public static Room CurrentRoom;
         public static Dictionary<string, Room> Rooms = new Dictionary<string, Room>();
         public static int TempIteration = 0;
+
+        /// <summary>
+        /// Load a room given a name
+        /// </summary>
+        /// <param name="roomName"></param>
+        public static void LoadRoom(string roomName)
+        {
+            Room room = AssetManager.GetAsset<Room>(roomName);
+
+            if (room != null)
+            {
+                room.Load();
+            }
+        }
 
         /// <summary>
         /// Save a snapshot the current room

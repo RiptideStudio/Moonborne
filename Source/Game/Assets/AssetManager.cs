@@ -99,10 +99,13 @@ namespace Moonborne.Game.Assets
                         assetIcon = texture.Icon;          
                     }
 
-
                     if (ImGui.ImageButton(asset.Name, assetIcon, finalSize))
                     {
                         SelectAsset(asset);
+                    }
+                    if (ImGui.IsItemHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+                    {
+                        asset.OnDoubleClick();
                     }
 
                     ImGui.PopStyleColor(3);
@@ -298,6 +301,18 @@ namespace Moonborne.Game.Assets
                 asset.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
 
-
+        /// <summary>
+        /// Get an asset of a type
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static T GetAsset<T>(string name) where T : Asset
+        {
+            return Assets
+                .OfType<T>()
+                .FirstOrDefault(asset =>
+                    asset.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
     }
 }

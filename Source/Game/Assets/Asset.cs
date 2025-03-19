@@ -41,5 +41,13 @@ namespace Moonborne.Game.Assets
         {
 
         }
+
+        /// <summary>
+        /// Called when an asset gets double clicked (e.g, open world)
+        /// </summary>
+        public virtual void OnDoubleClick()
+        {
+
+        }
     }
 }

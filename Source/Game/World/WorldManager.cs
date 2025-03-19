@@ -17,7 +17,7 @@ public class WorldState
     /// Save the world
     /// </summary>
     /// <param name="path"></param>
-    public void SaveJson(string path = @"Content/World/WorldData.json")
+    public void SaveJson()
     {
         try
         {
@@ -29,6 +29,7 @@ public class WorldState
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
 
+            string path = $@"Content/World/{RoomEditor.CurrentRoom.Name}.json";
             File.WriteAllText(path, json);
             Console.WriteLine("Game world saved successfully!");
         }
@@ -42,11 +43,13 @@ public class WorldState
     /// Load the world again
     /// </summary>
     /// <param name="path"></param>
-    public void LoadJsonIntoWorld(string path = @"Content/World/")
+    public void LoadJsonIntoWorld(string worldName, string path = @"Content/World/")
     {
+        path += worldName + ".json";
+
         if (!File.Exists(path))
         {
-            Console.WriteLine("Save file not found. Loading empty world.");
+            Console.WriteLine("Save file not found.");
             return;
         }
         try
@@ -83,9 +86,9 @@ public class WorldState
                         comp.Parent = obj;
                         ResolveAssetReferences(comp);
                     }
-                    ResolveAssetReferences(obj);
                 }
             }
+
             Console.WriteLine($"Loaded world from {path} successfully!");
         }
         catch (Exception ex)

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using Moonborne.Input;
 using Moonborne.Engine.UI;
 using System;
+using Moonborne.Engine.Graphics.Lighting;
 
 namespace Moonborne.Graphics
 {
@@ -13,9 +14,11 @@ namespace Moonborne.Graphics
         public static ContentManager content;
         public static GraphicsDevice graphicsDevice;
         public static GraphicsDeviceManager graphics;
+        public static LightManager lightManager;
         public static MGame game;
 
         public static float TargetFrameRate = 1.0f / 60.0f;
+
 
         /// <summary>
         /// Set up our graphics manager, and set our base window height
@@ -29,6 +32,7 @@ namespace Moonborne.Graphics
             graphicsDevice = device;
             graphics = graphics_;
             game = game_;
+            lightManager = new LightManager(graphicsDevice);
 
             SetTargetFramerate(TargetFrameRate);
         }

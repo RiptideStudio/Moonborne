@@ -83,7 +83,7 @@ namespace Moonborne.Engine.UI
             {
                 if (field.FieldType == typeof(SpriteTexture))
                 {
-                    RenderTextureField(obj, member, ((Sprite)(obj)).Texture);
+                    RenderTextureField(obj, member, ((SpriteTexture)value));
                     return;
                 }
             }

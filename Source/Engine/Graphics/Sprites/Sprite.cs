@@ -64,8 +64,8 @@ namespace Moonborne.Graphics
             {
                 case Axis.Horizontal:
                     CustomSpriteEffect = SpriteEffects.FlipHorizontally;
-                    break;                
-                
+                    break;
+
                 case Axis.Vertical:
                     CustomSpriteEffect = SpriteEffects.FlipVertically;
                     break;
@@ -88,7 +88,7 @@ namespace Moonborne.Graphics
             Texture = SpriteManager.GetTexture(tex);
             Texture.FrameHeight = frameWidth;
             Texture.FrameWidth = frameHeight;
-            MaxFrames = Texture.Data.Width/Texture.Data.Height; // Horizontal spritesheets
+            MaxFrames = Texture.Data.Width / Texture.Data.Height; // Horizontal spritesheets
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Moonborne.Graphics
         public override void Draw(SpriteBatch spriteBatch)
         {
             // Not visible flags
-            if (!Visible || Texture.Data == null)
+            if (!Visible || Texture == null || Texture.Data == null)
                 return;
 
             if (!GameManager.Paused && !VisibleInGame)

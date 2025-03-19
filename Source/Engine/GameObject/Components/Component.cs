@@ -1,4 +1,6 @@
 ﻿using Moonborne.Game.Objects;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Moonborne.Engine.Components
 {
@@ -9,13 +11,24 @@ namespace Moonborne.Engine.Components
         internal GameObject Parent = null;
         public bool Visible = true;
         public bool VisibleInGame = true;
+        private static List<ObjectComponent> allComponents = new List<ObjectComponent>();
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public ObjectComponent() : base()
+        protected ObjectComponent() : base()
         {
+            allComponents.Add(this);
+        }
 
+        ~ObjectComponent()
+        {
+            allComponents.Remove(this);
+        }
+
+        public static List<T> GetAllComponents<T>() where T : ObjectComponent
+        {
+            return allComponents.OfType<T>().ToList();
         }
     }
 }

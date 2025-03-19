@@ -202,8 +202,12 @@ namespace Moonborne.Game.Room
         {
             var snapShot = Layers.Values.ToList();
 
+            // Render all lights, calculate light map
+            GraphicsManager.lightManager.RenderLights();
+
             // Render world objects
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, Camera.TransformMatrix);
+
             foreach (var layer in snapShot) 
             {
                 // Don't draw invisible layers
@@ -227,6 +231,7 @@ namespace Moonborne.Game.Room
                 layer.DrawUI(spriteBatch);
             }
 
+            // Post rendering
             DialogueManager.DrawDialogueBox();
             InventoryManager.Draw(spriteBatch);
             RoomEditor.DrawEditor(spriteBatch);

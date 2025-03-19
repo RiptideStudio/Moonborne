@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Collisions.Layers;
 using MonoGame.Extended.Tiled;
+using Moonborne.Engine;
 using Moonborne.Engine.Components;
 using Moonborne.Engine.UI;
 using Moonborne.Game.Assets;
@@ -34,6 +35,23 @@ namespace Moonborne.Game.Room
         public void Save(string name, string overridePath = null)
         {
             Console.WriteLine($"Saved Room '{name}'");
+        }
+
+        /// <summary>
+        /// Load this room into the world
+        /// </summary>
+        public void Load()
+        {
+            GameManager.WorldState.LoadJsonIntoWorld(Name);
+            RoomEditor.CurrentRoom = this;
+        }
+
+        /// <summary>
+        /// Open the room
+        /// </summary>
+        public override void OnDoubleClick()
+        {
+            Load();
         }
     }
 }
