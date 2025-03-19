@@ -28,7 +28,6 @@ namespace Moonborne.Graphics
         public static SpriteBatch UISpriteBatch;
         public static SpriteBatch spriteBatch;
         public static SpriteBatch TargetSpriteBatch;
-        private static Dictionary<Texture2D, IntPtr> textureCache = new Dictionary<Texture2D, IntPtr>();
         public static SpriteFont GameFont;
         public static Texture2D PixelTexture;
         public static byte DrawAlpha = 1;
@@ -105,7 +104,7 @@ namespace Moonborne.Graphics
                 };
 
                 // Add to assets
-                AssetManager.Assets.Add(sprite);
+                AssetManager.AddAsset(sprite);
 
                 // Store the texture and sprite in their respective dictionaries
                 ImGuiTextures[textureName] = iconData;

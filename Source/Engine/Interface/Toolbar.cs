@@ -66,8 +66,8 @@ namespace Moonborne.Engine.UI
                 if (ImGui.BeginMenu("Edit"))
                 {
                     if (ImGui.MenuItem("Delete")) Inspector.DeleteSelectedObject();
-                    if (ImGui.MenuItem("Undo (Ctrl+Z)")) { /* Undo logic */ }
-                    if (ImGui.MenuItem("Redo (Ctrl+Y)")) { /* Redo logic */ }
+                    if (ImGui.MenuItem("Undo (Ctrl+Z)")) { RoomManager.Undo(); }
+                    if (ImGui.MenuItem("Redo (Ctrl+Y)")) { RoomManager.Redo(); }
                     ImGui.EndMenu();
                 }
 

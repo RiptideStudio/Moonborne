@@ -134,6 +134,7 @@ namespace Moonborne.Engine.UI
             }
             io.AddKeyEvent(ImGuiKey.Backspace, keyboardState.IsKeyDown(Keys.Back));
             io.AddKeyEvent(ImGuiKey.Delete, keyboardState.IsKeyDown(Keys.Delete));
+            io.AddKeyEvent(ImGuiKey.Enter, keyboardState.IsKeyDown(Keys.Enter));
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using Microsoft.Xna.Framework.Input;
 using Moonborne.Engine.Components;
 using Moonborne.Engine.UI;
 using Moonborne.Game.Objects;
@@ -23,19 +24,21 @@ namespace Moonborne.Game.Assets
         public static List<Asset> Assets = new List<Asset>();
         public static Asset SelectedAsset = null;
         public static GameObject CreatedObject = null;
+        public static string SelectedFolder = ""; // This is the folder we are currently in
         public static Dictionary<string, List<Asset>> AssetsByFolder { get; private set; } = new Dictionary<string, List<Asset>>();
         private static string assetDirectory = @"Content/Assets/";
-        private static string SelectedFolder = "";
+
+        private static string renamingFolder = null; // Tracks the folder being renamed
+        private static string renameBuffer = "";    // Stores new folder name
 
         /// <summary>
         /// Show all the assets in the browser
         /// </summary>
         public static void ShowAssetBrowser()
         {
-            // Update assets in the folder
-            GetAssetsByFolder();
-
             // Display Folders as Horizontal Row with Icons
+            float iconSize = 72;
+
             foreach (var folder in AssetsByFolder)
             {
                 ImGui.SameLine();
@@ -53,7 +56,6 @@ namespace Moonborne.Game.Assets
                 ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0, 0, 0, 0));
                 ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(1, 1, 1, 0.2f));
                 ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(1, 1, 1, 0.3f));
-                float iconSize = 64;
 
                 if (ImGui.ImageButton(folder.Key, folderIcon, new Vector2(iconSize, iconSize)))
                 {
@@ -62,12 +64,66 @@ namespace Moonborne.Game.Assets
 
                 ImGui.PopStyleColor(3); // Removes the last 3 pushed styles
 
-                // Center the text below the icon
-                float textWidth = ImGui.CalcTextSize(folder.Key).X;
-                float textOffset = 4+(iconSize - textWidth) * 0.5f;
+                // Allow for renaming with F2
+                if (SelectedFolder == folder.Key && InputManager.KeyTriggered(Keys.F2))
+                {
+                    renamingFolder = folder.Key;
+                    renameBuffer = folder.Key;
+                }
 
-                ImGui.SetCursorPosX(ImGui.GetCursorPosX() + textOffset);
-                ImGui.Text(folder.Key);
+                if (renamingFolder == folder.Key)
+                {
+                    ImGui.SetNextItemWidth(iconSize);
+                    ImGui.SetKeyboardFocusHere();
+
+                    bool enterPressed = ImGui.InputText("##rename", ref renameBuffer, 128, ImGuiInputTextFlags.EnterReturnsTrue);
+                    bool escapePressed = ImGui.IsKeyPressed(ImGuiKey.Escape);
+                    bool clickedOutside = !ImGui.IsItemActive() && ImGui.IsMouseClicked(ImGuiMouseButton.Left);
+
+                    // Confirm Rename on Enter
+                    if (enterPressed)
+                    {
+                        if (!string.IsNullOrEmpty(renameBuffer) && renameBuffer != folder.Key)
+                        {
+                            if (!AssetsByFolder.ContainsKey(renameBuffer))
+                            {
+                                AssetsByFolder[renameBuffer] = AssetsByFolder[folder.Key];
+                                AssetsByFolder.Remove(folder.Key);
+                                SelectedFolder = renameBuffer;
+                                SortByName();
+                                break;
+                            }
+                        }
+                        renamingFolder = null; // Exit rename mode
+                    }
+                    else if (escapePressed || clickedOutside)
+                    {
+                        renamingFolder = null; // Cancel renaming
+                    }
+                }
+                else
+                {
+                    // Define max text width before wrapping
+                    float maxTextWidth = iconSize;
+
+                    // Calculate the text size
+                    Vector2 textSize = ImGui.CalcTextSize(folder.Key);
+
+                    // Ensure text is wrapped if it exceeds max width
+                    ImGui.PushTextWrapPos(ImGui.GetCursorPosX() + maxTextWidth);
+
+                    // Calculate the proper X position for centering
+                    float availableWidth = iconSize;
+                    float textOffset = (availableWidth - Math.Min(textSize.X, maxTextWidth)) * 0.5f;
+
+                    // Move cursor to center text
+                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + textOffset);
+                    ImGui.TextWrapped(folder.Key); // Use TextWrapped instead of Text for proper wrapping
+
+                    ImGui.PopTextWrapPos(); // Reset wrapping behavior
+
+                }
+
 
                 ImGui.EndGroup(); // End vertical stack
             }
@@ -91,7 +147,6 @@ namespace Moonborne.Game.Assets
 
                     SpriteTexture texture = SpriteManager.GetTexture(asset.Name);
                     IntPtr assetIcon = SpriteManager.GetImGuiTexture(asset.Name);
-                    float iconSize = 64;
                     Vector2 finalSize = new Vector2(iconSize, iconSize);
 
                     if (texture != null)
@@ -103,6 +158,7 @@ namespace Moonborne.Game.Assets
                     {
                         SelectAsset(asset);
                     }
+
                     if (ImGui.IsItemHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
                     {
                         asset.OnDoubleClick();
@@ -127,6 +183,16 @@ namespace Moonborne.Game.Assets
 
             // Drop asset handle
             DropAsset();
+        }
+
+        /// <summary>
+        /// Sort all folders and assets by their name in alphabetical order
+        /// </summary>
+        public static void SortByName()
+        {
+            AssetsByFolder = new Dictionary<string, List<Asset>>(
+                AssetsByFolder.OrderBy(entry => entry.Key) // Sorts by folder name
+            );
         }
 
         /// <summary>
@@ -185,17 +251,6 @@ namespace Moonborne.Game.Assets
         }
 
         /// <summary>
-        /// Return a list of assets to render based on the folder we're in
-        /// </summary>
-        /// <returns></returns>
-        public static Dictionary<string, List<Asset>> GetAssetsByFolder()
-        {
-            AssetsByFolder = Assets.GroupBy(a  => a.Folder).ToDictionary(g => g.Key, gc => gc.ToList());
-
-            return AssetsByFolder;
-        }
-
-        /// <summary>
         /// Load all assets
         /// </summary>
         /// <summary>
@@ -216,21 +271,25 @@ namespace Moonborne.Game.Assets
                 string extension = Path.GetExtension(file).ToLower();
                 string folder = Path.GetRelativePath(assetDirectory, Path.GetDirectoryName(file));
 
-                Asset asset = extension switch
+                string json = File.ReadAllText(file);
+
+                JsonSerializerSettings settings = new JsonSerializerSettings
                 {
-                    ".json" when file.Contains("Prefabs") => PrefabManager.LoadPrefab(file),
-                    ".json" when file.Contains("Dialogue") => DeserializeAsset<Dialogue>(file),
-                    ".json" when file.Contains("Rooms") => DeserializeAsset<Room.Room>(file),
-                    _ => null
+                    TypeNameHandling = TypeNameHandling.Auto,
+                    Formatting = Formatting.Indented
                 };
 
-                if (asset != null)
-                {
-                    Assets.Add(asset);
-                }
+                Asset asset = JsonConvert.DeserializeObject<Asset>(json, settings);
+
+                if (asset == null)
+                    continue;
+                
+                // Add the asset
+                asset.Folder = folder;
+                AddAsset(asset);
             }
 
-            Console.WriteLine($"Loaded [{Assets.Count}] assets");
+            Console.WriteLine($"Loaded [{AssetsByFolder.Count}] assets");
         }
 
         /// <summary>
@@ -250,7 +309,6 @@ namespace Moonborne.Game.Assets
             };
 
             T obj = JsonConvert.DeserializeObject<T>(json, settings);
-
 
             return obj;
         }
@@ -273,7 +331,7 @@ namespace Moonborne.Game.Assets
                     };
 
                     string json = JsonConvert.SerializeObject(asset, settings);
-                    string directory = $"{assetDirectory}/{asset.Folder}";
+                    string directory = $"{assetDirectory}/{folder.Key}";
                     string filePath = $"{directory}/{asset.Name}.json";
 
                     if (!Directory.Exists(filePath))
@@ -313,6 +371,40 @@ namespace Moonborne.Game.Assets
                 .OfType<T>()
                 .FirstOrDefault(asset =>
                     asset.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
+
+        /// <summary>
+        /// Add an asset to the list given a folder
+        /// </summary>
+        /// <param name="sprite"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public static void AddAsset(Asset asset)
+        {
+            if (!AssetsByFolder.ContainsKey(asset.Folder))
+            {
+                AssetsByFolder.Add(asset.Folder, new List<Asset>());
+            }
+
+            AssetsByFolder[asset.Folder].Add(asset);
+        }
+
+        /// <summary>
+        /// Deletes a given asset from memory and files
+        /// </summary>
+        /// <param name="selectedAsset"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public static void DeleteAsset(Asset selectedAsset)
+        {
+            if (AssetsByFolder.ContainsKey(selectedAsset.Folder))
+            {
+                List<Asset> assets = AssetsByFolder[selectedAsset.Folder];
+
+                if (assets.Contains(selectedAsset))
+                {
+                    assets.Remove(selectedAsset);
+                    Console.WriteLine($"Deleted {selectedAsset.Name} from {selectedAsset.Folder}");
+                }
+            }
         }
     }
 }

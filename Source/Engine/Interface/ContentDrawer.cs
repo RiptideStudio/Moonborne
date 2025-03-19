@@ -49,11 +49,16 @@ namespace Moonborne.Engine.UI
             // Opt to create a new prefab
             if (ImGui.BeginPopupContextItem("PrefabContextMenu"))
             {
+                if (ImGui.MenuItem("Create Folder"))
+                {
+                    AssetManager.AssetsByFolder.Add("New Folder", new List<Asset>());
+                }
+
                 // Create a prefab
                 if (ImGui.MenuItem("Create Prefab"))
                 {
-                    Prefab prefab = new Prefab("GameObject", "Prefabs");
-                    AssetManager.Assets.Add(prefab);
+                    Prefab prefab = new Prefab("GameObject", AssetManager.SelectedFolder);
+                    AssetManager.AddAsset(prefab);
                     PrefabManager.Prefabs.Add(prefab);
                     prefab.Components.Add(new Transform());
                 }
@@ -61,28 +66,22 @@ namespace Moonborne.Engine.UI
                 // Create a dialogue object
                 if (ImGui.MenuItem("Create Dialogue"))
                 {
-                    Dialogue dialogue = new Dialogue("Dialogue_1", "Dialogue");
-                    AssetManager.Assets.Add(dialogue);
+                    Dialogue dialogue = new Dialogue("Dialogue_1", AssetManager.SelectedFolder);
+                    AssetManager.AddAsset(dialogue);
                 }
 
                 // Create rooms
                 if (ImGui.MenuItem("Create Room"))
                 {
-                    Room rm = new Room("Room_1", "Rooms");
-                    AssetManager.Assets.Add(rm);
+                    Room rm = new Room("Room_1", AssetManager.SelectedFolder);
+                    AssetManager.AddAsset(rm);
                 }
 
                 // Delete an asset
                 if (ImGui.MenuItem("Delete Asset"))
                 {
-                    AssetManager.Assets.Remove(AssetManager.SelectedAsset);
+                    AssetManager.DeleteAsset(AssetManager.SelectedAsset);
                 }
-                // Create a folder
-                if (ImGui.MenuItem("Create New Folder"))
-                {
-
-                }
-
                 // Delete a folder
                 if (ImGui.MenuItem("Delete Folder"))
                 {
