@@ -171,7 +171,7 @@ namespace Moonborne.Game.Room
                 }
             }
 
-            Toolbar.Draw();
+            Toolbar.DrawSecondLayer();
 
             if (!InEditor)
                 return;
@@ -216,6 +216,7 @@ namespace Moonborne.Game.Room
             ObjectEditor.Draw();
             ContentDrawer.Draw();
             LevelSelectEditor.Draw();
+            Toolbar.Draw();
 
             // Draw prefab editor if we are in it
             if (PrefabManager.IsActive)
