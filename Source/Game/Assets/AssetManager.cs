@@ -217,6 +217,7 @@ namespace Moonborne.Game.Assets
                 {
                     ".json" when file.Contains("Prefabs") => PrefabManager.LoadPrefab(file),
                     ".json" when file.Contains("Dialogue") => DeserializeAsset<Dialogue>(file),
+                    ".json" when file.Contains("Rooms") => DeserializeAsset<Room.Room>(file),
                     _ => null
                 };
 

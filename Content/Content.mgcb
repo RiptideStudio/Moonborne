@@ -13,8 +13,10 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Rooms/TestRoom.tmx
-/importer:
-/processor:
-/build:Rooms/TestRoom.tmx
+#begin Font/RobotoFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Font/RobotoFont.spritefont
 
