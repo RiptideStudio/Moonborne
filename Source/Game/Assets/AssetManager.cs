@@ -367,10 +367,11 @@ namespace Moonborne.Game.Assets
         /// <returns></returns>
         public static T GetAsset<T>(string name) where T : Asset
         {
-            return Assets
-                .OfType<T>()
-                .FirstOrDefault(asset =>
-                    asset.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            return AssetsByFolder
+                .Values // Get all lists of assets
+                .SelectMany(assets => assets) // Flatten into a single list
+                .OfType<T>() // Filter by type
+                .FirstOrDefault(asset => asset.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>

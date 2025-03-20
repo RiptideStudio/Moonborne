@@ -38,27 +38,29 @@ namespace Moonborne.Game.Components
             bool moving = false;
             Physics Physics = Parent.GetComponent<Physics>();
 
+            Physics.Acceleration = Vector2.Zero;
+
             if (InputManager.KeyDown(Keys.W))
             {
-                Physics.SetVelocityY(-Physics.Speed);
+                Physics.Acceleration.Y = -Physics.Speed;
                 Direction = Direction.Up;
                 moving = true;
             }
             if (InputManager.KeyDown(Keys.S))
             {
-                Physics.SetVelocityY(Physics.Speed);
+                Physics.Acceleration.Y = Physics.Speed;
                 Direction = Direction.Down;
                 moving = true;
             }
             if (InputManager.KeyDown(Keys.A))
             {
-                Physics.SetVelocityX(-Physics.Speed);
+                Physics.Acceleration.X = -Physics.Speed;
                 moving = true;
                 Direction = Direction.Left;
             }
             if (InputManager.KeyDown(Keys.D))
             {
-                Physics.SetVelocityX(Physics.Speed);
+                Physics.Acceleration.X = Physics.Speed;
                 moving = true;
                 Direction = Direction.Right;
             }

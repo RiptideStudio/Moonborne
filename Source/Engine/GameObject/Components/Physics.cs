@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Moonborne.Engine.Collision;
 using Moonborne.Game.Objects;
+using Moonborne.Utils.Math;
 using System;
 using static Moonborne.Graphics.Sprite;
 
@@ -11,13 +12,13 @@ namespace Moonborne.Engine.Components
     {
         internal override string Name => "Physics";
         public Vector2 Velocity { get; set; }
-        public Vector2 Acceleration { get; set; } = Vector2.One;
+        public Vector2 Acceleration = Vector2.One;
 
         /// <summary>
         /// Force of gravity
         /// </summary>
         public float Gravity = 0f; 
-        public float LinearFriction = 8;
+        public float LinearFriction = 0.3f;
         public float MaxSpeed = 1000;
         public float Speed = 50;
 
@@ -61,30 +62,11 @@ namespace Moonborne.Engine.Components
             // Apply linear friction to acceleration (multiplicative decay for realism)
             Velocity += Acceleration;
 
-            // Clamp the magnitude of the velocity vector to the maximum speed
-            float speed = Velocity.Length();
-            if (speed > Speed)
-            {
-                Velocity *= Speed / speed;
-            }
-
-            ApplyFriction();
-
             // Clamp velocity to maximum speed
             Vector2 velocity = Velocity;
             velocity.Y += Gravity;
             velocity.X = MathHelper.Clamp(velocity.X, -MaxSpeed, MaxSpeed);
             velocity.Y = MathHelper.Clamp(velocity.Y, -MaxSpeed, MaxSpeed);
-
-            if (velocity.X < 0)
-                Haxis = -1;
-            else if (velocity.X > 0)
-                Haxis = 1;
-
-            if (velocity.Y < 0)
-                Vaxis = -1;
-            else if (velocity.Y > 0)
-                Vaxis = 1;
 
             Transform Transform = Parent.GetComponent<Transform>();
 
@@ -107,6 +89,8 @@ namespace Moonborne.Engine.Components
 
             Transform.Position = finalPos;
             Transform.Position += Velocity * dt;
+
+            ApplyFriction();
         }
 
         /// <summary>
@@ -114,44 +98,11 @@ namespace Moonborne.Engine.Components
         /// </summary>
         public void ApplyFriction()
         {
+            // Apply friction to velocity (subtractive)
+            Velocity = MoonMath.Lerp(Velocity, Vector2.Zero, LinearFriction);
             Vector2 velocity = Velocity;
 
             // Stop the velocity entirely if it's close to zero (to avoid jittering)
-            // Apply friction to velocity (subtractive)
-            if (velocity.X > 0)
-            {
-                velocity.X -= LinearFriction;
-                if (velocity.X < 0)
-                {
-                    velocity.X = 0;
-                }
-            }
-            else if (velocity.X < 0)
-            {
-                velocity.X += LinearFriction;
-                if (velocity.X > 0)
-                {
-                    velocity.X = 0;
-                }
-            }
-
-            if (velocity.Y > 0)
-            {
-                velocity.Y -= LinearFriction;
-                if (velocity.Y < 0)
-                {
-                    velocity.Y = 0;
-                }
-            }
-            else if (velocity.Y < 0)
-            {
-                velocity.Y += LinearFriction;
-                if (velocity.Y > 0)
-                {
-                    velocity.Y = 0;
-                }
-            }
-
             if (Math.Abs(velocity.X) < 0.01f) velocity.X = 0f;
             if (Math.Abs(velocity.Y) < 0.01f) velocity.Y = 0f;
 
