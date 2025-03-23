@@ -31,6 +31,7 @@ namespace Moonborne
         private SpriteBatch spriteBatch;
         public Player player;
         public static float DeltaTime;
+        NodeEditor NodeEditor;
 
         public MGame()
         {
@@ -46,6 +47,7 @@ namespace Moonborne
                 throw new Exception("GraphicsDevice is null. Cannot initialize ImGuiManager.");
             }
 
+            NodeEditor = new NodeEditor();
             GameManager.Initialize(this);
             InputManager.Initialize(this);
             SpriteManager.Initialize(Content,GraphicsDevice);
@@ -130,6 +132,7 @@ namespace Moonborne
 
             // Render everything in all layers
             LayerManager.Draw(spriteBatch);
+            NodeEditor.Draw();
 
             // End drawing
             ImGuiManager.EndFrame(gameTime);

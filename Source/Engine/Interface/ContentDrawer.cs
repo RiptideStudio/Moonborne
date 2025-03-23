@@ -23,6 +23,7 @@ using Moonborne.Game.Gameplay;
 using Moonborne.Game.Assets;
 using Moonborne.Engine.Components;
 using Moonborne.UI.Dialogue;
+using Moonborne.Game.Behaviors;
 
 namespace Moonborne.Engine.UI
 {
@@ -75,6 +76,12 @@ namespace Moonborne.Engine.UI
                 {
                     Room rm = new Room("Room_1", AssetManager.SelectedFolder);
                     AssetManager.AddAsset(rm);
+                }
+
+                if (ImGui.MenuItem("Create Behavior Tree"))
+                {
+                    BehaviorTreeAsset bt = new BehaviorTreeAsset("BehaviorTree_1", AssetManager.SelectedFolder);
+                    AssetManager.AddAsset(bt);
                 }
 
                 // Delete an asset

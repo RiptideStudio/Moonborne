@@ -13,6 +13,7 @@ using Moonborne.Input;
 using MonoGame.Extended.Timers;
 using Moonborne.Graphics.Camera;
 using System.Drawing;
+using System.Numerics;
 
 namespace Moonborne.Engine.UI
 {
@@ -23,6 +24,8 @@ namespace Moonborne.Engine.UI
 
         public static RenderTarget2D tilePreviewRenderTarget;
         public static GraphicsDevice graphicsDevice;
+        public static System.Numerics.Vector2 PreviousMousePosition;
+        public static System.Numerics.Vector2 CurrentMousePosition;
 
         /// <summary>
         /// Setup ImGui
@@ -83,7 +86,6 @@ namespace Moonborne.Engine.UI
             style.Colors[(int)ImGuiCol.FrameBgHovered] = new System.Numerics.Vector4(0.4f, 0.4f, 0.4f, 1.00f);
 
             imGuiRenderer.RebuildFontAtlas();
-
         }
 
 
@@ -93,6 +95,8 @@ namespace Moonborne.Engine.UI
         public static void BeginFrame(GameTime gameTime)
         {
             imGuiRenderer.BeginLayout(gameTime);
+            PreviousMousePosition = CurrentMousePosition;
+            CurrentMousePosition = ImGui.GetMousePos();
 
             ImGuiViewportPtr mainViewport = ImGui.GetMainViewport();
             ImGui.SetNextWindowPos(mainViewport.Pos);
@@ -152,7 +156,7 @@ namespace Moonborne.Engine.UI
         /// <param name="position"></param>
         /// <param name="scale"></param>
         /// <returns></returns>
-        public static bool Button(string name, Vector2 position, Vector2 scale)
+        public static bool Button(string name, Microsoft.Xna.Framework.Vector2 position, Microsoft.Xna.Framework.Vector2 scale)
         {
             ImGui.SetNextWindowPos(position.ToNumerics());
             return ImGui.Button(name, scale.ToNumerics());

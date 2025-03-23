@@ -9,7 +9,7 @@ using Moonborne.Graphics.Window;
 
 namespace Moonborne.Game.Behavior
 {
-    public abstract class GameBehavior : ObjectComponent
+    public abstract class GameBehavior : ObjectComponent 
     {
         internal override string Name => "Behavior";
 
