@@ -81,6 +81,7 @@ namespace Moonborne
             InventoryManager.Initialize();
             DialogueManager.InitializeLater();
             RoomEditor.Initialize();
+            NodeEditor.Instance = NodeEditor;
             BehaviorNodeLibrary.Initialize();
             SettingsManager.Load();
             AssetManager.LoadAssets();

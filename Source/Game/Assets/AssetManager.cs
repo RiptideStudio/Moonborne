@@ -324,6 +324,8 @@ namespace Moonborne.Game.Assets
             {
                 foreach (Asset asset in folder.Value)
                 {
+                    asset.PreSave();
+
                     JsonSerializerSettings settings = new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.All,  // Include type metadata in JSON

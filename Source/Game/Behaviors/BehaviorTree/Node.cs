@@ -19,31 +19,44 @@ namespace Moonborn.Game.Behaviors
         public List<Pin> Inputs = new();
         public List<Pin> Outputs = new();
 
+        private static Color DarkenColor(Color color, float factor)
+        {
+            factor = Math.Clamp(factor, 0f, 1f); // Ensure factor is within range
+            return Color.FromArgb(
+                color.A,
+                (int)(color.R * factor),
+                (int)(color.G * factor),
+                (int)(color.B * factor)
+            );
+        }
+
         public void DrawNode()
         {
             var drawList = ImGui.GetWindowDrawList();
             var io = ImGui.GetIO();
             Vector2 basePos = Position;
 
-            // Title (centered above box)
+            // Check hover
+            bool isHovered = Node.MouseOverNode(Position, Size);
+
+            // Darken box color if hovered
+            Color boxColor = isHovered ? DarkenColor(BoxColor, 0.75f) : BoxColor;
+            uint boxColorU32 = (uint)boxColor.ToArgb();
+            uint outlineColorU32 = (uint)OutlineColor.ToArgb();
+
+            // Title
             Vector2 titleSize = ImGui.CalcTextSize(Title);
             Vector2 titlePos = basePos + new Vector2((Size.X - titleSize.X) / 2, -titleSize.Y - 6);
             drawList.AddText(titlePos, ImGui.GetColorU32(Vector4.One), Title);
 
             // Draw node box
-            drawList.AddRectFilled(basePos, basePos + Size, ((uint)BoxColor.ToArgb()), 8);
-            drawList.AddRect(basePos, basePos + Size, ((uint)OutlineColor.ToArgb()), 8, 0, 1.0f);
+            drawList.AddRectFilled(basePos, basePos + Size, boxColorU32, 8);
+            drawList.AddRect(basePos, basePos + Size, outlineColorU32, 8, 0, 4f);
 
-            // Drag to move
-            if (ImGui.IsMouseDown(ImGuiMouseButton.Left) && MouseOverNode(Position,Size))
-            {
-                Position += io.MouseDelta;
-            }
-
-            // Draw pins at middle left/right
+            // Draw pins
             foreach (var input in Inputs)
             {
-                input.Offset = new Vector2(0, Size.Y / 2); // middle-left
+                input.Offset = new Vector2(0, Size.Y / 2);
                 var pinPos = basePos + input.Offset;
                 input.ScreenPosition = pinPos;
                 drawList.AddCircleFilled(pinPos, PinSize, ImGui.GetColorU32(Vector4.One));
@@ -51,7 +64,7 @@ namespace Moonborn.Game.Behaviors
 
             foreach (var output in Outputs)
             {
-                output.Offset = new Vector2(Size.X, Size.Y / 2); // middle-right
+                output.Offset = new Vector2(Size.X, Size.Y / 2);
                 var pinPos = basePos + output.Offset;
                 output.ScreenPosition = pinPos;
                 drawList.AddCircleFilled(pinPos, PinSize, ImGui.GetColorU32(Vector4.One));

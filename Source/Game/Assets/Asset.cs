@@ -49,5 +49,13 @@ namespace Moonborne.Game.Assets
         {
 
         }
+
+        /// <summary>
+        /// Called before saving, useful for building
+        /// </summary>
+        public virtual void PreSave()
+        {
+
+        }
     }
 }

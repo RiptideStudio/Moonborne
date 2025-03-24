@@ -17,10 +17,23 @@ namespace Moonborne.Game.Behaviors
         Running
     }
 
+    /// <summary>
+    /// Base behavior tree node structure
+    /// </summary>
     public abstract class BehaviorTreeNode : Node
     {
         public abstract string Name { get; }
+
+        /// <summary>
+        /// Ticks the behavior tree and executes behavior
+        /// </summary>
+        /// <returns></returns>
         public abstract BehaviorStatus Tick();
+
+        /// <summary>
+        /// When behaviors trees executed again they may reset
+        /// </summary>
+        public virtual void Reset() { }
     }
 
     /// <summary>
@@ -47,86 +60,13 @@ namespace Moonborne.Game.Behaviors
             Tree = new BehaviorTree();
             Tree.Root = null; 
         }
-    }
 
-    public class SequenceNode : BehaviorTreeNode
-    {
-        public override string Name => "Sequence Node";
-
-        public List<BehaviorTreeNode> Children = new();
-        private int currentIndex = 0;
-
-        public SequenceNode() : base()
+        /// <summary>
+        /// Open the behavior tree in the editor
+        /// </summary>
+        public override void OnDoubleClick()
         {
-            BoxColor = Color.DarkSlateGray;
-            OutlineColor = Color.SlateGray;
-        }
-
-        public override BehaviorStatus Tick()
-        {
-            while (currentIndex < Children.Count)
-            {
-                var status = Children[currentIndex].Tick();
-                if (status == BehaviorStatus.Running) return BehaviorStatus.Running;
-                if (status == BehaviorStatus.Failure)
-                {
-                    currentIndex = 0;
-                    return BehaviorStatus.Failure;
-                }
-                currentIndex++;
-            }
-
-            currentIndex = 0;
-            return BehaviorStatus.Success;
-        }
-    }
-
-    public class SelectorNode : BehaviorTreeNode
-    {
-        public override string Name => "Selector Node";
-
-        public List<BehaviorTreeNode> Children = new();
-        private int currentIndex = 0;
-
-        public SelectorNode() : base()
-        {
-            BoxColor = Color.DarkSlateGray;
-            OutlineColor = Color.SlateGray;
-        }
-
-        public override BehaviorStatus Tick()
-        {
-            while (currentIndex < Children.Count)
-            {
-                var status = Children[currentIndex].Tick();
-                if (status == BehaviorStatus.Running) return BehaviorStatus.Running;
-                if (status == BehaviorStatus.Success)
-                {
-                    currentIndex = 0;
-                    return BehaviorStatus.Success;
-                }
-                currentIndex++;
-            }
-
-            currentIndex = 0;
-            return BehaviorStatus.Failure;
-        }
-    }
-
-    public class ActionNode : BehaviorTreeNode
-    {
-        public override string Name => "Action Node";
-        public Func<BehaviorStatus> Action;
-
-        public ActionNode() : base()
-        {
-            BoxColor = Color.DarkRed;
-            OutlineColor = Color.IndianRed;
-        }
-
-        public override BehaviorStatus Tick()
-        {
-            return Action?.Invoke() ?? BehaviorStatus.Failure;
+            NodeEditor.Open(this);
         }
     }
 }

@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Moonborne.Game.Components;
 using Moonborne.Game.Objects;
 using Moonborne.Engine.Graphics.Lighting;
+using Moonborne.Game.Behaviors;
 
 public static class ComponentRegistry
 {
@@ -13,6 +14,7 @@ public static class ComponentRegistry
 
     static ComponentRegistry()
     {
+        RegisterComponent(typeof(BehaviorTree));
         RegisterComponent(typeof(Light));
         RegisterComponent(typeof(NPCBehavior));
         RegisterComponent(typeof(CameraFollow));
