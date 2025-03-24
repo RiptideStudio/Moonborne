@@ -1,7 +1,9 @@
-﻿using Moonborne.Game.Assets;
+﻿using Moonborn.Game.Behaviors;
+using Moonborne.Game.Assets;
 using Moonborne.Game.Behavior;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,9 +17,9 @@ namespace Moonborne.Game.Behaviors
         Running
     }
 
-    public abstract class BehaviorTreeNode
+    public abstract class BehaviorTreeNode : Node
     {
-        public int Id;
+        public abstract string Name { get; }
         public abstract BehaviorStatus Tick();
     }
 
@@ -49,8 +51,16 @@ namespace Moonborne.Game.Behaviors
 
     public class SequenceNode : BehaviorTreeNode
     {
+        public override string Name => "Sequence Node";
+
         public List<BehaviorTreeNode> Children = new();
         private int currentIndex = 0;
+
+        public SequenceNode() : base()
+        {
+            BoxColor = Color.DarkSlateGray;
+            OutlineColor = Color.SlateGray;
+        }
 
         public override BehaviorStatus Tick()
         {
@@ -73,8 +83,16 @@ namespace Moonborne.Game.Behaviors
 
     public class SelectorNode : BehaviorTreeNode
     {
+        public override string Name => "Selector Node";
+
         public List<BehaviorTreeNode> Children = new();
         private int currentIndex = 0;
+
+        public SelectorNode() : base()
+        {
+            BoxColor = Color.DarkSlateGray;
+            OutlineColor = Color.SlateGray;
+        }
 
         public override BehaviorStatus Tick()
         {
@@ -97,7 +115,14 @@ namespace Moonborne.Game.Behaviors
 
     public class ActionNode : BehaviorTreeNode
     {
+        public override string Name => "Action Node";
         public Func<BehaviorStatus> Action;
+
+        public ActionNode() : base()
+        {
+            BoxColor = Color.DarkRed;
+            OutlineColor = Color.IndianRed;
+        }
 
         public override BehaviorStatus Tick()
         {

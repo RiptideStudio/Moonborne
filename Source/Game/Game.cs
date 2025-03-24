@@ -22,6 +22,7 @@ using Moonborne.Engine;
 using System.IO;
 using Moonborne.Engine.Files;
 using Moonborne.Game.Assets;
+using Moonborne.Game.Behaviors;
 
 namespace Moonborne
 {
@@ -80,6 +81,7 @@ namespace Moonborne
             InventoryManager.Initialize();
             DialogueManager.InitializeLater();
             RoomEditor.Initialize();
+            BehaviorNodeLibrary.Initialize();
             SettingsManager.Load();
             AssetManager.LoadAssets();
             LayerManager.Initialize();

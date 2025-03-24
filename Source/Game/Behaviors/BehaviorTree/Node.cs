@@ -2,6 +2,7 @@
 using Moonborne.Game.Behaviors;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Numerics;
 
 namespace Moonborn.Game.Behaviors
@@ -12,6 +13,8 @@ namespace Moonborn.Game.Behaviors
         public string Title;
         public Vector2 Position;
         public Vector2 Size = new Vector2(200, 100);
+        public Color BoxColor = Color.DarkSlateGray;
+        public Color OutlineColor = Color.SlateGray;
         public float PinSize = 8f;
         public List<Pin> Inputs = new();
         public List<Pin> Outputs = new();
@@ -28,11 +31,11 @@ namespace Moonborn.Game.Behaviors
             drawList.AddText(titlePos, ImGui.GetColorU32(Vector4.One), Title);
 
             // Draw node box
-            drawList.AddRectFilled(basePos, basePos + Size, ImGui.GetColorU32(new Vector4(0.2f, 0.2f, 0.2f, 1f)), 8);
-            drawList.AddRect(basePos, basePos + Size, ImGui.GetColorU32(Vector4.One), 8, 0, 1.0f);
+            drawList.AddRectFilled(basePos, basePos + Size, ((uint)BoxColor.ToArgb()), 8);
+            drawList.AddRect(basePos, basePos + Size, ((uint)OutlineColor.ToArgb()), 8, 0, 1.0f);
 
             // Drag to move
-            if (ImGui.IsMouseDown(ImGuiMouseButton.Left) && MouseOverNode(basePos, Size))
+            if (ImGui.IsMouseDown(ImGuiMouseButton.Left) && MouseOverNode(Position,Size))
             {
                 Position += io.MouseDelta;
             }

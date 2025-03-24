@@ -1,5 +1,7 @@
 ﻿using ImGuiNET;
 using Moonborn.Game.Behaviors;
+using Moonborne.Game.Behaviors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -17,8 +19,6 @@ public class NodeEditor
 
     public void Draw()
     {
-   
-
         ImGui.Begin("Behavior Tree Editor");
 
         // Draw right-click menu for adding nodes
@@ -27,10 +27,18 @@ public class NodeEditor
 
         if (ImGui.BeginPopup("NodeContext"))
         {
-            if (ImGui.MenuItem("Add Action Node"))
+            if (ImGui.BeginMenu("Create New Node"))
             {
-                AddActionNode(ImGui.GetMousePos());
+                foreach (var node in BehaviorNodeLibrary.Nodes)
+                {
+                    if (ImGui.MenuItem($"{node.Key}"))
+                    {
+                        AddNode(node.Key, ImGui.GetMousePos());
+                    }
+                }
+                ImGui.EndMenu();
             }
+
             ImGui.EndPopup();
         }
 
@@ -59,10 +67,6 @@ public class NodeEditor
                 if (activeDraggedNode == null && ImGui.IsMouseClicked(ImGuiMouseButton.Left) && Node.MouseOverNode(node.Position, size))
                 {
                     activeDraggedNode = node;
-                }
-                if (activeDraggedNode == node)
-                {
-                    node.Position = ImGui.GetMousePos()-(ImGui.GetMousePos()-node.Position);
                 }
                 if (ImGui.IsMouseReleased(ImGuiMouseButton.Left))
                 {
@@ -103,22 +107,27 @@ public class NodeEditor
         ImGui.End();
     }
 
-    private void AddActionNode(Vector2 position)
+    /// <summary>
+    /// Adds a node given the type
+    /// </summary>
+    /// <param name="node"></param>
+    /// <param name="position"></param>
+    private void AddNode(string node, Vector2 position)
     {
-        var node = new Node
-        {
-            Id = nextNodeId++,
-            Title = "Action",
-            Position = position,
-            Inputs = new() {
-                new Pin { Id = nextPinId++, Name = "In", Offset = new Vector2(0, 30) }
-            },
-            Outputs = new() {
-                new Pin { Id = nextPinId++, Name = "Out", Offset = new Vector2(140, 30) }
-            }
+        Type nodeType = BehaviorNodeLibrary.Nodes.GetValueOrDefault(node);
+        BehaviorTreeNode newNode = (BehaviorTreeNode)Activator.CreateInstance(nodeType);
+
+        newNode.Id = nextNodeId++;
+        newNode.Position = position;
+        newNode.Title = newNode.Name;
+        newNode.Inputs = new() {
+            new Pin { Id = nextPinId++, Name = "In", Offset = new Vector2(0, 30) }
+        };
+        newNode.Outputs = new() {
+            new Pin { Id = nextPinId++, Name = "Out", Offset = new Vector2(140, 30) }
         };
 
-        nodes.Add(node);
+        nodes.Add(newNode);
     }
 
     private Pin FindPinById(int id, out Node owningNode)
