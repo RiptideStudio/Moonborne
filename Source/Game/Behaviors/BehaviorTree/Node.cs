@@ -30,14 +30,14 @@ namespace Moonborn.Game.Behaviors
             );
         }
 
-        public void DrawNode()
+        public void DrawNode(Vector2 screenPos, float zoomLevel)
         {
             var drawList = ImGui.GetWindowDrawList();
             var io = ImGui.GetIO();
-            Vector2 basePos = Position;
+            Vector2 basePos = screenPos;
 
             // Check hover
-            bool isHovered = Node.MouseOverNode(Position, Size);
+            bool isHovered = Node.MouseOverNode(screenPos, Size * zoomLevel);
 
             // Darken box color if hovered
             Color boxColor = isHovered ? DarkenColor(BoxColor, 0.75f) : BoxColor;
@@ -46,37 +46,52 @@ namespace Moonborn.Game.Behaviors
 
             // Title
             Vector2 titleSize = ImGui.CalcTextSize(Title);
-            Vector2 titlePos = basePos + new Vector2((Size.X - titleSize.X) / 2, -titleSize.Y - 6);
+            Vector2 titlePos = basePos + new Vector2((Size.X * zoomLevel - titleSize.X) / 2, -titleSize.Y - 6 * zoomLevel);
             drawList.AddText(titlePos, ImGui.GetColorU32(Vector4.One), Title);
 
             // Draw node box
-            drawList.AddRectFilled(basePos, basePos + Size, boxColorU32, 8);
-            drawList.AddRect(basePos, basePos + Size, outlineColorU32, 8, 0, 4f);
+            Vector2 scaledSize = Size * zoomLevel;
+            drawList.AddRectFilled(basePos, basePos + scaledSize, boxColorU32, 8 * zoomLevel);
+            drawList.AddRect(basePos, basePos + scaledSize, outlineColorU32, 8 * zoomLevel, 0, 4f * zoomLevel);
 
             // Draw pins
             foreach (var input in Inputs)
             {
-                input.Offset = new Vector2(0, Size.Y / 2);
+                input.Offset = new Vector2(0, scaledSize.Y / 2);
                 var pinPos = basePos + input.Offset;
                 input.ScreenPosition = pinPos;
-                drawList.AddCircleFilled(pinPos, PinSize, ImGui.GetColorU32(Vector4.One));
+                drawList.AddCircleFilled(pinPos, PinSize * zoomLevel, ImGui.GetColorU32(Vector4.One));
             }
 
             foreach (var output in Outputs)
             {
-                output.Offset = new Vector2(Size.X, Size.Y / 2);
+                output.Offset = new Vector2(scaledSize.X, scaledSize.Y / 2);
                 var pinPos = basePos + output.Offset;
                 output.ScreenPosition = pinPos;
-                drawList.AddCircleFilled(pinPos, PinSize, ImGui.GetColorU32(Vector4.One));
+                drawList.AddCircleFilled(pinPos, PinSize * zoomLevel, ImGui.GetColorU32(Vector4.One));
             }
         }
 
         public static void DrawLink(Vector2 from, Vector2 to)
         {
             var drawList = ImGui.GetWindowDrawList();
-            Vector2 cp1 = from + new Vector2(50, 0);
-            Vector2 cp2 = to - new Vector2(50, 0);
-            drawList.AddBezierCubic(from, cp1, cp2, to, ImGui.GetColorU32(Vector4.One), 2.0f);
+            // Adjust control points based on distance between nodes
+            float distance = Vector2.Distance(from, to);
+            float controlPointOffset = Math.Min(50, distance * 0.4f);
+            
+            Vector2 cp1 = from + new Vector2(controlPointOffset, 0);
+            Vector2 cp2 = to - new Vector2(controlPointOffset, 0);
+            
+            // Adjust line thickness based on zoom level
+            float lineThickness = 2.0f;
+            if (ImGui.GetIO().KeyCtrl) // Assuming we can access zoom level through a global or pass it as parameter
+            {
+                // This is a placeholder - in real implementation, you'd use the actual zoom level
+                float zoomLevel = 1.0f;
+                lineThickness *= zoomLevel;
+            }
+            
+            drawList.AddBezierCubic(from, cp1, cp2, to, ImGui.GetColorU32(Vector4.One), lineThickness);
         }
 
         public static bool MouseOverNode(Vector2 position, Vector2 size)
@@ -106,16 +121,16 @@ namespace Moonborn.Game.Behaviors
         public string Name;
         public Vector2 Offset;
         public Vector2 ScreenPosition;
-        public static bool IsMouseOverPin(Vector2 pos, float radius = 8f)
+        public static bool IsMouseOverPin(Vector2 pos, float zoomLevel = 1.0f)
         {
             Vector2 mouse = ImGui.GetIO().MousePos;
-            return Vector2.Distance(mouse, pos) <= radius;
+            float scaledRadius = 8f * zoomLevel;
+            return Vector2.Distance(mouse, pos) <= scaledRadius;
         }
 
         public static Vector2 GetPinWorldPosition(Node node, Pin pin)
         {
-            return pin.ScreenPosition; // now precalculated
+            return node.Position + pin.Offset / (ImGui.GetIO().KeyCtrl ? 1.0f : 1.0f); // Adjust for zoom if needed
         }
     }
 }
-

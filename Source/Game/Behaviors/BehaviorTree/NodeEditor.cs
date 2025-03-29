@@ -1,6 +1,8 @@
 ﻿using ImGuiNET;
+using Microsoft.Xna.Framework.Input;
 using Moonborn.Game.Behaviors;
 using Moonborne.Game.Behaviors;
+using Moonborne.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +20,12 @@ public class NodeEditor
     public bool Active = false;
     public static NodeEditor Instance;
     private BehaviorTreeAsset currentAsset;
+    
+    // Camera/view properties
+    private Vector2 cameraPosition = Vector2.Zero;
+    private float zoomLevel = 1.0f;
+    private const float zoomSpeed = 0.1f;
+    private const float panSpeed = 10.0f;
 
     /// <summary>
     /// Open a behavior tree asset
@@ -97,6 +105,17 @@ public class NodeEditor
         currentAsset.Tree = BuildBehaviorTree(); // builds and sets .Root too
     }
 
+    // Convert screen position to world position
+    private Vector2 ScreenToWorld(Vector2 screenPos)
+    {
+        return (screenPos - cameraPosition) / zoomLevel;
+    }
+
+    // Convert world position to screen position
+    private Vector2 WorldToScreen(Vector2 worldPos)
+    {
+        return (worldPos * zoomLevel) + cameraPosition;
+    }
 
     public void Draw()
     {
@@ -105,6 +124,43 @@ public class NodeEditor
 
         ImGui.Begin("Behavior Tree Editor");
 
+        // Handle zooming with mouse wheel
+        float mouseWheel = ImGui.GetIO().MouseWheel;
+        if (mouseWheel != 0 && ImGui.IsWindowHovered())
+        {
+            // Get mouse position before zoom
+            Vector2 mousePos = ImGui.GetMousePos();
+            Vector2 windowPos = ImGui.GetWindowPos();
+            Vector2 mouseRelativePos = mousePos - windowPos - cameraPosition;
+
+            // Apply zoom
+            float prevZoom = zoomLevel;
+            zoomLevel = Math.Clamp(zoomLevel + mouseWheel * zoomSpeed, 0.1f, 3.0f);
+
+            // Adjust camera position to zoom toward mouse cursor
+            float zoomFactor = zoomLevel / prevZoom;
+            cameraPosition += mouseRelativePos - (mouseRelativePos * zoomFactor);
+        }
+
+        // Handle panning with WASD
+        if (ImGui.IsWindowFocused())
+        {
+            if (InputManager.KeyDown(Keys.W))
+                cameraPosition.Y += panSpeed;
+            if (InputManager.KeyDown(Keys.S))
+                cameraPosition.Y -= panSpeed;
+            if (InputManager.KeyDown(Keys.A))
+                cameraPosition.X += panSpeed;
+            if (InputManager.KeyDown(Keys.D))
+                cameraPosition.X -= panSpeed;
+        }
+
+        // Display current zoom level
+        ImGui.Text($"Zoom: {zoomLevel:F2}x (Mouse wheel to zoom, WASD to pan)");
+
+        // Apply transformation for all drawing operations
+        ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(0, 0));
+        
         // Draw right-click menu for adding nodes
         if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
             ImGui.OpenPopup("NodeContext");
@@ -117,7 +173,8 @@ public class NodeEditor
                 {
                     if (ImGui.MenuItem($"{node.Key}"))
                     {
-                        AddNode(node.Key, ImGui.GetMousePos());
+                        // Convert mouse position to world position for node placement
+                        AddNode(node.Key, ScreenToWorld(ImGui.GetMousePos()));
                         UpdateAsset();
                     }
                 }
@@ -127,7 +184,6 @@ public class NodeEditor
             ImGui.EndPopup();
         }
 
-
         // Draw links
         foreach (var link in links)
         {
@@ -136,8 +192,8 @@ public class NodeEditor
 
             if (fromPin != null && toPin != null)
             {
-                var from = Pin.GetPinWorldPosition(fromNode, fromPin);
-                var to = Pin.GetPinWorldPosition(toNode, toPin);
+                var from = WorldToScreen(Pin.GetPinWorldPosition(fromNode, fromPin));
+                var to = WorldToScreen(Pin.GetPinWorldPosition(toNode, toPin));
                 Node.DrawLink(from, to);
             }
         }
@@ -145,14 +201,19 @@ public class NodeEditor
         // Drag to move
         if (activeDraggedNode != null)
         {
-            activeDraggedNode.Position += ImGui.GetIO().MouseDelta;
+            activeDraggedNode.Position += ImGui.GetIO().MouseDelta / zoomLevel;
         }
 
         // Draw nodes and handle interaction
         foreach (var node in nodes)
         {
+            // Apply zoom and camera offset to node position for rendering
+            Vector2 screenPos = WorldToScreen(node.Position);
+            Vector2 scaledSize = node.Size * zoomLevel;
+            
             // Right-click node to open context menu
-            if (ImGui.IsMouseClicked(ImGuiMouseButton.Right) && Node.MouseOverNode(node.Position, node.Size))
+            if (ImGui.IsMouseClicked(ImGuiMouseButton.Right) && 
+                Node.MouseOverNode(screenPos, scaledSize))
             {
                 ImGui.OpenPopup($"NodeContext_{node.Id}");
             }
@@ -175,23 +236,30 @@ public class NodeEditor
                 ImGui.EndPopup();
             }
 
-            node.DrawNode();
+            // Draw node with zoom applied
+            node.DrawNode(screenPos, zoomLevel);
 
             foreach (var output in node.Outputs)
             {
                 if (HandlePinSelection(node, output))
                     break;
-                Vector2 size = new Vector2(150, 60);
-                if (activeDraggedNode == null && activeOutputPin == null && ImGui.IsMouseClicked(ImGuiMouseButton.Left) && Node.MouseOverNode(node.Position, node.Size))
+                
+                if (activeDraggedNode == null && activeOutputPin == null && 
+                    ImGui.IsMouseClicked(ImGuiMouseButton.Left) && 
+                    Node.MouseOverNode(screenPos, scaledSize))
                 {
                     activeDraggedNode = node;
                 }
+                
                 if (ImGui.IsMouseReleased(ImGuiMouseButton.Left))
                 {
                     activeDraggedNode = null;
                 }
-                var pos = Pin.GetPinWorldPosition(node, output);
-                if (Pin.IsMouseOverPin(pos) && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+                
+                var pos = WorldToScreen(Pin.GetPinWorldPosition(node, output));
+                output.ScreenPosition = pos;
+                
+                if (Pin.IsMouseOverPin(pos, zoomLevel) && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
                 {
                     activeOutputPin = output;
                 }
@@ -201,8 +269,12 @@ public class NodeEditor
             {
                 if (HandlePinSelection(node, input))
                     break;
-                var pos = Pin.GetPinWorldPosition(node, input);
-                if (activeOutputPin != null && Pin.IsMouseOverPin(pos) && ImGui.IsMouseReleased(ImGuiMouseButton.Left))
+                
+                var pos = WorldToScreen(Pin.GetPinWorldPosition(node, input));
+                input.ScreenPosition = pos;
+                
+                if (activeOutputPin != null && Pin.IsMouseOverPin(pos, zoomLevel) && 
+                    ImGui.IsMouseReleased(ImGuiMouseButton.Left))
                 {
                     // Create a new link
                     links.Add(new Link
@@ -211,6 +283,7 @@ public class NodeEditor
                         InputPinId = input.Id
                     });
                     activeOutputPin = null;
+                    UpdateAsset(); // Update asset when connections change
                 }
             }
         }
@@ -219,17 +292,22 @@ public class NodeEditor
         if (activeOutputPin != null)
         {
             var fromNode = nodes.First(n => n.Outputs.Contains(activeOutputPin));
-            var from = Pin.GetPinWorldPosition(fromNode, activeOutputPin);
+            var from = WorldToScreen(Pin.GetPinWorldPosition(fromNode, activeOutputPin));
             var to = ImGui.GetIO().MousePos;
             Node.DrawLink(from, to);
         }
 
+        ImGui.PopStyleVar();
         ImGui.End();
     }
 
     private bool HandlePinSelection(Node node, Pin pin)
     {
-        if (ImGui.IsMouseClicked(ImGuiMouseButton.Right) && Pin.IsMouseOverPin(pin.ScreenPosition))
+        var screenPos = WorldToScreen(Pin.GetPinWorldPosition(node, pin));
+        pin.ScreenPosition = screenPos;
+        
+        if (ImGui.IsMouseClicked(ImGuiMouseButton.Right) && 
+            Pin.IsMouseOverPin(screenPos, zoomLevel))
         {
             ImGui.OpenPopup($"PinContext_{node.Id}_{pin.Id}");
         }
@@ -295,6 +373,10 @@ public class NodeEditor
     {
         var tree = new BehaviorTree();
 
+        // Create a dictionary to track processed nodes to avoid duplicates
+        Dictionary<int, BehaviorTreeNode> processedNodes = new Dictionary<int, BehaviorTreeNode>();
+        
+        // Find the root node
         var rootNode = FindRootNode();
         if (rootNode == null)
         {
@@ -302,12 +384,25 @@ public class NodeEditor
             return tree;
         }
 
+        // Set the root node
         tree.Root = (BehaviorTreeNode)rootNode;
+        processedNodes[rootNode.Id] = (BehaviorTreeNode)rootNode;
 
+        // Create a mapping from pin ID to node
         var pinToNode = nodes
             .SelectMany(n => n.Outputs.Concat(n.Inputs), (n, pin) => (pin, node: n))
             .ToDictionary(x => x.pin.Id, x => x.node);
 
+        // Clear existing children collections
+        foreach (var node in nodes)
+        {
+            if (node is SequenceNode seq)
+                seq.Children.Clear();
+            else if (node is SelectorNode sel)
+                sel.Children.Clear();
+        }
+
+        // Process all links to rebuild the tree structure
         foreach (var link in links)
         {
             if (!pinToNode.TryGetValue(link.OutputPinId, out var parent) ||
@@ -316,6 +411,7 @@ public class NodeEditor
                 continue;
             }
 
+            // Add child to parent's children collection
             if (parent is SequenceNode seq)
                 seq.Children.Add((BehaviorTreeNode)child);
             else if (parent is SelectorNode sel)

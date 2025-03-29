@@ -1,6 +1,7 @@
-﻿/*
- * Author: Callen Betts (RiptideDev) 
- * Breif: Defines an inspector to display information about objects
+﻿/**
+ * @file ContentDrawer.cs
+ * @brief Defines a UI drawer for displaying and managing game content assets
+ * @author Callen Betts (RiptideDev)
  */
 
 using ImGuiNET;
@@ -27,13 +28,25 @@ using Moonborne.Game.Behaviors;
 
 namespace Moonborne.Engine.UI
 {
+    /**
+     * @brief Static class that handles drawing and managing the content browser window
+     */
     public static class ContentDrawer
     {
+        /** @brief The title displayed in the content drawer window */
         public static string WindowName = "Content Drawer";
 
-        /// <summary>
-        /// Render the content drawer
-        /// </summary>
+        /**
+         * @brief Renders the content drawer window and handles asset management operations
+         *
+         * Displays the asset browser and provides context menu options for:
+         * - Creating folders
+         * - Creating prefabs
+         * - Creating dialogue assets
+         * - Creating room assets
+         * - Creating behavior trees
+         * - Deleting assets and folders
+         */
         public static void Draw()
         {
             ImGui.Begin(WindowName);
@@ -47,49 +60,32 @@ namespace Moonborne.Engine.UI
                 ImGui.OpenPopup("PrefabContextMenu");
             }
 
-            // Opt to create a new prefab
+            // Context menu for asset operations
             if (ImGui.BeginPopupContextItem("PrefabContextMenu"))
             {
+                // Folder operations
                 if (ImGui.MenuItem("Create Folder"))
                 {
                     AssetManager.AssetsByFolder.Add("New Folder", new List<Asset>());
                 }
+                
+                // Asset creation operations
+                CreateAssetMenuItem<Prefab>("Create Prefab", "GameObject", 
+                    prefab => {
+                        PrefabManager.Prefabs.Add(prefab);
+                        prefab.Components.Add(new Transform());
+                    });
+                
+                CreateAssetMenuItem<Dialogue>("Create Dialogue", "Dialogue_1");
+                CreateAssetMenuItem<Room>("Create Room", "Room_1");
+                CreateAssetMenuItem<BehaviorTreeAsset>("Create Behavior Tree", "BehaviorTree_1");
 
-                // Create a prefab
-                if (ImGui.MenuItem("Create Prefab"))
-                {
-                    Prefab prefab = new Prefab("GameObject", AssetManager.SelectedFolder);
-                    AssetManager.AddAsset(prefab);
-                    PrefabManager.Prefabs.Add(prefab);
-                    prefab.Components.Add(new Transform());
-                }
-
-                // Create a dialogue object
-                if (ImGui.MenuItem("Create Dialogue"))
-                {
-                    Dialogue dialogue = new Dialogue("Dialogue_1", AssetManager.SelectedFolder);
-                    AssetManager.AddAsset(dialogue);
-                }
-
-                // Create rooms
-                if (ImGui.MenuItem("Create Room"))
-                {
-                    Room rm = new Room("Room_1", AssetManager.SelectedFolder);
-                    AssetManager.AddAsset(rm);
-                }
-
-                if (ImGui.MenuItem("Create Behavior Tree"))
-                {
-                    BehaviorTreeAsset bt = new BehaviorTreeAsset("BehaviorTree_1", AssetManager.SelectedFolder);
-                    AssetManager.AddAsset(bt);
-                }
-
-                // Delete an asset
+                // Delete operations
                 if (ImGui.MenuItem("Delete Asset"))
                 {
                     AssetManager.DeleteAsset(AssetManager.SelectedAsset);
                 }
-                // Delete a folder
+                
                 if (ImGui.MenuItem("Delete Folder"))
                 {
 
@@ -98,6 +94,22 @@ namespace Moonborne.Engine.UI
             }
 
             ImGui.End();
+        }
+        
+        /**
+         * @brief Helper method to create menu items for different asset types
+         * @param menuName The name to display in the menu
+         * @param assetName The default name for the new asset
+         * @param postProcess Optional action to perform after asset creation
+         */
+        private static void CreateAssetMenuItem<T>(string menuName, string assetName, Action<T> postProcess = null) where T : Asset
+        {
+            if (ImGui.MenuItem(menuName))
+            {
+                T asset = (T)Activator.CreateInstance(typeof(T), assetName, AssetManager.SelectedFolder);
+                AssetManager.AddAsset(asset);
+                postProcess?.Invoke(asset);
+            }
         }
     }
 }
