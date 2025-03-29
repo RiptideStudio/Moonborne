@@ -130,7 +130,9 @@ namespace Moonborn.Game.Behaviors
 
         public static Vector2 GetPinWorldPosition(Node node, Pin pin)
         {
-            return node.Position + pin.Offset / (ImGui.GetIO().KeyCtrl ? 1.0f : 1.0f); // Adjust for zoom if needed
+            // Return the world position without any zoom adjustment
+            // The NodeEditor will handle the conversion between world and screen coordinates
+            return node.Position + pin.Offset;
         }
     }
 }

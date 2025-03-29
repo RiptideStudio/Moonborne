@@ -12,9 +12,11 @@ public static class ComponentRegistry
 {
     private static List<Type> componentTypes = new List<Type>();
 
+    /// <summary>
+    /// The components we can attach via the editor
+    /// </summary>
     static ComponentRegistry()
     {
-        RegisterComponent(typeof(BehaviorTree));
         RegisterComponent(typeof(Light));
         RegisterComponent(typeof(NPCBehavior));
         RegisterComponent(typeof(CameraFollow));

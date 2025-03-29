@@ -1,4 +1,5 @@
-﻿using Moonborn.Game.Behaviors;
+﻿using Force.DeepCloner;
+using Moonborn.Game.Behaviors;
 using Moonborne.Game.Assets;
 using Moonborne.Game.Behavior;
 using System;
@@ -37,17 +38,32 @@ namespace Moonborne.Game.Behaviors
     }
 
     /// <summary>
-    /// The component
+    /// The behavior tree component that can be attached to game objects
     /// </summary>
     public class BehaviorTree : GameBehavior
     {
         internal override string Name => "Behavior Tree";
 
         public BehaviorTreeNode Root;
+        
+        /// <summary>
+        /// Reference to the asset that defines this behavior tree
+        /// </summary>
+        public BehaviorTreeAsset Asset { get; set; }
 
         public BehaviorStatus Tick()
         {
             return Root?.Tick() ?? BehaviorStatus.Failure;
+        }
+        public void Initialize()
+        {
+            if (Asset == null)
+            {
+                Root = null;
+                return;
+            }
+
+            Root = Asset.Tree.Root.DeepClone();
         }
     }
 

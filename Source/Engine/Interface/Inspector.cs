@@ -24,7 +24,7 @@ using System.ComponentModel;
 using System.Diagnostics.Metrics;
 using System.Xml.Linq;
 using Moonborne.Game.Assets;
-
+using Moonborne.Game.Behaviors;
 namespace Moonborne.Engine.UI
 {
     public static class Inspector
@@ -302,9 +302,9 @@ namespace Moonborne.Engine.UI
             ImGui.Begin(name);
 
             // Show the display name of the asset
-            if (obj is Asset asset)
+            if (obj is Asset ass)
             {
-                ImGui.Text($"Editing {asset.Name}");
+                ImGui.Text($"Editing {ass.Name}");
             }
             else
             {
@@ -357,8 +357,31 @@ namespace Moonborne.Engine.UI
                             holder.AddComponent(Activator.CreateInstance(componentType) as ObjectComponent);
                         }
                     }
+
+                    foreach (var kvp in AssetManager.AssetsByFolder)
+                    {
+                        string folderName = kvp.Key;
+                        List<Asset> assets = kvp.Value;
+
+                        foreach (var asset in assets)
+                        {
+                            if (asset is BehaviorTreeAsset behaviorAsset)
+                            {
+                                string label = $"{behaviorAsset.Name}";
+                                if (ImGui.MenuItem(label))
+                                {
+                                    var bt = new BehaviorTree { Asset = behaviorAsset };
+                                    bt.Initialize();
+                                    holder.AddComponent(bt);
+                                    ImGui.CloseCurrentPopup();
+                                }
+                            }
+                        }
+                    }
+
                     ImGui.EndPopup();
                 }
+
             }
 
             ImGui.End();
