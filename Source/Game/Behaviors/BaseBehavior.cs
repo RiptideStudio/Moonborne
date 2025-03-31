@@ -52,6 +52,14 @@ namespace Moonborne.Game.Objects
         }
 
         /// <summary>
+        /// Build a component if it needs it (hotloading)
+        /// </summary>
+        public virtual void OnBuild()
+        {
+
+        }
+
+        /// <summary>
         /// Draw a component
         /// </summary>
         public virtual void Draw(SpriteBatch spriteBatch)

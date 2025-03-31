@@ -1,4 +1,6 @@
 ﻿
+using Moonborne.Engine;
+
 namespace Moonborne.Game.Behaviors
 {
     public class N_QuitGame : ActionNode
@@ -7,7 +9,8 @@ namespace Moonborne.Game.Behaviors
 
         public override BehaviorStatus Tick()
         {
-            throw new System.NotImplementedException();
+            GameManager.Exit();
+            return BehaviorStatus.Success;
         }
     }
 }

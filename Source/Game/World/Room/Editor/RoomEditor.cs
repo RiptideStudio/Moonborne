@@ -217,6 +217,7 @@ namespace Moonborne.Game.Room
             ContentDrawer.Draw();
             LevelSelectEditor.Draw();
             Toolbar.Draw();
+            NodeEditor.Instance.Draw();
 
             // Draw prefab editor if we are in it
             if (PrefabManager.IsActive)

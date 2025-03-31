@@ -283,8 +283,9 @@ namespace Moonborne.Game.Assets
 
                 if (asset == null)
                     continue;
-                
+
                 // Add the asset
+                asset.Load();
                 asset.Folder = folder;
                 AddAsset(asset);
             }

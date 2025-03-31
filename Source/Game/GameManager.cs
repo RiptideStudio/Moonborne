@@ -63,6 +63,7 @@ namespace Moonborne.Engine
             foreach (GameObject obj in LayerManager.Objects)
             {
                 obj.OnBeginPlay();
+                obj.OnBuild();
             }
         }
 

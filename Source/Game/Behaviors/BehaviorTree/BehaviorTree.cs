@@ -51,10 +51,28 @@ namespace Moonborne.Game.Behaviors
         /// </summary>
         public BehaviorTreeAsset Asset { get; set; }
 
+        /// <summary>
+        /// Tick the behavior tree
+        /// </summary>
+        /// <param name="dt"></param>
+        public override void Update(float dt)
+        {
+            base.Update(dt);
+            Tick();
+        }
+
+        /// <summary>
+        /// Tick the node
+        /// </summary>
+        /// <returns></returns>
         public BehaviorStatus Tick()
         {
             return Root?.Tick() ?? BehaviorStatus.Failure;
         }
+        
+        /// <summary>
+        /// Initialize the behavior tree with a clone on give
+        /// </summary>
         public void Initialize()
         {
             if (Asset == null)
@@ -64,6 +82,15 @@ namespace Moonborne.Game.Behaviors
             }
 
             Root = Asset.Tree.Root.DeepClone();
+        }
+
+        /// <summary>
+        /// Initialize the tree
+        /// </summary>
+        public override void OnBuild()
+        {
+            Asset = AssetManager.GetAsset<BehaviorTreeAsset>(Asset.Name);
+            Initialize();
         }
     }
 

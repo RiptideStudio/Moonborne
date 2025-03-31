@@ -32,7 +32,7 @@ namespace Moonborne
         private SpriteBatch spriteBatch;
         public Player player;
         public static float DeltaTime;
-        NodeEditor NodeEditor;
+        public static NodeEditor NodeEditor;
 
         public MGame()
         {
@@ -135,7 +135,6 @@ namespace Moonborne
 
             // Render everything in all layers
             LayerManager.Draw(spriteBatch);
-            NodeEditor.Draw();
 
             // End drawing
             ImGuiManager.EndFrame(gameTime);

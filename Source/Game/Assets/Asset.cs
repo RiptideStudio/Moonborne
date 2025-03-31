@@ -51,6 +51,14 @@ namespace Moonborne.Game.Assets
         }
 
         /// <summary>
+        /// Used to initialize an asset when it is loaded
+        /// </summary>
+        public virtual void Load()
+        {
+
+        }
+
+        /// <summary>
         /// Called before saving, useful for building
         /// </summary>
         public virtual void PreSave()

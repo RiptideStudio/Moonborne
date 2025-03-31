@@ -90,6 +90,17 @@ namespace Moonborne.Game.Objects
         }
 
         /// <summary>
+        /// Builds any attached assets that need to be updated
+        /// </summary>
+        public override void OnBuild()
+        {
+            foreach (ObjectComponent component in Components)
+            {
+                component.OnBuild();
+            }
+        }
+
+        /// <summary>
         /// Adds a component to this object
         /// </summary>
         /// <param name="component"></param>
@@ -279,8 +290,6 @@ namespace Moonborne.Game.Objects
         /// </summary>
         public override void OnBeginPlay()
         {
-            base.OnBeginPlay();
-
             foreach (ObjectComponent component in Components)
             {
                 component.OnBeginPlay();

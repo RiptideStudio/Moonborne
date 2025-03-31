@@ -102,7 +102,7 @@ public class NodeEditor
         if (currentAsset == null)
             return;
 
-        currentAsset.Tree = BuildBehaviorTree(); // builds and sets .Root too
+        currentAsset.Tree = BuildBehaviorTree();
     }
 
     // Convert screen position to world position
