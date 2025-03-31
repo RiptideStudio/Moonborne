@@ -85,7 +85,9 @@ namespace Moonborne.Game.Objects
         /// </summary>
         public GameObject()
         {
+            // Give all objects the name of their base type
             Name = GetType().BaseType.Name;
+
             Create();
         }
 

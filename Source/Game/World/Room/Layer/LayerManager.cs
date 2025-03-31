@@ -23,6 +23,18 @@ namespace Moonborne.Game.Room
         public static Dictionary<string, Layer> Layers = new Dictionary<string, Layer>();
         public static Dictionary<string, Layer> LayersToAdd = new Dictionary<string, Layer>();
         public static List<GameObject> Objects = new List<GameObject>(); // Global list of all game objects
+        
+
+        /// <summary>
+        /// Check if there exists an object with a given name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="currentObj"></param>
+        /// <returns></returns>
+        public static bool NameExists(string name)
+        {
+            return Objects.Any(obj => obj.Name == name);
+        }
 
         /// <summary>
         /// Add a new layer to the list
@@ -136,6 +148,12 @@ namespace Moonborne.Game.Room
                 layer.AddObject(gameObject);
                 gameObject.Layer = layer;
                 gameObject.Height = layer.Height;
+            }
+
+            // Check if an object with this name exists, and if it does change it
+            if (NameExists(gameObject.Name))
+            {
+                gameObject.Name += $"_{Objects.Count}";
             }
         }
 

@@ -57,7 +57,7 @@ namespace Moonborne.Game.Objects.Prefabs
         /// Instantiate a prefab
         /// </summary>
         /// <param name="position"></param>
-        public GameObject Instantiate(Vector2 position)
+        public GameObject Instantiate(Vector2 position, string name = "GameObject")
         {
             GameObject gameObject = (GameObject)Activator.CreateInstance(AssetType);
 
@@ -71,7 +71,7 @@ namespace Moonborne.Game.Objects.Prefabs
             {
                 transform.Position = position;
             }
-
+            gameObject.Name = name;
             LayerManager.AddInstance(gameObject, RoomEditor.selectedLayer);
 
             return gameObject;

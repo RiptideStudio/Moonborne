@@ -201,13 +201,14 @@ namespace Moonborne.Game.Assets
         /// <param name="asset"></param>
         public static void DragAsset()
         {
+            // Drop prefabs into the world
             if (SelectedAsset is Prefab prefab && ImGui.BeginDragDropSource())
             {
                 if (!RoomEditor.Dragging)
                 {
                     Vector2 position = InputManager.MouseWorldCoords().ToNumerics();
                     Console.WriteLine($"Created {SelectedAsset.Name} at {position}");
-                    CreatedObject = prefab.Instantiate(position);
+                    CreatedObject = prefab.Instantiate(position,SelectedAsset.Name);
                 }
                 RoomEditor.Dragging = true;
                 ImGui.Text($"{prefab.Name}");
