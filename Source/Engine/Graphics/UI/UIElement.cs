@@ -41,7 +41,7 @@ namespace Moonborne.Engine.UI
         {
             base.Draw(spriteBatch);
             SpriteManager.DrawSetAlignment(true);
-            SpriteManager.DrawText(Text, Transform.Position, Transform.Scale, Transform.Rotation, Tint);
+            SpriteManager.DrawText(Text, Transform.Position, Transform.Scale, Transform.Rotation, GetComponent<Sprite>().Tint);
             SpriteManager.DrawSetAlignment(false);
             Update(MGame.DeltaTime);
         }
@@ -89,7 +89,7 @@ namespace Moonborne.Engine.UI
                 Hover = true;
                 OnMouseEnter();
             }
-            Tint = HoverColor;
+            GetComponent<Sprite>().Tint = HoverColor;
 
             WhileMouseHeld();
         }
@@ -108,7 +108,7 @@ namespace Moonborne.Engine.UI
         public virtual void OnMouseExit()
         {
             Hover = false;
-            Tint = IdleColor;
+            GetComponent<Sprite>().Tint = IdleColor;
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace Moonborne.Engine.UI
         {
             if (Hover && InputManager.MouseLeftDown())
             {
-                Tint = ClickColor;
+                GetComponent<Sprite>().Tint = ClickColor;
             }
         }
     }

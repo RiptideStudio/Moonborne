@@ -57,7 +57,6 @@ namespace Moonborne.Game.Objects
         public bool Collideable = true;
         public bool IsStatic = false; // Static collisions don't get updated
         protected ECollisionState CollisionState = ECollisionState.None;
-        public Color Tint = Color.White;
         internal int HitboxXOffset;
         internal int HitboxYOffset;
         internal int HitboxWidthOffset;
@@ -228,10 +227,11 @@ namespace Moonborne.Game.Objects
             // Draw the hitbox of our object
             if (GameManager.DebugMode)
             {
+                Transform transform = GetComponent<Transform>();
                 SpriteManager.SetDrawAlpha(0.25f);
                 SpriteManager.DrawRectangle(Hitbox.X, Hitbox.Y, Hitbox.Width, Hitbox.Height, Color.Red);
                 SpriteManager.SetDrawAlpha(1);
-                SpriteManager.DrawText($"{GetType().Name}", Transform.Position, Transform.Scale, Transform.Rotation, Tint);
+                SpriteManager.DrawText($"{GetType().Name}", transform.Position, transform.Scale, transform.Rotation, Color.White);
             }
         }
 

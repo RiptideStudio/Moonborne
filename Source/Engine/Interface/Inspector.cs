@@ -95,6 +95,46 @@ namespace Moonborne.Engine.UI
 
             Type valueType = value.GetType();
 
+            // Enum Types
+            if (valueType.IsEnum)
+            {
+                string[] enumNames = Enum.GetNames(valueType);
+                int currentIndex = Array.IndexOf(enumNames, value.ToString());
+
+                if (ImGui.Combo(name, ref currentIndex, enumNames, enumNames.Length))
+                {
+                    object newEnumValue = Enum.Parse(valueType, enumNames[currentIndex]);
+                    SetValue(obj, member, newEnumValue);
+                }
+
+                return;
+            }
+
+            // Color Types (XNA)
+            if (value is Color xnaColor)
+            {
+                System.Numerics.Vector4 colorVec = new System.Numerics.Vector4(
+                    xnaColor.R / 255f,
+                    xnaColor.G / 255f,
+                    xnaColor.B / 255f,
+                    xnaColor.A / 255f
+                );
+
+                if (ImGui.ColorEdit4(name, ref colorVec))
+                {
+                    Color newColor = new Color(
+                        (byte)(colorVec.X * 255),
+                        (byte)(colorVec.Y * 255),
+                        (byte)(colorVec.Z * 255),
+                        (byte)(colorVec.W * 255)
+                    );
+
+                    SetValue(obj, member, newColor);
+                }
+
+                return;
+            }
+
             // Primitive Types
             if (valueType.IsPrimitive || value is decimal || value is string)
             {
@@ -232,8 +272,6 @@ namespace Moonborne.Engine.UI
                 }
                 return;
             }
-
-
 
             // Nested classes
             if (valueType.IsClass && valueType != typeof(string))

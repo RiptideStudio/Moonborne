@@ -28,7 +28,10 @@ namespace Moonborne.Engine.Components
 
         public static List<T> GetAllComponents<T>() where T : ObjectComponent
         {
-            return allComponents.OfType<T>().ToList();
+            return allComponents
+                .OfType<T>()
+                .Where(c => c.Parent != null && c.Parent != null)
+                .ToList();
         }
     }
 }

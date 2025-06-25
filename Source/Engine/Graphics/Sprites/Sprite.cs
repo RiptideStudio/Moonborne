@@ -28,7 +28,7 @@ namespace Moonborne.Graphics
         public int AnimationSpeed = 10;
         public float Alpha = 1f;
 
-        public Color Color = Color.White;
+        public Color Tint = Color.White;
         public int Frame = 0;
         internal float LayerDepth = 0;
         internal float FrameTime = 0;
@@ -149,7 +149,7 @@ namespace Moonborne.Graphics
 
             LayerDepth = Parent.Depth;
 
-            DrawSprite(spriteBatch, Frame, Transform.Position + DrawOffset, Transform.Scale, Transform.Rotation, Color);
+            DrawSprite(spriteBatch, Frame, Transform.Position + DrawOffset, Transform.Scale, Transform.Rotation, Tint);
         }
 
         /// <summary>

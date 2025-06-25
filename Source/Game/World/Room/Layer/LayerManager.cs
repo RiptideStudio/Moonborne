@@ -220,9 +220,6 @@ namespace Moonborne.Game.Room
         {
             var snapShot = Layers.Values.ToList();
 
-            // Render all lights, calculate light map
-            GraphicsManager.lightManager.RenderLights();
-
             // Render world objects
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, Camera.TransformMatrix);
 
@@ -237,6 +234,9 @@ namespace Moonborne.Game.Room
 
             RoomEditor.DrawGrid(spriteBatch);
             spriteBatch.End();
+
+            // Render all lights
+            GraphicsManager.lightManager.RenderLights();
 
             // Render our UI
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, WindowManager.Transform);

@@ -10,7 +10,6 @@ namespace Moonborne.Engine.Graphics.Lighting
         internal override string Name => "Point Light";
 
         public SpriteTexture Sprite;
-        public Vector2 Position;
         public Color Color = Color.White;
         public float Intensity = 1f;
         public float Radius = 64f;

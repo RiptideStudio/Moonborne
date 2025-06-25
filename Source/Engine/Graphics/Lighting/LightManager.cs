@@ -65,8 +65,6 @@ namespace Moonborne.Engine.Graphics.Lighting
         /// </summary>
         public void RenderLights()
         {
-            graphicsDevice.SetRenderTarget(LightMap);
-            graphicsDevice.Clear(Color.Black);
             List<Light> lights = ObjectComponent.GetAllComponents<Light>();
             SpriteManager.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, null, null, null, Camera.TransformMatrix);
 
@@ -78,20 +76,17 @@ namespace Moonborne.Engine.Graphics.Lighting
 
                 SpriteManager.spriteBatch.Draw(
                     light.Sprite.Data,
-                    light.Position,
+                    light.Parent.GetComponent<Transform>().Position,
                     null,
-                    Color.White * light.Intensity,
+                    light.Color * light.Intensity,
                     0f,
                     origin,
-                    scale,
+                    light.Radius/16f,
                     SpriteEffects.None,
                     0f);
             }
 
             SpriteManager.spriteBatch.End();
-
-            // Draw the actual shadows
-            DrawShadows();
         }
 
         /// <summary>
